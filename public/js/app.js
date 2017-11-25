@@ -42212,7 +42212,7 @@ var render = function() {
           _c(
             "button",
             {
-              staticClass: "delete",
+              staticClass: "button",
               attrs: { "aria-label": "close" },
               on: { click: _vm.toggleWindowState }
             },

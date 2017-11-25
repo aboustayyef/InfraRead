@@ -78,7 +78,7 @@ class rssFetcher implements Fetchable
 			$post->content = $item['content'];
 			$post->title = $item['title'];
 			$post->url = $item['url'];
-			$post->excerpt = str_limit(strip_tags($item['content']), 400);
+			$post->excerpt = str_limit(strip_tags($item['content']), 280);
 			// $post->original_image = $e->image;
 			$post->posted_at = new Carbon($item['date']);
 			$post->tag_id = $this->source->tag->id;
