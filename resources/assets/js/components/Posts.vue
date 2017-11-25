@@ -1,7 +1,15 @@
 <template>
     <div>
-        <post-details :activepost="activepost"></post-details>
-        <post-list v-on:update="updateActivePost"></post-list>
+
+        <post-list 
+            v-on:update="updateActivePost">
+        </post-list>
+
+        <post-details 
+            :activepost="activepost" 
+            :visible="visible"
+            v-on:toggle="visible = !visible">
+        </post-details>
     </div>
 </template>
 <script>
@@ -14,12 +22,14 @@
                     time_ago:'',
                     content: "Content will be available once a post is selected"
                 },
+                visible: false
             };
         },
         
         methods: {
             updateActivePost(post) {
                 this.activepost = post;
+                this.visible = ! this.visible;
             }
         }
     }

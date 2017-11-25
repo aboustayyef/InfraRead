@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 38);
+/******/ 	return __webpack_require__(__webpack_require__.s = 39);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -41854,102 +41854,7 @@ module.exports = Vue$3;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
 /***/ }),
-/* 34 */,
-/* 35 */,
-/* 36 */,
-/* 37 */,
-/* 38 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = __webpack_require__(39);
-
-
-/***/ }),
-/* 39 */
-/***/ (function(module, exports, __webpack_require__) {
-
-
-/**
- * First we will load all of this project's JavaScript dependencies which
- * includes Vue and other libraries. It is a great starting point when
- * building robust, powerful web applications using Vue and Laravel.
- */
-
-__webpack_require__(8);
-
-window.Vue = __webpack_require__(33);
-
-/**
- * Next, we will create a fresh Vue application instance and attach it to
- * the page. Then, you may begin adding components to this application
- * or customize the JavaScript scaffolding to fit your unique needs.
- */
-
-Vue.component('posts', __webpack_require__(54));
-Vue.component('post-details', __webpack_require__(57));
-Vue.component('post-list', __webpack_require__(50));
-var app = new Vue({
-  el: '#app'
-});
-
-/***/ }),
-/* 40 */,
-/* 41 */,
-/* 42 */,
-/* 43 */,
-/* 44 */,
-/* 45 */,
-/* 46 */,
-/* 47 */,
-/* 48 */,
-/* 49 */,
-/* 50 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var disposed = false
-var normalizeComponent = __webpack_require__(51)
-/* script */
-var __vue_script__ = __webpack_require__(52)
-/* template */
-var __vue_template__ = __webpack_require__(53)
-/* styles */
-var __vue_styles__ = null
-/* scopeId */
-var __vue_scopeId__ = null
-/* moduleIdentifier (server only) */
-var __vue_module_identifier__ = null
-var Component = normalizeComponent(
-  __vue_script__,
-  __vue_template__,
-  __vue_styles__,
-  __vue_scopeId__,
-  __vue_module_identifier__
-)
-Component.options.__file = "resources/assets/js/components/PostList.vue"
-if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
-if (Component.options.functional) {console.error("[vue-loader] PostList.vue: functional components are not supported with templates, they should use render functions.")}
-
-/* hot reload */
-if (false) {(function () {
-  var hotAPI = require("vue-hot-reload-api")
-  hotAPI.install(require("vue"), false)
-  if (!hotAPI.compatible) return
-  module.hot.accept()
-  if (!module.hot.data) {
-    hotAPI.createRecord("data-v-12c24cca", Component.options)
-  } else {
-    hotAPI.reload("data-v-12c24cca", Component.options)
-  }
-  module.hot.dispose(function (data) {
-    disposed = true
-  })
-})()}
-
-module.exports = Component.exports
-
-
-/***/ }),
-/* 51 */
+/* 34 */
 /***/ (function(module, exports) {
 
 /* globals __VUE_SSR_CONTEXT__ */
@@ -42046,11 +41951,364 @@ module.exports = function normalizeComponent (
 
 
 /***/ }),
-/* 52 */
+/* 35 */,
+/* 36 */,
+/* 37 */,
+/* 38 */,
+/* 39 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__(40);
+
+
+/***/ }),
+/* 40 */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+/**
+ * First we will load all of this project's JavaScript dependencies which
+ * includes Vue and other libraries. It is a great starting point when
+ * building robust, powerful web applications using Vue and Laravel.
+ */
+
+__webpack_require__(8);
+
+window.Vue = __webpack_require__(33);
+
+/**
+ * Next, we will create a fresh Vue application instance and attach it to
+ * the page. Then, you may begin adding components to this application
+ * or customize the JavaScript scaffolding to fit your unique needs.
+ */
+
+Vue.component('posts', __webpack_require__(41));
+Vue.component('post-details', __webpack_require__(44));
+Vue.component('post-list', __webpack_require__(47));
+var app = new Vue({
+  el: '#app'
+});
+
+/***/ }),
+/* 41 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+var normalizeComponent = __webpack_require__(34)
+/* script */
+var __vue_script__ = __webpack_require__(42)
+/* template */
+var __vue_template__ = __webpack_require__(43)
+/* styles */
+var __vue_styles__ = null
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/assets/js/components/Posts.vue"
+if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
+if (Component.options.functional) {console.error("[vue-loader] Posts.vue: functional components are not supported with templates, they should use render functions.")}
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-7dbbd72e", Component.options)
+  } else {
+    hotAPI.reload("data-v-7dbbd72e", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 42 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    data: function data() {
+        return {
+            activepost: {
+                title: 'No Post selected yet',
+                source: { name: 'No Source yet' },
+                time_ago: '',
+                content: "Content will be available once a post is selected"
+            },
+            visible: false
+        };
+    },
+
+
+    methods: {
+        updateActivePost: function updateActivePost(post) {
+            this.activepost = post;
+            this.visible = !this.visible;
+        }
+    }
+});
+
+/***/ }),
+/* 43 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "div",
+    [
+      _c("post-list", { on: { update: _vm.updateActivePost } }),
+      _vm._v(" "),
+      _c("post-details", {
+        attrs: { activepost: _vm.activepost, visible: _vm.visible },
+        on: {
+          toggle: function($event) {
+            _vm.visible = !_vm.visible
+          }
+        }
+      })
+    ],
+    1
+  )
+}
+var staticRenderFns = []
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-hot-reload-api").rerender("data-v-7dbbd72e", module.exports)
+  }
+}
+
+/***/ }),
+/* 44 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+var normalizeComponent = __webpack_require__(34)
+/* script */
+var __vue_script__ = __webpack_require__(45)
+/* template */
+var __vue_template__ = __webpack_require__(46)
+/* styles */
+var __vue_styles__ = null
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/assets/js/components/PostDetails.vue"
+if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
+if (Component.options.functional) {console.error("[vue-loader] PostDetails.vue: functional components are not supported with templates, they should use render functions.")}
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-5496eb1d", Component.options)
+  } else {
+    hotAPI.reload("data-v-5496eb1d", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 45 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    props: ['activepost', 'visible'],
+    methods: {
+        toggleWindowState: function toggleWindowState() {
+            this.$emit('toggle');
+        }
+    }
+});
+
+/***/ }),
+/* 46 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "div",
+    { class: { active: _vm.visible }, attrs: { id: "offCanvas" } },
+    [
+      _c("a", { staticClass: "button", on: { click: _vm.toggleWindowState } }, [
+        _vm._v("Close")
+      ]),
+      _vm._v(" "),
+      _c(
+        "h1",
+        {
+          staticClass:
+            "has-text-grey-dark is-title is-size-4 has-text-weight-bold"
+        },
+        [_vm._v(_vm._s(_vm.activepost.title))]
+      ),
+      _vm._v(" "),
+      _c(
+        "h2",
+        {
+          staticClass:
+            "has-text-primary is-subtitle is-size-5 is-uppercase has-text-weight-semibold"
+        },
+        [_vm._v(_vm._s(_vm.activepost.source.name))]
+      ),
+      _vm._v(" "),
+      _c("h3", { staticClass: "is-size-6 has-text-grey-light" }, [
+        _vm._v(_vm._s(_vm.activepost.time_ago))
+      ]),
+      _vm._v(" "),
+      _c("div", {
+        staticClass: "content",
+        domProps: { innerHTML: _vm._s(_vm.activepost.content) }
+      })
+    ]
+  )
+}
+var staticRenderFns = []
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-hot-reload-api").rerender("data-v-5496eb1d", module.exports)
+  }
+}
+
+/***/ }),
+/* 47 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+var normalizeComponent = __webpack_require__(34)
+/* script */
+var __vue_script__ = __webpack_require__(48)
+/* template */
+var __vue_template__ = __webpack_require__(49)
+/* styles */
+var __vue_styles__ = null
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/assets/js/components/PostList.vue"
+if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
+if (Component.options.functional) {console.error("[vue-loader] PostList.vue: functional components are not supported with templates, they should use render functions.")}
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-1eb3abd3", Component.options)
+  } else {
+    hotAPI.reload("data-v-1eb3abd3", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 48 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -42105,16 +42363,23 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             post.read = 1;
             axios.patch('api/posts/' + post.id, { read: 1 }).then(function (res) {
                 _this2.fetchPostList();
+            }).catch(function (res) {
+                console.log('there was a problem with marking the post as read');
+                post.read = 0;
             });
         },
         updateCurrentPost: function updateCurrentPost(post) {
+            // mark post as read
+            this.markPostRead(post);
+
+            // Tells the the parent component <posts> that the current post has changed
             this.$emit('update', post);
         }
     }
 });
 
 /***/ }),
-/* 53 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
@@ -42134,44 +42399,89 @@ var render = function() {
             return _c("li", [
               _c(
                 "div",
-                {
-                  staticClass: "columns",
-                  class: { read: post.read },
-                  on: {
-                    click: function($event) {
-                      _vm.updateCurrentPost(post)
-                    }
-                  }
-                },
+                { staticClass: "columns", class: { read: post.read } },
                 [
                   _c("div", { staticClass: "column is-half" }, [
                     _c(
                       "h1",
                       {
                         staticClass:
-                          "has-text-grey-dark is-title is-size-4 has-text-weight-bold"
+                          "has-text-grey-dark is-title is-size-4 has-text-weight-bold",
+                        on: {
+                          click: function($event) {
+                            _vm.updateCurrentPost(post)
+                          }
+                        }
                       },
-                      [_vm._v(_vm._s(post.title))]
+                      [
+                        _vm._v(
+                          "\n                            " +
+                            _vm._s(post.title) +
+                            "\n                        "
+                        )
+                      ]
                     ),
                     _vm._v(" "),
                     _c(
                       "h2",
                       {
                         staticClass:
-                          "has-text-primary is-subtitle is-size-5 is-uppercase has-text-weight-semibold"
+                          "has-text-primary is-subtitle is-size-5 is-uppercase has-text-weight-semibold",
+                        on: {
+                          click: function($event) {
+                            _vm.updateCurrentPost(post)
+                          }
+                        }
                       },
-                      [_vm._v(_vm._s(post.source.name))]
+                      [
+                        _vm._v(
+                          _vm._s(post.source.name) +
+                            "\n                        "
+                        )
+                      ]
                     ),
                     _vm._v(" "),
-                    _c("h3", { staticClass: "is-size-6 has-text-grey-light" }, [
-                      _vm._v(_vm._s(post.time_ago))
-                    ])
+                    _c(
+                      "h3",
+                      {
+                        staticClass: "is-size-6 has-text-grey-light",
+                        on: {
+                          click: function($event) {
+                            _vm.updateCurrentPost(post)
+                          }
+                        }
+                      },
+                      [
+                        _vm._v(
+                          "\n                            " +
+                            _vm._s(post.time_ago) +
+                            "\n                        "
+                        )
+                      ]
+                    )
                   ]),
                   _vm._v(" "),
                   _c("div", { staticClass: "column is-half" }, [
-                    _c("p", { staticClass: "has-text-grey" }, [
-                      _vm._v(_vm._s(post.excerpt))
-                    ]),
+                    _c(
+                      "p",
+                      {
+                        staticClass: "has-text-grey",
+                        on: {
+                          click: function($event) {
+                            _vm.updateCurrentPost(post)
+                          }
+                        }
+                      },
+                      [
+                        _vm._v(
+                          "\n                            " +
+                            _vm._s(post.excerpt) +
+                            "\n                        "
+                        )
+                      ]
+                    ),
+                    _vm._v(" "),
+                    _c("br"),
                     _vm._v(" "),
                     _c(
                       "a",
@@ -42204,239 +42514,7 @@ module.exports = { render: render, staticRenderFns: staticRenderFns }
 if (false) {
   module.hot.accept()
   if (module.hot.data) {
-     require("vue-hot-reload-api").rerender("data-v-12c24cca", module.exports)
-  }
-}
-
-/***/ }),
-/* 54 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var disposed = false
-var normalizeComponent = __webpack_require__(51)
-/* script */
-var __vue_script__ = __webpack_require__(55)
-/* template */
-var __vue_template__ = __webpack_require__(56)
-/* styles */
-var __vue_styles__ = null
-/* scopeId */
-var __vue_scopeId__ = null
-/* moduleIdentifier (server only) */
-var __vue_module_identifier__ = null
-var Component = normalizeComponent(
-  __vue_script__,
-  __vue_template__,
-  __vue_styles__,
-  __vue_scopeId__,
-  __vue_module_identifier__
-)
-Component.options.__file = "resources/assets/js/components/Posts.vue"
-if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
-if (Component.options.functional) {console.error("[vue-loader] Posts.vue: functional components are not supported with templates, they should use render functions.")}
-
-/* hot reload */
-if (false) {(function () {
-  var hotAPI = require("vue-hot-reload-api")
-  hotAPI.install(require("vue"), false)
-  if (!hotAPI.compatible) return
-  module.hot.accept()
-  if (!module.hot.data) {
-    hotAPI.createRecord("data-v-00ecbe66", Component.options)
-  } else {
-    hotAPI.reload("data-v-00ecbe66", Component.options)
-  }
-  module.hot.dispose(function (data) {
-    disposed = true
-  })
-})()}
-
-module.exports = Component.exports
-
-
-/***/ }),
-/* 55 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-//
-//
-//
-//
-//
-//
-
-/* harmony default export */ __webpack_exports__["default"] = ({
-    data: function data() {
-        return {
-            activepost: {
-                title: 'No Post selected yet',
-                source: { name: 'No Source yet' },
-                time_ago: '',
-                content: "Content will be available once a post is selected"
-            }
-        };
-    },
-
-
-    methods: {
-        updateActivePost: function updateActivePost(post) {
-            this.activepost = post;
-        }
-    }
-});
-
-/***/ }),
-/* 56 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var render = function() {
-  var _vm = this
-  var _h = _vm.$createElement
-  var _c = _vm._self._c || _h
-  return _c(
-    "div",
-    [
-      _c("post-details", { attrs: { activepost: _vm.activepost } }),
-      _vm._v(" "),
-      _c("post-list", { on: { update: _vm.updateActivePost } })
-    ],
-    1
-  )
-}
-var staticRenderFns = []
-render._withStripped = true
-module.exports = { render: render, staticRenderFns: staticRenderFns }
-if (false) {
-  module.hot.accept()
-  if (module.hot.data) {
-     require("vue-hot-reload-api").rerender("data-v-00ecbe66", module.exports)
-  }
-}
-
-/***/ }),
-/* 57 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var disposed = false
-var normalizeComponent = __webpack_require__(51)
-/* script */
-var __vue_script__ = __webpack_require__(58)
-/* template */
-var __vue_template__ = __webpack_require__(59)
-/* styles */
-var __vue_styles__ = null
-/* scopeId */
-var __vue_scopeId__ = null
-/* moduleIdentifier (server only) */
-var __vue_module_identifier__ = null
-var Component = normalizeComponent(
-  __vue_script__,
-  __vue_template__,
-  __vue_styles__,
-  __vue_scopeId__,
-  __vue_module_identifier__
-)
-Component.options.__file = "resources/assets/js/components/PostDetails.vue"
-if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
-if (Component.options.functional) {console.error("[vue-loader] PostDetails.vue: functional components are not supported with templates, they should use render functions.")}
-
-/* hot reload */
-if (false) {(function () {
-  var hotAPI = require("vue-hot-reload-api")
-  hotAPI.install(require("vue"), false)
-  if (!hotAPI.compatible) return
-  module.hot.accept()
-  if (!module.hot.data) {
-    hotAPI.createRecord("data-v-059b8855", Component.options)
-  } else {
-    hotAPI.reload("data-v-059b8855", Component.options)
-  }
-  module.hot.dispose(function (data) {
-    disposed = true
-  })
-})()}
-
-module.exports = Component.exports
-
-
-/***/ }),
-/* 58 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-//
-//
-//
-//
-//
-//
-//
-//
-
-/* harmony default export */ __webpack_exports__["default"] = ({
-    props: ['activepost'],
-    data: function data() {
-        return {
-            visible: false
-        };
-    },
-
-
-    methods: {
-        toggleVisible: function toggleVisible() {
-            this.visible = !this.visible;
-        }
-    }
-});
-
-/***/ }),
-/* 59 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var render = function() {
-  var _vm = this
-  var _h = _vm.$createElement
-  var _c = _vm._self._c || _h
-  return _c(
-    "div",
-    { class: { active: _vm.visible }, attrs: { id: "offCanvas" } },
-    [
-      _c(
-        "h1",
-        {
-          staticClass:
-            "has-text-grey-dark is-title is-size-4 has-text-weight-bold"
-        },
-        [_vm._v(_vm._s(_vm.activepost.title))]
-      ),
-      _vm._v(" "),
-      _c(
-        "h2",
-        {
-          staticClass:
-            "has-text-primary is-subtitle is-size-5 is-uppercase has-text-weight-semibold"
-        },
-        [_vm._v(_vm._s(_vm.activepost.source.name))]
-      ),
-      _vm._v(" "),
-      _c("h3", { staticClass: "is-size-6 has-text-grey-light" }, [
-        _vm._v(_vm._s(_vm.activepost.time_ago))
-      ]),
-      _vm._v(" "),
-      _c("span", { domProps: { innerHTML: _vm._s(_vm.activepost.content) } })
-    ]
-  )
-}
-var staticRenderFns = []
-render._withStripped = true
-module.exports = { render: render, staticRenderFns: staticRenderFns }
-if (false) {
-  module.hot.accept()
-  if (module.hot.data) {
-     require("vue-hot-reload-api").rerender("data-v-059b8855", module.exports)
+     require("vue-hot-reload-api").rerender("data-v-1eb3abd3", module.exports)
   }
 }
 
