@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<opml version="1.0">
+    <head>
+        <title>Mustapha subscriptions in feedly Cloud</title>
+    </head>
+    <body>
+        <outline text="Tech Blogs" title="Tech Blogs">
+            <outline type="rss" text="Marco.org" title="Marco.org" xmlUrl="http://www.marco.org/rss" htmlUrl="https://marco.org/"/>
+            <outline type="rss" text="Jared Sinclair" title="Jared Sinclair" xmlUrl="http://blog.jaredsinclair.com/rss" htmlUrl="http://blog.jaredsinclair.com/"/>
+            <outline type="rss" text="Slashdot" title="Slashdot" xmlUrl="http://rss.slashdot.org/Slashdot/slashdot" htmlUrl="https://slashdot.org/"/>
+            <outline type="rss" text="A VC" title="A VC" xmlUrl="http://feeds.feedburner.com/AVc" htmlUrl="http://avc.com"/>
+            <outline type="rss" text="Anil Dash" title="Anil Dash" xmlUrl="http://feeds.dashes.com/AnilDash" htmlUrl="http://anildash.com/"/>
+            <outline type="rss" text="Idle Words" title="Idle Words" xmlUrl="http://www.idlewords.com/index.xml" htmlUrl="http://idlewords.com"/>
+            <outline type="rss" text="Geek Living - Medium" title="Geek Living - Medium" xmlUrl="http://mustapha.me/feed/" htmlUrl="https://mustapha.me?source=rss----9abcb6ee529a---4"/>
+            <outline type="rss" text="Hypercritical" title="Hypercritical" xmlUrl="http://hypercritical.co/feeds/main" htmlUrl="http://hypercritical.co/"/>
+            <outline type="rss" text="daverupert.com" title="daverupert.com" xmlUrl="http://daverupert.com/atom.xml" htmlUrl="http://daverupert.com"/>
+            <outline type="rss" text="Daring Fireball" title="Daring Fireball" xmlUrl="http://daringfireball.net/index.xml" htmlUrl="https://daringfireball.net/"/>
+            <outline type="rss" text="Coding Horror" title="Coding Horror" xmlUrl="http://feeds.feedburner.com/codinghorror/" htmlUrl="https://blog.codinghorror.com/"/>
+            <outline type="rss" text="Liss is More" title="Liss is More" xmlUrl="http://www.caseyliss.com/rss" htmlUrl="https://www.caseyliss.com"/>
+        </outline>
+        <outline text="business" title="business">
+            <outline type="rss" text="Benedict Evans" title="Benedict Evans" xmlUrl="http://ben-evans.com/benedictevans?format=rss" htmlUrl="http://www.ben-evans.com/"/>
+            <outline type="rss" text="Stratechery" title="Stratechery" xmlUrl="http://stratechery.com/feed/" htmlUrl="https://stratechery.com"/>
+        </outline>
+        <outline text="Dev" title="Dev">
+            <outline type="rss" text="Laravel Daily" title="Laravel Daily" xmlUrl="http://laraveldaily.com/feed/" htmlUrl="http://laraveldaily.com"/>
+            <outline type="rss" text="Lea Verou" title="Lea Verou" xmlUrl="http://feeds2.feedburner.com/leaverou" htmlUrl="http://lea.verou.me"/>
+            <outline type="rss" text="MattStauffer.com" title="MattStauffer.com" xmlUrl="http://mattstauffer.co/blog/feed.atom" htmlUrl="https://mattstauffer.com/blog"/>
+            <outline type="rss" text="murze.be - all blogposts" title="murze.be - all blogposts" xmlUrl="https://murze.be/feed/" htmlUrl="https://murze.be/feed"/>
+        </outline>
+        <outline text="Fun + Hobbies" title="Fun + Hobbies">
+            <outline type="rss" text="Dear Coffee, I Love You." title="Dear Coffee, I Love You." xmlUrl="http://www.dearcoffeeiloveyou.com/feed/" htmlUrl="http://www.dearcoffeeiloveyou.com"/>
+            <outline type="rss" text="ARIS News" title="ARIS News" xmlUrl="http://aris.edu.gh/rss" htmlUrl="https://aris.edu.gh/rss"/>
+            <outline type="rss" text="BrettTerpstra.com" title="BrettTerpstra.com" xmlUrl="http://feeds.feedburner.com/BrettTerpstra" htmlUrl="http://brettterpstra.com/"/>
+            <outline type="rss" text="Not A Blog" title="Not A Blog" xmlUrl="http://grrm.livejournal.com/data/rss" htmlUrl="https://grrm.livejournal.com/"/>
+        </outline>
+        <outline text="Ghana" title="Ghana">
+            <outline type="rss" text="CediTalk" title="CediTalk" xmlUrl="http://ceditalk.com/feed/" htmlUrl="http://www.ceditalk.com"/>
+            <outline type="rss" text="[ɪmˈbreɪd dôt Wûrld] » Feed" title="[ɪmˈbreɪd dôt Wûrld] » Feed" xmlUrl="http://embraid.world/feed/" htmlUrl="http://embraid.world"/>
+        </outline>
+        <outline text="Design + Tutorials" title="Design + Tutorials">
+            <outline type="rss" text="Shrikar Archak" title="Shrikar Archak" xmlUrl="http://shrikar.com/atom.xml" htmlUrl="https://shrikar.com"/>
+            <outline type="rss" text="madewithlove blog" title="madewithlove blog" xmlUrl="http://blog.madewithlove.be/feed.xml" htmlUrl="https://blog.madewithlove.be/"/>
+            <outline type="rss" text="MacStories" title="MacStories" xmlUrl="http://feeds.feedburner.com/macstoriesnet" htmlUrl="https://www.macstories.net"/>
+            <outline type="rss" text="Codrops" title="Codrops" xmlUrl="http://feeds2.feedburner.com/tympanus" htmlUrl="https://tympanus.net/codrops"/>
+        </outline>
+        <outline text="Arab World + Politics" title="Arab World + Politics">
+            <outline type="rss" text="The Arabist" title="The Arabist" xmlUrl="http://feeds.feedburner.com/arabistdotnet" htmlUrl="https://arabist.net/"/>
+            <outline type="rss" text="Beirut Spring | A Lebanese Blog" title="Beirut Spring | A Lebanese Blog" xmlUrl="http://feeds.feedburner.com/beirutspring/fb_feed" htmlUrl="https://beirutspring.com?source=rss----876295693541---4"/>
+            <outline type="rss" text="Baheyya: Egypt Analysis and Whimsy بهيّة" title="Baheyya: Egypt Analysis and Whimsy بهيّة" xmlUrl="http://baheyya.blogspot.com/feeds/posts/default" htmlUrl="http://baheyya.blogspot.com/"/>
+        </outline>
+    </body>
+</opml>
