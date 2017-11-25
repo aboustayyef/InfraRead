@@ -1,5 +1,9 @@
 $primary: #da2525;
 $modal-content-width: calc(100% - 40px);
+$modal-card-head-background-color: white;
+$modal-card-margin:5px;
+$modal-background-background-color: white;
+$modal-close-dimensions: 60px;
 
 @import "../../../node_modules/bulma/bulma";
 body{
@@ -15,20 +19,22 @@ p{
 .read{
     opacity: 0.5;
 }
-
-#offCanvas{
-    position: fixed;
-    background-color: white;
-    z-index: 5;
-    left: 0;
-    height: 100%;
-    border: 1px solid silver;
-    width: 100%;
-    top: 0;
-    padding: 3em;
-    transform: translate3d(calc(100% + 10px) , 0 , 0);
-    transition: 1s easein;
-    &.active{
-        transform:translate3d(0,0,0);
+.content{
+    max-width:800px;
+    margin:auto;
+    a{
+        color:$primary;
     }
+}
+.modal-card-head{
+    width: 100%;
+    max-width: 800px;
+    padding-left: 0;
+    margin: auto;
+}
+.modal-card{
+    height: calc(100% - 20px);
+    width:  calc(100% - 20px);
+    max-height:  calc(100% - 20px);
+    max-width: calc(100% - 20px);
 }

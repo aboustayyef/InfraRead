@@ -6510,7 +6510,7 @@ a.dropdown-item.is-active {
   position: absolute;
   right: 0;
   top: 0;
-  background-color: rgba(10, 10, 10, 0.86);
+  background-color: white;
 }
 
 .modal-content,
@@ -6560,11 +6560,11 @@ a.dropdown-item.is-active {
   vertical-align: top;
   width: 20px;
   background: none;
-  height: 40px;
+  height: 60px;
   position: fixed;
   right: 20px;
   top: 20px;
-  width: 40px;
+  width: 60px;
 }
 
 .modal-close:before,
@@ -6644,7 +6644,7 @@ a.dropdown-item.is-active {
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
-  background-color: whitesmoke;
+  background-color: white;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -11468,24 +11468,26 @@ p {
   opacity: 0.5;
 }
 
-#offCanvas {
-  position: fixed;
-  background-color: white;
-  z-index: 5;
-  left: 0;
-  height: 100%;
-  border: 1px solid silver;
-  width: 100%;
-  top: 0;
-  padding: 3em;
-  -webkit-transform: translate3d(calc(100% + 10px), 0, 0);
-          transform: translate3d(calc(100% + 10px), 0, 0);
-  -webkit-transition: 1s easein;
-  transition: 1s easein;
+.content {
+  max-width: 800px;
+  margin: auto;
 }
 
-#offCanvas.active {
-  -webkit-transform: translate3d(0, 0, 0);
-          transform: translate3d(0, 0, 0);
+.content a {
+  color: #da2525;
+}
+
+.modal-card-head {
+  width: 100%;
+  max-width: 800px;
+  padding-left: 0;
+  margin: auto;
+}
+
+.modal-card {
+  height: calc(100% - 20px);
+  width: calc(100% - 20px);
+  max-height: calc(100% - 20px);
+  max-width: calc(100% - 20px);
 }
 

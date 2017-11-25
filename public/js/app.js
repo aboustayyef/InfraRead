@@ -42174,6 +42174,15 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     props: ['activepost', 'visible'],
@@ -42194,38 +42203,54 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c(
     "div",
-    { class: { active: _vm.visible }, attrs: { id: "offCanvas" } },
+    { staticClass: "modal", class: { "is-active": _vm.visible } },
     [
-      _c("a", { staticClass: "button", on: { click: _vm.toggleWindowState } }, [
-        _vm._v("Close")
-      ]),
+      _c("div", { staticClass: "modal-background" }),
       _vm._v(" "),
-      _c(
-        "h1",
-        {
-          staticClass:
-            "has-text-grey-dark is-title is-size-4 has-text-weight-bold"
-        },
-        [_vm._v(_vm._s(_vm.activepost.title))]
-      ),
-      _vm._v(" "),
-      _c(
-        "h2",
-        {
-          staticClass:
-            "has-text-primary is-subtitle is-size-5 is-uppercase has-text-weight-semibold"
-        },
-        [_vm._v(_vm._s(_vm.activepost.source.name))]
-      ),
-      _vm._v(" "),
-      _c("h3", { staticClass: "is-size-6 has-text-grey-light" }, [
-        _vm._v(_vm._s(_vm.activepost.time_ago))
-      ]),
-      _vm._v(" "),
-      _c("div", {
-        staticClass: "content",
-        domProps: { innerHTML: _vm._s(_vm.activepost.content) }
-      })
+      _c("div", { staticClass: "modal-card" }, [
+        _c("header", { staticClass: "modal-card-head" }, [
+          _c(
+            "button",
+            {
+              staticClass: "delete",
+              attrs: { "aria-label": "close" },
+              on: { click: _vm.toggleWindowState }
+            },
+            [_vm._v("Done")]
+          )
+        ]),
+        _vm._v(" "),
+        _c("section", { staticClass: "modal-card-body" }, [
+          _c("div", { staticClass: "content" }, [
+            _c(
+              "h1",
+              {
+                staticClass:
+                  "has-text-grey-dark is-title is-size-4 has-text-weight-bold"
+              },
+              [_vm._v(_vm._s(_vm.activepost.title))]
+            ),
+            _vm._v(" "),
+            _c(
+              "h2",
+              {
+                staticClass:
+                  "has-text-primary is-subtitle is-size-5 is-uppercase has-text-weight-semibold"
+              },
+              [_vm._v(_vm._s(_vm.activepost.source.name))]
+            ),
+            _vm._v(" "),
+            _c("h3", { staticClass: "is-size-6 has-text-grey-light" }, [
+              _vm._v(_vm._s(_vm.activepost.time_ago))
+            ])
+          ]),
+          _vm._v(" "),
+          _c("div", {
+            staticClass: "content",
+            domProps: { innerHTML: _vm._s(_vm.activepost.content) }
+          })
+        ])
+      ])
     ]
   )
 }
