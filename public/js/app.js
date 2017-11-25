@@ -42362,6 +42362,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     data: function data() {
@@ -42427,63 +42428,56 @@ var render = function() {
                 { staticClass: "columns", class: { read: post.read } },
                 [
                   _c("div", { staticClass: "column is-half" }, [
-                    _c(
-                      "h1",
-                      {
+                    _c("div", { staticClass: "content" }, [
+                      _c("h1", {
                         staticClass:
                           "has-text-grey-dark is-title is-size-4 has-text-weight-bold",
+                        domProps: { innerHTML: _vm._s(post.title) },
                         on: {
                           click: function($event) {
                             _vm.updateCurrentPost(post)
                           }
                         }
-                      },
-                      [
-                        _vm._v(
-                          "\n                            " +
-                            _vm._s(post.title) +
-                            "\n                        "
-                        )
-                      ]
-                    ),
-                    _vm._v(" "),
-                    _c(
-                      "h2",
-                      {
-                        staticClass:
-                          "has-text-primary is-subtitle is-size-5 is-uppercase has-text-weight-semibold",
-                        on: {
-                          click: function($event) {
-                            _vm.updateCurrentPost(post)
+                      }),
+                      _vm._v(" "),
+                      _c(
+                        "h2",
+                        {
+                          staticClass:
+                            "has-text-primary is-subtitle is-size-5 is-uppercase has-text-weight-semibold",
+                          on: {
+                            click: function($event) {
+                              _vm.updateCurrentPost(post)
+                            }
                           }
-                        }
-                      },
-                      [
-                        _vm._v(
-                          _vm._s(post.source.name) +
-                            "\n                        "
-                        )
-                      ]
-                    ),
-                    _vm._v(" "),
-                    _c(
-                      "h3",
-                      {
-                        staticClass: "is-size-6 has-text-grey-light",
-                        on: {
-                          click: function($event) {
-                            _vm.updateCurrentPost(post)
+                        },
+                        [
+                          _vm._v(
+                            _vm._s(post.source.name) +
+                              "\n                            "
+                          )
+                        ]
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "h3",
+                        {
+                          staticClass: "is-size-6 has-text-grey-light",
+                          on: {
+                            click: function($event) {
+                              _vm.updateCurrentPost(post)
+                            }
                           }
-                        }
-                      },
-                      [
-                        _vm._v(
-                          "\n                            " +
-                            _vm._s(post.time_ago) +
-                            "\n                        "
-                        )
-                      ]
-                    )
+                        },
+                        [
+                          _vm._v(
+                            "\n                                " +
+                              _vm._s(post.time_ago) +
+                              "\n                            "
+                          )
+                        ]
+                      )
+                    ])
                   ]),
                   _vm._v(" "),
                   _c("div", { staticClass: "column is-half" }, [

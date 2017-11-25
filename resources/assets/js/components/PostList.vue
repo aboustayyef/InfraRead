@@ -8,21 +8,22 @@
                     <div class="columns" :class=" {read: post.read}">
                         <!-- Left Pane -->
                         <div class="column is-half">
-                            <h1 
-                                @click="updateCurrentPost(post)" 
-                                class="has-text-grey-dark is-title is-size-4 has-text-weight-bold">
-                                {{ post.title }}
-                            </h1>
-                            <h2 
-                                @click="updateCurrentPost(post)"
-                                class="has-text-primary is-subtitle is-size-5 is-uppercase has-text-weight-semibold"
-                                >{{ post.source.name }}
-                            </h2>
-                            <h3 
-                                @click="updateCurrentPost(post)" 
-                                class="is-size-6 has-text-grey-light" >
-                                {{post.time_ago}}
-                            </h3>
+                            <div class="content">
+                                <h1 v-html="post.title" 
+                                    @click="updateCurrentPost(post)" 
+                                    class="has-text-grey-dark is-title is-size-4 has-text-weight-bold">
+                                </h1>
+                                <h2 
+                                    @click="updateCurrentPost(post)"
+                                    class="has-text-primary is-subtitle is-size-5 is-uppercase has-text-weight-semibold"
+                                    >{{ post.source.name }}
+                                </h2>
+                                <h3 
+                                    @click="updateCurrentPost(post)" 
+                                    class="is-size-6 has-text-grey-light" >
+                                    {{post.time_ago}}
+                                </h3>
+                            </div>
                         </div>
         
                         <!-- Right Pane -->
@@ -78,7 +79,7 @@
             {
                 // mark post as read
                 this.markPostRead(post);
-                
+
                 // Tells the the parent component <posts> that the current post has changed
                 this.$emit('update', post) 
             }
