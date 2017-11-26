@@ -42063,7 +42063,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     props: ['activepost', 'visible'],
@@ -42098,21 +42097,21 @@ var render = function() {
               on: { click: _vm.toggleWindowState }
             },
             [_vm._v("Done")]
-          ),
-          _vm._v(" "),
-          _c("a", { attrs: { href: _vm.activepost.url } }, [_vm._v("  [link]")])
+          )
         ]),
         _vm._v(" "),
         _c("section", { staticClass: "modal-card-body" }, [
           _c("div", { staticClass: "content" }, [
-            _c(
-              "h1",
-              {
-                staticClass:
-                  "has-text-grey-dark is-title is-size-4 has-text-weight-bold"
-              },
-              [_vm._v(_vm._s(_vm.activepost.title))]
-            ),
+            _c("a", { attrs: { href: _vm.activepost.url } }, [
+              _c(
+                "h1",
+                {
+                  staticClass:
+                    "has-text-grey-dark is-title is-size-4 has-text-weight-bold"
+                },
+                [_vm._v(_vm._s(_vm.activepost.title))]
+              )
+            ]),
             _vm._v(" "),
             _c(
               "h2",
