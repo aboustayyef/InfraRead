@@ -42054,7 +42054,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     data: function data() {
@@ -42363,11 +42362,20 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     data: function data() {
         return {
-            list: []
+            list: [],
+            source: null,
+            source_name: null
         };
     },
     created: function created() {
@@ -42379,24 +42387,39 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         fetchPostList: function fetchPostList() {
             var _this = this;
 
-            axios.get('api/posts').then(function (res) {
+            var request_string = 'api/posts';
+            if (this.source) {
+                request_string = 'api/posts/' + this.source;
+            }
+            axios.get(request_string).then(function (res) {
                 _this.list = res.data;
             });
         },
-        markPostRead: function markPostRead(post) {
+        togglePostRead: function togglePostRead(post) {
             var _this2 = this;
 
-            post.read = 1;
-            axios.patch('api/posts/' + post.id, { read: 1 }).then(function (res) {
+            post.read = 1 - post.read; // toggle between 0 and 1
+            axios.patch('api/posts/' + post.id, { read: post.read }).then(function (res) {
                 _this2.fetchPostList();
             }).catch(function (res) {
-                console.log('there was a problem with marking the post as read');
-                post.read = 0;
+                console.log('there was a problem with updating post status');
+                post.read = 1 - post.read;;
             });
+        },
+        readButtonMessage: function readButtonMessage(post) {
+            if (post.read) {
+                return "Mark Unread";
+            }
+            return "Mark Read";
+        },
+        updateSource: function updateSource(source) {
+            this.source = source.id;
+            this.source_name = source.name;
+            this.fetchPostList();
         },
         updateCurrentPost: function updateCurrentPost(post) {
             // mark post as read
-            this.markPostRead(post);
+            this.togglePostRead(post);
 
             // Tells the the parent component <posts> that the current post has changed
             this.$emit('update', post);
@@ -42413,6 +42436,34 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "container" }, [
+    _vm.source
+      ? _c(
+          "nav",
+          { staticClass: "breadcrumb", attrs: { "aria-label": "breadcrumbs" } },
+          [
+            _c("ul", [
+              _c("li", [
+                _c(
+                  "a",
+                  {
+                    attrs: { href: "#" },
+                    on: {
+                      click: function($event) {
+                        $event.preventDefault()
+                        _vm.updateSource({ id: null, name: null })
+                      }
+                    }
+                  },
+                  [_vm._v("Home")]
+                )
+              ]),
+              _vm._v(" "),
+              _c("li", [_vm._v(_vm._s(_vm.source_name))])
+            ])
+          ]
+        )
+      : _vm._e(),
+    _vm._v(" "),
     _c("div", { staticClass: "row" }, [
       _c(
         "ul",
@@ -42421,7 +42472,7 @@ var render = function() {
             ? _c("li", [_vm._v("There are no posts yet!")])
             : _vm._e(),
           _vm._v(" "),
-          _vm._l(_vm.list, function(post, index) {
+          _vm._l(_vm.list, function(post) {
             return _c("li", [
               _c(
                 "div",
@@ -42429,35 +42480,40 @@ var render = function() {
                 [
                   _c("div", { staticClass: "column is-half" }, [
                     _c("div", { staticClass: "content" }, [
-                      _c("h1", {
-                        staticClass:
-                          "has-text-grey-dark is-title is-size-4 has-text-weight-bold",
-                        domProps: { innerHTML: _vm._s(post.title) },
-                        on: {
-                          click: function($event) {
-                            _vm.updateCurrentPost(post)
-                          }
-                        }
-                      }),
-                      _vm._v(" "),
-                      _c(
-                        "h2",
-                        {
+                      _c("a", { attrs: { href: "#" } }, [
+                        _c("h1", {
                           staticClass:
-                            "has-text-primary is-subtitle is-size-5 is-uppercase has-text-weight-semibold",
+                            "has-text-grey-dark is-title is-size-4 has-text-weight-bold",
+                          domProps: { innerHTML: _vm._s(post.title) },
                           on: {
                             click: function($event) {
                               _vm.updateCurrentPost(post)
                             }
                           }
-                        },
-                        [
-                          _vm._v(
-                            _vm._s(post.source.name) +
-                              "\n                            "
-                          )
-                        ]
-                      ),
+                        })
+                      ]),
+                      _vm._v(" "),
+                      _c("a", { attrs: { href: "#" } }, [
+                        _c(
+                          "h2",
+                          {
+                            staticClass:
+                              "has-text-primary is-subtitle is-size-5 is-uppercase has-text-weight-semibold",
+                            on: {
+                              click: function($event) {
+                                $event.preventDefault()
+                                _vm.updateSource(post.source)
+                              }
+                            }
+                          },
+                          [
+                            _vm._v(
+                              _vm._s(post.source.name) +
+                                "\n                            "
+                            )
+                          ]
+                        )
+                      ]),
                       _vm._v(" "),
                       _c(
                         "h3",
@@ -42508,11 +42564,11 @@ var render = function() {
                         staticClass: "button",
                         on: {
                           click: function($event) {
-                            _vm.markPostRead(post)
+                            _vm.togglePostRead(post)
                           }
                         }
                       },
-                      [_vm._v("Mark Read")]
+                      [_vm._v(_vm._s(_vm.readButtonMessage(post)))]
                     )
                   ])
                 ]

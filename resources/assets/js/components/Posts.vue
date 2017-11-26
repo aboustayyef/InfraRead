@@ -1,6 +1,5 @@
 <template>
     <div>
-
         <post-list 
             v-on:update="updateActivePost">
         </post-list>

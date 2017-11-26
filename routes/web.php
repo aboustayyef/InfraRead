@@ -33,6 +33,9 @@ Route::prefix('api')->middleware('auth')->group(function(){
 		return App\Source::all();
 	});
 
+    Route::get('posts/{source_id}', function($source_id){
+        return Post::with(['Source','Tag'])->where('source_id', $source_id)->OrderBy('posted_at','desc')->take(10)->get();
+    });
     Route::resource('posts', 'PostController');
 });
 

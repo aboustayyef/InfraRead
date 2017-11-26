@@ -50,7 +50,7 @@ class rssFetcher implements Fetchable
 				'url' => $item->get_link(), 
 				'uid' => $item->get_id(),
 				'date'=> $item->get_date(),
-				'title'=> $item->get_title(),
+				'title'=> html_entity_decode($item->get_title()),
 				'url'	=> $item->get_link(),	
 				'content' => $item->get_content(),
 			];

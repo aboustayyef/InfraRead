@@ -4,6 +4,7 @@ $modal-card-head-background-color: white;
 $modal-card-margin:5px;
 $modal-background-background-color: white;
 $modal-close-dimensions: 60px;
+$link: $primary;
 
 @import "../../../node_modules/bulma/bulma";
 body{
@@ -22,9 +23,7 @@ p{
 .content{
     max-width:800px;
     margin:auto;
-    a{
-        color:$primary;
-    }
+    line-height:2;
 }
 .modal-card-head{
     width: 100%;
