@@ -3,6 +3,7 @@
 namespace App;
 
 use App\Media;
+use App\Post;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
@@ -74,6 +75,10 @@ class Source extends Model
       return $posts->count() . ' new posts saved';
     }
 
+    public function getLatestPosts($howmany = 20)
+    {
+      return Post::with(['Source','Tag'])->where('source_id', $this->id)->OrderBy('posted_at','desc')->take($howmany)->get();
+    }
 
     /**
      * These are the rules for validating field form submissions

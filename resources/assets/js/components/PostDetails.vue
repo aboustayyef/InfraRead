@@ -3,7 +3,8 @@
     <div class="modal-background"></div>
     <div class="modal-card">
         <header class="modal-card-head">
-            <button class="button" @click="toggleWindowState" aria-label="close">Done</button>
+            <a class="button" @click="toggleWindowState" aria-label="close">Done</a>
+            <a :href="activepost.url">  [link]</a>
         </header>
         <section class="modal-card-body">
            <div class="content">

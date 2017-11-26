@@ -42063,6 +42063,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     props: ['activepost', 'visible'],
@@ -42090,14 +42091,16 @@ var render = function() {
       _c("div", { staticClass: "modal-card" }, [
         _c("header", { staticClass: "modal-card-head" }, [
           _c(
-            "button",
+            "a",
             {
               staticClass: "button",
               attrs: { "aria-label": "close" },
               on: { click: _vm.toggleWindowState }
             },
             [_vm._v("Done")]
-          )
+          ),
+          _vm._v(" "),
+          _c("a", { attrs: { href: _vm.activepost.url } }, [_vm._v("  [link]")])
         ]),
         _vm._v(" "),
         _c("section", { staticClass: "modal-card-body" }, [
@@ -42223,37 +42226,53 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     data: function data() {
         return {
-            list: [],
-            source_id: null,
-            source_name: null
+            raw_list: [], // all posts
+            only_unread: true, // show only unread posts
+            source_id: null, // if null, show all posts, otherwise, show only posts by source
+            source_name: null // name of the source
         };
     },
     created: function created() {
         this.fetchPostList();
     },
 
-
+    computed: {
+        list: function list() {
+            if (this.only_unread) {
+                return this.raw_list.filter(function (item) {
+                    return item.read == 0;
+                });
+            }
+            // otherwise
+            return this.raw_list;
+        }
+    },
     methods: {
         fetchPostList: function fetchPostList() {
             var _this = this;
 
             var request_string = 'api/posts';
             if (this.source_id) {
-                request_string = 'api/posts/' + this.source_id;
+                request_string = 'api/sourcePosts/' + this.source_id;
             }
             axios.get(request_string).then(function (res) {
-                _this.list = res.data;
+                _this.raw_list = res.data;
             });
         },
         togglePostRead: function togglePostRead(post) {
             var _this2 = this;
 
             post.read = 1 - post.read; // toggle between 0 and 1
-            this.$emit('testing', 'the payload');
 
             axios.patch('api/posts/' + post.id, { read: post.read }).then(function (res) {
                 _this2.fetchPostList();
@@ -42290,6 +42309,36 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "container" }, [
+    _c("div", { staticClass: "tabs is-right" }, [
+      _c("ul", [
+        _c(
+          "li",
+          {
+            class: { "is-active": _vm.only_unread },
+            on: {
+              click: function($event) {
+                _vm.only_unread = !_vm.only_unread
+              }
+            }
+          },
+          [_c("a", [_vm._v("Unread Posts")])]
+        ),
+        _vm._v(" "),
+        _c(
+          "li",
+          {
+            class: { "is-active": !_vm.only_unread },
+            on: {
+              click: function($event) {
+                _vm.only_unread = !_vm.only_unread
+              }
+            }
+          },
+          [_c("a", [_vm._v("All Posts")])]
+        )
+      ])
+    ]),
+    _vm._v(" "),
     _vm.source_id
       ? _c(
           "nav",

@@ -31,7 +31,10 @@ Route::prefix('admin')->middleware('auth')->group(function(){
 Route::prefix('api')->middleware('auth')->group(function(){
     
     // Get a List of posts via XHR to display in app
-    Route::resource('posts/{source_id?}', 'PostController');
+    Route::resource('/posts', 'PostController');
+
+    // Get a List of posts of a particular source
+    Route::resource('/sourcePosts/{source}','SourcePostController')->only(['index']);
 
     // Get a list of sources. Used for administering sources
     Route::get('source', function(){

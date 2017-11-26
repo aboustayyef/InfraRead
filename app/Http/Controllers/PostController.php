@@ -13,12 +13,9 @@ class PostController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index($source_id = null)
+    public function index()
     {
-        if ($source_id) {
-            return Post::with(['Source','Tag'])->where('source_id', $source_id)->OrderBy('posted_at','desc')->take(10)->get();
-        }
-        return Post::with(['Source','Tag'])->where('read', 0)->OrderBy('posted_at','desc')->take(10)->get();
+        return Post::with(['Source','Tag'])->OrderBy('posted_at','desc')->take(60)->get();
     }
 
     /**
