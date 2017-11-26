@@ -41982,137 +41982,18 @@ window.Vue = __webpack_require__(33);
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
-Vue.component('posts', __webpack_require__(41));
+Vue.component('app', __webpack_require__(60));
 Vue.component('post-details', __webpack_require__(44));
 Vue.component('post-list', __webpack_require__(47));
+Vue.component('post-list-item', __webpack_require__(63));
 var app = new Vue({
   el: '#app'
 });
 
 /***/ }),
-/* 41 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var disposed = false
-var normalizeComponent = __webpack_require__(34)
-/* script */
-var __vue_script__ = __webpack_require__(42)
-/* template */
-var __vue_template__ = __webpack_require__(43)
-/* styles */
-var __vue_styles__ = null
-/* scopeId */
-var __vue_scopeId__ = null
-/* moduleIdentifier (server only) */
-var __vue_module_identifier__ = null
-var Component = normalizeComponent(
-  __vue_script__,
-  __vue_template__,
-  __vue_styles__,
-  __vue_scopeId__,
-  __vue_module_identifier__
-)
-Component.options.__file = "resources/assets/js/components/Posts.vue"
-if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
-if (Component.options.functional) {console.error("[vue-loader] Posts.vue: functional components are not supported with templates, they should use render functions.")}
-
-/* hot reload */
-if (false) {(function () {
-  var hotAPI = require("vue-hot-reload-api")
-  hotAPI.install(require("vue"), false)
-  if (!hotAPI.compatible) return
-  module.hot.accept()
-  if (!module.hot.data) {
-    hotAPI.createRecord("data-v-7dbbd72e", Component.options)
-  } else {
-    hotAPI.reload("data-v-7dbbd72e", Component.options)
-  }
-  module.hot.dispose(function (data) {
-    disposed = true
-  })
-})()}
-
-module.exports = Component.exports
-
-
-/***/ }),
-/* 42 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-
-/* harmony default export */ __webpack_exports__["default"] = ({
-    data: function data() {
-        return {
-            activepost: {
-                title: 'No Post selected yet',
-                source: { name: 'No Source yet' },
-                time_ago: '',
-                content: "Content will be available once a post is selected"
-            },
-            visible: false
-        };
-    },
-
-
-    methods: {
-        updateActivePost: function updateActivePost(post) {
-            this.activepost = post;
-            this.visible = !this.visible;
-        }
-    }
-});
-
-/***/ }),
-/* 43 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var render = function() {
-  var _vm = this
-  var _h = _vm.$createElement
-  var _c = _vm._self._c || _h
-  return _c(
-    "div",
-    [
-      _c("post-list", { on: { update: _vm.updateActivePost } }),
-      _vm._v(" "),
-      _c("post-details", {
-        attrs: { activepost: _vm.activepost, visible: _vm.visible },
-        on: {
-          toggle: function($event) {
-            _vm.visible = !_vm.visible
-          }
-        }
-      })
-    ],
-    1
-  )
-}
-var staticRenderFns = []
-render._withStripped = true
-module.exports = { render: render, staticRenderFns: staticRenderFns }
-if (false) {
-  module.hot.accept()
-  if (module.hot.data) {
-     require("vue-hot-reload-api").rerender("data-v-7dbbd72e", module.exports)
-  }
-}
-
-/***/ }),
+/* 41 */,
+/* 42 */,
+/* 43 */,
 /* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -42342,6 +42223,351 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    data: function data() {
+        return {
+            list: [],
+            source_id: null,
+            source_name: null
+        };
+    },
+    created: function created() {
+        this.fetchPostList();
+    },
+
+
+    methods: {
+        fetchPostList: function fetchPostList() {
+            var _this = this;
+
+            var request_string = 'api/posts';
+            if (this.source_id) {
+                request_string = 'api/posts/' + this.source_id;
+            }
+            axios.get(request_string).then(function (res) {
+                _this.list = res.data;
+            });
+        },
+        togglePostRead: function togglePostRead(post) {
+            var _this2 = this;
+
+            post.read = 1 - post.read; // toggle between 0 and 1
+            this.$emit('testing', 'the payload');
+
+            axios.patch('api/posts/' + post.id, { read: post.read }).then(function (res) {
+                _this2.fetchPostList();
+            }).catch(function (res) {
+                console.log('there was a problem with updating post status');
+                post.read = 1 - post.read;;
+            });
+        },
+        showPostDetails: function showPostDetails(post) {
+            // bubble up to App
+            this.$emit('show-post-details', post);
+        },
+        showSource: function showSource(source) {
+            // bubble up
+            this.source_id = source.id;
+            this.source_name = source.name;
+            this.fetchPostList();
+        },
+        readButtonMessage: function readButtonMessage(post) {
+            if (post.read) {
+                return "Mark Unread";
+            }
+            return "Mark Read";
+        }
+    }
+});
+
+/***/ }),
+/* 49 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", { staticClass: "container" }, [
+    _vm.source_id
+      ? _c(
+          "nav",
+          { staticClass: "breadcrumb", attrs: { "aria-label": "breadcrumbs" } },
+          [
+            _c("ul", [
+              _c("li", [
+                _c(
+                  "a",
+                  {
+                    attrs: { href: "#" },
+                    on: {
+                      click: function($event) {
+                        $event.preventDefault()
+                        _vm.showSource({ id: null, name: null })
+                      }
+                    }
+                  },
+                  [_vm._v("Home")]
+                )
+              ]),
+              _vm._v(" "),
+              _c("li", [_vm._v(_vm._s(_vm.source_name))])
+            ])
+          ]
+        )
+      : _vm._e(),
+    _vm._v(" "),
+    _c("div", { staticClass: "row" }, [
+      _c(
+        "ul",
+        [
+          _vm.list.length === 0
+            ? _c("li", [_vm._v("There are no posts yet!")])
+            : _vm._e(),
+          _vm._v(" "),
+          _vm._l(_vm.list, function(post) {
+            return _c(
+              "li",
+              [
+                _c("post-list-item", {
+                  attrs: { post: post },
+                  on: {
+                    toggleReadStatus: function($event) {
+                      _vm.togglePostRead(post)
+                    },
+                    "show-post-details": function($event) {
+                      _vm.showPostDetails(post)
+                    },
+                    "show-source": function($event) {
+                      _vm.showSource(post.source)
+                    }
+                  }
+                }),
+                _vm._v(" "),
+                _c("hr")
+              ],
+              1
+            )
+          })
+        ],
+        2
+      )
+    ])
+  ])
+}
+var staticRenderFns = []
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-hot-reload-api").rerender("data-v-1eb3abd3", module.exports)
+  }
+}
+
+/***/ }),
+/* 50 */,
+/* 51 */,
+/* 52 */,
+/* 53 */,
+/* 54 */,
+/* 55 */,
+/* 56 */,
+/* 57 */,
+/* 58 */,
+/* 59 */,
+/* 60 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+var normalizeComponent = __webpack_require__(34)
+/* script */
+var __vue_script__ = __webpack_require__(61)
+/* template */
+var __vue_template__ = __webpack_require__(62)
+/* styles */
+var __vue_styles__ = null
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/assets/js/components/App.vue"
+if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
+if (Component.options.functional) {console.error("[vue-loader] App.vue: functional components are not supported with templates, they should use render functions.")}
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-66c29988", Component.options)
+  } else {
+    hotAPI.reload("data-v-66c29988", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 61 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    data: function data() {
+        return {
+            activepost: {
+                title: 'No Post selected yet',
+                source: { name: 'No Source yet' },
+                time_ago: '',
+                content: "Content will be available once a post is selected"
+            },
+            visible: false
+        };
+    },
+
+
+    methods: {
+        updateActivePost: function updateActivePost(post) {
+            this.activepost = post;
+            this.visible = !this.visible;
+        }
+    }
+});
+
+/***/ }),
+/* 62 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "div",
+    [
+      _c("post-details", {
+        attrs: { activepost: _vm.activepost, visible: _vm.visible },
+        on: {
+          toggle: function($event) {
+            _vm.visible = !_vm.visible
+          }
+        }
+      }),
+      _vm._v(" "),
+      _c("post-list", {
+        on: {
+          "show-post-details": function($event) {
+            _vm.updateActivePost.apply(void 0, arguments)
+          }
+        }
+      })
+    ],
+    1
+  )
+}
+var staticRenderFns = []
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-hot-reload-api").rerender("data-v-66c29988", module.exports)
+  }
+}
+
+/***/ }),
+/* 63 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+var normalizeComponent = __webpack_require__(34)
+/* script */
+var __vue_script__ = __webpack_require__(64)
+/* template */
+var __vue_template__ = __webpack_require__(65)
+/* styles */
+var __vue_styles__ = null
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/assets/js/components/PostListItem.vue"
+if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
+if (Component.options.functional) {console.error("[vue-loader] PostListItem.vue: functional components are not supported with templates, they should use render functions.")}
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-72b0b406", Component.options)
+  } else {
+    hotAPI.reload("data-v-72b0b406", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 64 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -42371,214 +42597,119 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-    data: function data() {
-        return {
-            list: [],
-            source: null,
-            source_name: null
-        };
-    },
-    created: function created() {
-        this.fetchPostList();
-    },
-
-
+    props: ['post'],
     methods: {
-        fetchPostList: function fetchPostList() {
-            var _this = this;
-
-            var request_string = 'api/posts';
-            if (this.source) {
-                request_string = 'api/posts/' + this.source;
-            }
-            axios.get(request_string).then(function (res) {
-                _this.list = res.data;
-            });
-        },
-        togglePostRead: function togglePostRead(post) {
-            var _this2 = this;
-
-            post.read = 1 - post.read; // toggle between 0 and 1
-            axios.patch('api/posts/' + post.id, { read: post.read }).then(function (res) {
-                _this2.fetchPostList();
-            }).catch(function (res) {
-                console.log('there was a problem with updating post status');
-                post.read = 1 - post.read;;
-            });
-        },
-        readButtonMessage: function readButtonMessage(post) {
-            if (post.read) {
+        readButtonMessage: function readButtonMessage() {
+            if (this.post.read) {
                 return "Mark Unread";
             }
             return "Mark Read";
         },
-        updateSource: function updateSource(source) {
-            this.source = source.id;
-            this.source_name = source.name;
-            this.fetchPostList();
+        showSource: function showSource() {
+            this.$emit('show-source');
         },
-        updateCurrentPost: function updateCurrentPost(post) {
+        togglePostRead: function togglePostRead() {
+            this.$emit('toggleReadStatus');
+        },
+        showPostDetails: function showPostDetails() {
             // mark post as read
-            this.togglePostRead(post);
+            this.$emit('toggleReadStatus');
 
-            // Tells the the parent component <posts> that the current post has changed
-            this.$emit('update', post);
+            // Tells the the parent components that the current post has changed
+            this.$emit('show-post-details');
         }
     }
 });
 
 /***/ }),
-/* 49 */
+/* 65 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "container" }, [
-    _vm.source
-      ? _c(
-          "nav",
-          { staticClass: "breadcrumb", attrs: { "aria-label": "breadcrumbs" } },
+  return _c("div", { staticClass: "columns", class: { read: _vm.post.read } }, [
+    _c("div", { staticClass: "column is-half" }, [
+      _c("div", { staticClass: "content" }, [
+        _c("a", { attrs: { href: "#" } }, [
+          _c("h1", {
+            staticClass:
+              "has-text-grey-dark is-title is-size-4 has-text-weight-bold",
+            domProps: { innerHTML: _vm._s(_vm.post.title) },
+            on: {
+              click: function($event) {
+                _vm.showPostDetails()
+              }
+            }
+          })
+        ]),
+        _vm._v(" "),
+        _c("a", { attrs: { href: "#" } }, [
+          _c(
+            "h2",
+            {
+              staticClass:
+                "has-text-primary is-subtitle is-size-5 is-uppercase has-text-weight-semibold",
+              on: {
+                click: function($event) {
+                  $event.preventDefault()
+                  _vm.showSource()
+                }
+              }
+            },
+            [_vm._v(_vm._s(_vm.post.source.name) + "\n            ")]
+          )
+        ]),
+        _vm._v(" "),
+        _c(
+          "h3",
+          {
+            staticClass: "is-size-6 has-text-grey-light",
+            on: {
+              click: function($event) {
+                _vm.showPostDetails()
+              }
+            }
+          },
           [
-            _c("ul", [
-              _c("li", [
-                _c(
-                  "a",
-                  {
-                    attrs: { href: "#" },
-                    on: {
-                      click: function($event) {
-                        $event.preventDefault()
-                        _vm.updateSource({ id: null, name: null })
-                      }
-                    }
-                  },
-                  [_vm._v("Home")]
-                )
-              ]),
-              _vm._v(" "),
-              _c("li", [_vm._v(_vm._s(_vm.source_name))])
-            ])
+            _vm._v(
+              "\n                " +
+                _vm._s(_vm.post.time_ago) +
+                "\n            "
+            )
           ]
         )
-      : _vm._e(),
+      ])
+    ]),
     _vm._v(" "),
-    _c("div", { staticClass: "row" }, [
+    _c("div", { staticClass: "column is-half" }, [
       _c(
-        "ul",
-        [
-          _vm.list.length === 0
-            ? _c("li", [_vm._v("There are no posts yet!")])
-            : _vm._e(),
-          _vm._v(" "),
-          _vm._l(_vm.list, function(post) {
-            return _c("li", [
-              _c(
-                "div",
-                { staticClass: "columns", class: { read: post.read } },
-                [
-                  _c("div", { staticClass: "column is-half" }, [
-                    _c("div", { staticClass: "content" }, [
-                      _c("a", { attrs: { href: "#" } }, [
-                        _c("h1", {
-                          staticClass:
-                            "has-text-grey-dark is-title is-size-4 has-text-weight-bold",
-                          domProps: { innerHTML: _vm._s(post.title) },
-                          on: {
-                            click: function($event) {
-                              _vm.updateCurrentPost(post)
-                            }
-                          }
-                        })
-                      ]),
-                      _vm._v(" "),
-                      _c("a", { attrs: { href: "#" } }, [
-                        _c(
-                          "h2",
-                          {
-                            staticClass:
-                              "has-text-primary is-subtitle is-size-5 is-uppercase has-text-weight-semibold",
-                            on: {
-                              click: function($event) {
-                                $event.preventDefault()
-                                _vm.updateSource(post.source)
-                              }
-                            }
-                          },
-                          [
-                            _vm._v(
-                              _vm._s(post.source.name) +
-                                "\n                            "
-                            )
-                          ]
-                        )
-                      ]),
-                      _vm._v(" "),
-                      _c(
-                        "h3",
-                        {
-                          staticClass: "is-size-6 has-text-grey-light",
-                          on: {
-                            click: function($event) {
-                              _vm.updateCurrentPost(post)
-                            }
-                          }
-                        },
-                        [
-                          _vm._v(
-                            "\n                                " +
-                              _vm._s(post.time_ago) +
-                              "\n                            "
-                          )
-                        ]
-                      )
-                    ])
-                  ]),
-                  _vm._v(" "),
-                  _c("div", { staticClass: "column is-half" }, [
-                    _c(
-                      "p",
-                      {
-                        staticClass: "has-text-grey",
-                        on: {
-                          click: function($event) {
-                            _vm.updateCurrentPost(post)
-                          }
-                        }
-                      },
-                      [
-                        _vm._v(
-                          "\n                            " +
-                            _vm._s(post.excerpt) +
-                            "\n                        "
-                        )
-                      ]
-                    ),
-                    _vm._v(" "),
-                    _c("br"),
-                    _vm._v(" "),
-                    _c(
-                      "a",
-                      {
-                        staticClass: "button",
-                        on: {
-                          click: function($event) {
-                            _vm.togglePostRead(post)
-                          }
-                        }
-                      },
-                      [_vm._v(_vm._s(_vm.readButtonMessage(post)))]
-                    )
-                  ])
-                ]
-              ),
-              _vm._v(" "),
-              _c("hr")
-            ])
-          })
-        ],
-        2
+        "p",
+        {
+          staticClass: "has-text-grey",
+          on: {
+            click: function($event) {
+              _vm.showPostDetails()
+            }
+          }
+        },
+        [_vm._v("\n            " + _vm._s(_vm.post.excerpt) + "\n        ")]
+      ),
+      _vm._v(" "),
+      _c("br"),
+      _vm._v(" "),
+      _c(
+        "a",
+        {
+          staticClass: "button",
+          on: {
+            click: function($event) {
+              _vm.togglePostRead()
+            }
+          }
+        },
+        [_vm._v(_vm._s(_vm.readButtonMessage()))]
       )
     ])
   ])
@@ -42589,7 +42720,7 @@ module.exports = { render: render, staticRenderFns: staticRenderFns }
 if (false) {
   module.hot.accept()
   if (module.hot.data) {
-     require("vue-hot-reload-api").rerender("data-v-1eb3abd3", module.exports)
+     require("vue-hot-reload-api").rerender("data-v-72b0b406", module.exports)
   }
 }
 

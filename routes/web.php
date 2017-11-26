@@ -13,10 +13,12 @@ use App\Post;
 |
 */
 
-Route::get('/test', function(){
-    $details = json_decode(exec('curl -H "x-api-key: tBlrpRvdgS6cx7gP9cA3ts4blzjZJHC507lXAuk2" "https://marco.org/2017/11/14/best-laptop-ever"'));
-
-    return $details;
+Route::get('/markallread', function(){
+    Post::all()->each(function($post){
+        $post->read = 1;
+        $post->save();
+    });
+    return redirect('/');
 });
 
 Route::middleware('auth')->get('/', function(){

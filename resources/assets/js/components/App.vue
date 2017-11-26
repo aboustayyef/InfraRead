@@ -1,14 +1,15 @@
 <template>
     <div>
-        <post-list 
-            v-on:update="updateActivePost">
-        </post-list>
-
         <post-details 
             :activepost="activepost" 
             :visible="visible"
             v-on:toggle="visible = !visible">
         </post-details>
+
+        <post-list 
+            v-on:show-post-details="updateActivePost(...arguments)"
+            >
+        </post-list>
     </div>
 </template>
 <script>
