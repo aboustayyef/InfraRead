@@ -15,7 +15,7 @@
         </nav>
         <div class='row'>
             <ul>
-                <li v-if='list.length === 0'>There are no posts yet!</li>
+                <li v-if='!posts_loaded'>Loading Posts...</li>
                 <li v-for="post in list">
                     <!-- When a user clicks on an area of the post, change the current post and mark it as read -->
                     <post-list-item 
@@ -35,6 +35,7 @@
     export default {
         data() {
             return {
+                posts_loaded: false,     // once posts load via ajax, it becomes true
                 raw_list: [],           // all posts
                 only_unread: true,       // show only unread posts
                 source_id: null,        // if null, show all posts, otherwise, show only posts by source
@@ -63,7 +64,12 @@
                 }
                 axios.get(request_string).then((res) => {
                     this.raw_list = res.data;
+                    this.posts_loaded = true;
 
+                    // if all posts are read, show read posts;
+                    if (this.list.length == 0) {
+                        this.only_unread = false;
+                    }
                 });
             },
             togglePostRead(post)
