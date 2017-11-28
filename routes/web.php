@@ -1,10 +1,22 @@
 <?php
 
 use App\Post;
+use App\Utilities\OpmlImporter;
+use Illuminate\Http\Request;
 
 Route::middleware('auth')->get('/', function(){
     return view('home');
 });
+
+Route::get('/setup', function(){
+    return view('setup');
+})->middleware('auth');
+
+Route::post('/uploadOpml', function(Request $request){
+    $request->file('opml')->storeAs('uploaded','feeds.opml');
+    OpmlImporter::process();
+    return redirect('/admin/source');
+})->middleware('auth');
 
 Route::get('/markallread', function(){
     Post::all()->each(function($post){
