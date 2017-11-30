@@ -15,8 +15,11 @@ class OpmlImporter
         $collection = collect(json_decode(json_encode(simplexml_load_file(storage_path().'/app/uploaded/feeds.opml')),TRUE));
         $feeds = $collection['body']['outline'];
 
+        // If you're importing a new OPML, it is assumed that you're starting from zero
+        // Hence all content-related tables are truncated
         DB::table('sources')->truncate();
         DB::table('tags')->truncate();
+        DB::table('posts')->truncate();
 
         foreach ($feeds as $key => $group) {
             

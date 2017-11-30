@@ -19,8 +19,8 @@ class AdminSeeder extends Seeder
         DB::table('users')->truncate();
         
         $admin = new User;
-        $admin->name = "Mustapha";
-        $admin->email = "mustapha.hamoui@gmail.com";
+        $admin->name = env('ADMIN_NAME');
+        $admin->email = env('ADMIN_EMAIL');
         $admin->password = bcrypt(env('ADMIN_PASSWORD'));
         $admin->save();
     }

@@ -4,9 +4,16 @@ use App\Post;
 use App\Utilities\OpmlImporter;
 use Illuminate\Http\Request;
 
-Route::middleware('auth')->get('/', function(){
+Route::get('/', 'HomeController@index');
+
+Route::get('/app', function(){
     return view('home');
-});
+})->middleware('auth');
+
+// Authentication Routes...
+$this->get('login', 'Auth\LoginController@showLoginForm')->name('login');
+$this->post('login', 'Auth\LoginController@login');
+$this->post('logout', 'Auth\LoginController@logout')->name('logout');
 
 Route::get('/setup', function(){
     return view('setup');
@@ -26,11 +33,6 @@ Route::get('/markallread', function(){
     return redirect('/');
 });
 
-
-// Authentication Routes...
-$this->get('login', 'Auth\LoginController@showLoginForm')->name('login');
-$this->post('login', 'Auth\LoginController@login');
-$this->post('logout', 'Auth\LoginController@logout')->name('logout');
 
 // Administration
 Route::prefix('admin')->middleware('auth')->group(function(){
