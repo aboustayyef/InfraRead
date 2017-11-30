@@ -32,10 +32,21 @@
                             </span>
                         </label>
                         &nbsp;
-                    <button type="submit" class="button is-warning">Upload</button>
+                    <button style="display:none" id="nameOfFile" type="submit" class="button is-warning">Upload</button>
                     </div>
-                </form>                
 
+                </form>                
+                <script>
+                    // script to update name of selected file before uploading
+                    let input_button = document.getElementsByClassName('file-input')[0];
+                    let file_label_button = document.getElementById('nameOfFile');
+                    updateButton=function(){
+                        file_label_button.innerHTML = "Click to upload " + input_button.value.replace(/C:\\fakepath\\/i, '');
+                        file_label_button.style.display = 'block';
+                    };
+                    input_button.addEventListener('change', updateButton);
+                    // document.getElementsByClassName('file-input')[0].value.replace(/C:\\fakepath\\/i, '');
+                </script>
             </div>
         </div>
     </section>
