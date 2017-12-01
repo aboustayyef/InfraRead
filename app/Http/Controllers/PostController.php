@@ -15,7 +15,7 @@ class PostController extends Controller
      */
     public function index()
     {
-        return Post::with(['Source','Tag'])->OrderBy('posted_at','desc')->take(60)->get();
+        return Post::with(['Source','Category'])->OrderBy('posted_at','desc')->take(60)->get();
     }
 
     /**

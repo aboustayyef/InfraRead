@@ -3,7 +3,7 @@
 namespace App\Utilities;
 
 use App\Source;
-use App\Tag;
+use App\Category;
 use Illuminate\Support\Facades\DB;
 
 class OpmlImporter 
@@ -18,13 +18,13 @@ class OpmlImporter
         // If you're importing a new OPML, it is assumed that you're starting from zero
         // Hence all content-related tables are truncated
         DB::table('sources')->truncate();
-        DB::table('tags')->truncate();
+        DB::table('categories')->truncate();
         DB::table('posts')->truncate();
 
         foreach ($feeds as $key => $group) {
             
-            // create group as tag
-            $tag = Tag::Create([
+            // create group as Category
+            $category = Category::Create([
                 'description'       =>  $group['@attributes']['title'],
             ]);
 
@@ -40,7 +40,7 @@ class OpmlImporter
                     'fetcher_source'    =>  $source_details['xmlUrl'],
                     'active'            =>  1,
                     'why_deactivated'   => null,
-                    'tag_id'            => $tag->id
+                    'category_id'            => $category->id
                 ]);
             }
         }

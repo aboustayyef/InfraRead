@@ -21,7 +21,7 @@ class CreatePostsTable extends Migration
             $table->longText('content')->nullable();
             $table->dateTime('posted_at'); 
             $table->integer('source_id');
-            $table->integer('tag_id');
+            $table->integer('category_id');
             $table->text('original_image')->nullable();
             $table->boolean('read')->default(0);
             $table->string('uid')->unique();

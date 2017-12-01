@@ -3,8 +3,8 @@
 @section('content')
 <div class="container">
    <div>
-        <h1>Tags in LB</h1>
-        <a href="{{route('admin.tag.create')}}" class="btn btn-primary pull-right">Create New tag</a>
+        <h1>Categories</h1>
+        <a href="{{route('admin.category.create')}}" class="btn btn-primary pull-right">Create New category</a>
    </div>
     <table class="table table-striped">
         <thead>
@@ -17,13 +17,10 @@
         </thead>
 
         <tbody>
-            @foreach($tags as $tag)
+            @foreach($categories as $category)
                 <tr>
-
-                    <td>{{$tag->nickname}}</td>
-                    <td>{{$tag->description}}</td>
-                    <td>{{$tag->color}}</td>
-                    <td><a href="{{route('admin.tag.edit', ['id' => $tag->id])}}">edit</a></td>
+                    <td>{{$category->description}}</td>
+                    <td><a href="{{route('admin.category.edit', ['id' => $category->id])}}">edit</a></td>
                 </tr>
             @endforeach
         </tbody>

@@ -91,6 +91,6 @@ class AdminSourceController extends Controller
     public function destroy(Source $source)
     {
         $source->delete();
-        return redirect(route('source.index'))->with('message', 'Source Succesfully Deleted'); 
+        return redirect(route('admin.source.index'))->with('message', 'Source Succesfully Deleted'); 
     }
 }

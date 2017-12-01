@@ -37,7 +37,7 @@ Route::get('/markallread', function(){
 // Administration
 Route::prefix('admin')->middleware('auth')->group(function(){
     Route::resource('source', 'AdminSourceController', ['as' => 'admin'])->except('show');
-    Route::resource('tag', 'AdminTagController',['as' => 'admin'])->except('show');
+    Route::resource('category', 'AdminCategoryController',['as' => 'admin'])->except('show');
     Route::get('/', 'AdminController@index');
 });
 

@@ -36,9 +36,9 @@ class Post extends Model
       return $this->hasMany('App\Media');
     }
 
-    public function tag()
+    public function category()
     {
-        return $this->belongsTo('App\Tag');
+        return $this->belongsTo('App\Category');
     }
 
     /*

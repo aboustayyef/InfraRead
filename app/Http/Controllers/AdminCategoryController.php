@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Tag;
+use App\category;
 use Illuminate\Http\Request;
 
-class AdminTagController extends Controller
+class AdminCategoryController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -14,8 +14,8 @@ class AdminTagController extends Controller
      */
     public function index()
     {
-        $tags = Tag::all(); 
-        return view('admin.tag.index')->with(compact('tags'));
+        $categories = Category::all(); 
+        return view('admin.category.index')->with(compact('categories'));
     }
 
     /**
@@ -25,9 +25,9 @@ class AdminTagController extends Controller
      */
     public function create()
     {
-        $tag = new Tag;
-        $tags = Tag::all();
-        return view('admin.tag.create')->with(compact('tag'))->with(compact('tags'));
+        $category = new Category;
+        $categories = Category::all();
+        return view('admin.category.create')->with(compact('category'))->with(compact('categories'));
     }
 
     /**
@@ -38,14 +38,9 @@ class AdminTagController extends Controller
      */
     public function store(Request $request)
     {
-       $request->validate(Tag::validationRules());
-       $tag = Tag::create($request->except(['_token','parent']));
-       if ($request->get('parent') != "null") {
-        $parent = Tag::find($request->get('parent'));
-        $tag->parent()->associate($parent);        
-        $tag->save();
-       }
-       return redirect(route('tag.index'))->with('message', 'Tag Created Succesfully');
+       $request->validate(Category::validationRules());
+       $category = Category::create($request->except(['_token']));
+       return redirect(route('admin.category.index'))->with('message', 'category Created Succesfully');
     }
 
     /**
@@ -65,10 +60,10 @@ class AdminTagController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit(Tag $tag)
+    public function edit(Category $category)
     {
-        $tags = Tag::all();
-        return view('admin.tag.edit')->with(compact('tag'))->with(compact('tags'));
+        $categories = Category::all();
+        return view('admin.category.edit')->with(compact('category'))->with(compact('categories'));
     }
 
     /**
@@ -78,10 +73,11 @@ class AdminTagController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Category $category)
     {
-       $request->validate(Tag::validationRules(false));
-       
+       $request->validate(Category::validationRules(false));
+       $category->update($request->except(['_token']));
+       return redirect(route('admin.category.index'))->with('message', 'Category Modified Succesfully');
     }
 
     /**
@@ -90,8 +86,9 @@ class AdminTagController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Category $category)
     {
-        //
+        $category->delete();
+        return redirect(route('admin.category.index'))->with('message', 'Category Succesfully Deleted'); 
     }
 }

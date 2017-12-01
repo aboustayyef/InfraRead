@@ -19,6 +19,7 @@
         @include('admin.partials.navtabs')
         {{--  Message --}}
         @if(session()->has('message'))
+            <br>
             <div class="container">
                 <div class="alert alert-info">
                     {{session()->get('message')}}

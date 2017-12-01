@@ -23,7 +23,7 @@ class CreateSourcesTable extends Migration
             $table->string('fetcher_source');
             $table->boolean('active')->default(1);
             $table->text('why_deactivated')->nullable();
-            $table->integer('tag_id')->unsigned();
+            $table->integer('category_id')->unsigned();
             $table->timestamps();
         });
     }

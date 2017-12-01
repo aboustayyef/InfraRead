@@ -20,9 +20,9 @@ class Source extends Model
       return $this->hasMany('App\Media');
     }
     
-    public function tag()
+    public function category()
     {
-      return $this->belongsTo('App\Tag');
+      return $this->belongsTo('App\Category');
     }
 
     public function createAvatar($img)
@@ -77,7 +77,7 @@ class Source extends Model
 
     public function getLatestPosts($howmany = 20)
     {
-      return Post::with(['Source','Tag'])->where('source_id', $this->id)->OrderBy('posted_at','desc')->take($howmany)->get();
+      return Post::with(['Source','Category'])->where('source_id', $this->id)->OrderBy('posted_at','desc')->take($howmany)->get();
     }
 
     /**
@@ -101,8 +101,8 @@ class Source extends Model
        }
        return $rules;
     }
-    public function tags()
+    public function categories()
     {
-      return $this->BelongsToMany('App\Tag');
+      return $this->BelongsToMany('App\Category');
     }
 }
