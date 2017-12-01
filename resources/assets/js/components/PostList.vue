@@ -1,6 +1,6 @@
 <template>
     <div class="container">
-        <div class="tabs is-right">
+        <div class="tabs is-right is-boxed">
             <ul>
                 <li :class="{'is-active':only_unread}" @click="only_unread = ! only_unread"><a>Unread Posts</a></li>
                 <li :class="{'is-active':!only_unread}" @click="only_unread = ! only_unread"><a>All Posts</a></li>

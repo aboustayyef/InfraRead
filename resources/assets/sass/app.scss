@@ -11,7 +11,7 @@ body{
     padding-top:2em;
 }
 p{
-    font-size: 1.1rem;
+    font-size: 1.25rem;
     line-height:1.8;
 }
 .container{
@@ -36,4 +36,12 @@ p{
     width:  calc(100% - 20px);
     max-height:  calc(100% - 20px);
     max-width: calc(100% - 20px);
+}
+hr{
+    margin: 0 0 1.5rem 0;
+}
+.inline-at-mobile{
+    @media screen and (max-width: 768px){
+        display:inline-block;
+    }
 }
