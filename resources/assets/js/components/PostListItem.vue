@@ -10,12 +10,12 @@
                 </h1></a>
                 <a href="#"><h2 
                     @click.prevent="showSource()" 
-                    class="has-text-primary is-subtitle is-size-5 is-uppercase has-text-weight-semibold"
+                    class="has-text-primary is-subtitle is-size-5 is-uppercase has-text-weight-semibold inline-at-mobile"
                     >{{ post.source.name }}
                 </h2></a>
                 <h3 
                     @click="showPostDetails()" 
-                    class="is-size-6 has-text-grey-light" >
+                    class="is-size-6 has-text-grey-light inline-at-mobile" >
                     {{post.time_ago}}
                 </h3>
             </div>
