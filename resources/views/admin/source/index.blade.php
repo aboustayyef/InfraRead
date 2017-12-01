@@ -3,7 +3,7 @@
 @section('content')
 <div class="container">
     <div>
-        <h1>sources At LB</h1>
+        <h1>Manage Sources</h1>
         <div class="row">
             <div class="col-md-2">
                 <a href="{{route('admin.source.create')}}" class="btn btn-primary">Create New source</a>

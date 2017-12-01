@@ -17,11 +17,11 @@
                         <tbody>
                             <tr>
                                 <td>Manage Sources</td>
-                                <td><a href="/admin/blog" class="btn btn-primary">Go</a></td>
+                                <td><a href="/admin/source" class="btn btn-primary">Go</a></td>
                             </tr>
                             <tr>
                                 <td>Manage Categories</td>
-                                <td><a href="/admin/tag" class="btn btn-primary">Go</a></td>
+                                <td><a href="/admin/category" class="btn btn-primary">Go</a></td>
                             </tr>
                         </tbody>
                     </table> 

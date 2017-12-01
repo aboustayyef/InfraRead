@@ -9,9 +9,7 @@
     <table class="table table-striped">
         <thead>
             <tr>
-                <th>Nickname</th>
                 <th>Description</th>
-                <th>Color</th>
                 <th>&nbsp;</th>
             </tr>
         </thead>
