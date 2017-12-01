@@ -11,7 +11,7 @@
     <title>Feed Reader</title>
 
     <!-- Styles -->
-    <link href="{{ asset('css/admin.css') }}" rel="stylesheet">
+    <link href="{{ mix('css/admin.css') }}" rel="stylesheet">
 </head>
 <body>
     <div id="app">
@@ -31,7 +31,7 @@
     </div>
 
     <!-- Scripts -->
-    <script src="{{ asset('js/admin.js') }}"></script>
+    <script src="{{ mix('js/admin.js') }}"></script>
     <!-- Extra Scripts -->
     @yield('extra_scripts')
 </body>
