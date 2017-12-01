@@ -16,9 +16,14 @@ class HomeController extends Controller
     	}
 
     	// Scenario two: user exists, but not RSS feeds set up
+        // must be logged in, hence redirect
     	if (\App\Source::count() == 0) {
-    		return view('setup');
+    		return redirect('/setup');
     	}
+
+        // If everything is set, go to the app
+        // must be logged in, hence redirect
+        return redirect('/app');
 
     }
 }

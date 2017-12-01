@@ -6,7 +6,16 @@ use Illuminate\Http\Request;
 
 Route::get('/', 'HomeController@index');
 
+Route::get('/setup', function(){
+    return view('setup');
+})->middleware('auth');
+
 Route::get('/app', function(){
+
+    // if no sources, are available, go to setup screen
+    if (\App\Source::count() == 0) {
+        return redirect('/setup');
+    }
     return view('home');
 })->middleware('auth');
 
