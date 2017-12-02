@@ -17,6 +17,7 @@ window.Vue = require('vue');
 
 Vue.component('app', require('./components/App.vue'));
 Vue.component('post-details', require('./components/PostDetails.vue'));
+Vue.component('post-filters', require('./components/PostFilters.vue'));
 Vue.component('post-list', require('./components/PostList.vue'));
 Vue.component('post-list-item', require('./components/PostListItem.vue'));
 const app = new Vue({

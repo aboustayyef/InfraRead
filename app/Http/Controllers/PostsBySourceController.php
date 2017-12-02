@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Source;
 use Illuminate\Http\Request;
 
-class SourcePostController extends Controller
+class PostsBySourceController extends Controller
 {
     /**
      * Display a listing of the resource.

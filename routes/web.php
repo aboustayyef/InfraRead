@@ -53,11 +53,13 @@ Route::prefix('admin')->middleware('auth')->group(function(){
 // Ajax
 Route::prefix('api')->middleware('auth')->group(function(){
     
-    // Get a List of posts via XHR to display in app
-    Route::resource('/posts', 'PostController');
+    Route::get('/postsByReadStatus/{readStatus?}', 'PostByReadStatusController@index');
 
     // Get a List of posts of a particular source
-    Route::resource('/sourcePosts/{source}','SourcePostController')->only(['index']);
+    Route::get('/postsBySource/{source}','PostsBySourceController@index');
+
+    // Get a List of posts of a particular category
+    Route::get('/postsByCategory/{category}','PostsByCategoryController@index');
 
     // Get a list of sources. Used for administering sources
     Route::get('source', function(){

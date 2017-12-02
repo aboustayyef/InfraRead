@@ -11,7 +11,7 @@
 
 </head>
 <body>
-    <div id="app">
+    <div id="app" v-cloak>
         <app></app>
     </div>
     <script src="{{ mix('/js/app.js') }}"></script>
