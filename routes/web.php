@@ -53,7 +53,7 @@ Route::prefix('admin')->middleware('auth')->group(function(){
 // Ajax
 Route::prefix('api')->middleware('auth')->group(function(){
     
-    Route::get('/postsByReadStatus/{readStatus?}', 'PostByReadStatusController@index');
+    Route::resource('/posts', 'PostController')->only(['index','update']);
 
     // Get a List of posts of a particular source
     Route::get('/postsBySource/{source}','PostsBySourceController@index');

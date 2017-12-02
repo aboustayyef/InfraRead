@@ -1655,11 +1655,12 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 /* harmony default export */ __webpack_exports__["default"] = ({
     data: function data() {
         return _defineProperty({
+            page: 'post list',
             posts: [],
             posts_loaded: false,
             active_post: {},
             filter: null
-        }, 'filter', 'post.category.id == 3');
+        }, 'filter', 'post.read == 0');
     },
     created: function created() {
         this.fetchPostList();
@@ -1682,12 +1683,28 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         fetchPostList: function fetchPostList() {
             var _this2 = this;
 
-            var request_string = 'api/postsByReadStatus';
+            var request_string = 'api/posts';
             axios.get(request_string).then(function (res) {
                 _this2.posts = res.data;
                 _this2.posts_loaded = true;
                 _this2.active_post = _this2.posts[0];
             });
+        },
+        showPostDetails: function showPostDetails(post) {
+            this.active_post = post;
+            this.page = "post details";
+        },
+        closeDetailsView: function closeDetailsView() {
+            // mark post as read if unread
+            if (this.active_post.read == 0) {
+                this.togglePostRead(this.active_post);
+            }
+
+            // change to list view
+            this.page = 'post list';
+
+            // update list of posts
+            this.fetchPostList();
         },
         togglePostRead: function togglePostRead(post) {
             var _this3 = this;
@@ -1728,17 +1745,12 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-//
-//
-//
-//
-//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-    props: ['activepost', 'visible'],
+    props: ['active_post'],
     methods: {
-        toggleWindowState: function toggleWindowState() {
-            this.$emit('toggle');
+        closeWindow: function closeWindow() {
+            this.$emit('closeWindow');
         }
     }
 });
@@ -1941,12 +1953,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         showSource: function showSource() {
             this.$emit('show-source');
         },
-        togglePostRead: function togglePostRead() {
-            this.$emit('toggleReadStatus');
+        togglePostRead: function togglePostRead(post) {
+            this.$emit('toggle-post-read', post);
         },
         showPostDetails: function showPostDetails() {
-            // mark post as read
-            this.$emit('toggleReadStatus');
 
             // Tells the the parent components that the current post has changed
             this.$emit('show-post-details');
@@ -32104,60 +32114,50 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c(
-    "div",
-    { staticClass: "modal", class: { "is-active": _vm.visible } },
-    [
-      _c("div", { staticClass: "modal-background" }),
+  return _c("div", { staticClass: "container" }, [
+    _c("div", { staticClass: "content" }, [
+      _c(
+        "a",
+        {
+          staticClass: "button",
+          attrs: { "aria-label": "close" },
+          on: { click: _vm.closeWindow }
+        },
+        [_vm._v("Done")]
+      )
+    ]),
+    _vm._v(" "),
+    _c("div", { staticClass: "content" }, [
+      _c("a", { attrs: { href: _vm.active_post.url } }, [
+        _c(
+          "h1",
+          {
+            staticClass:
+              "has-text-grey-dark is-title is-size-4 has-text-weight-bold"
+          },
+          [_vm._v(_vm._s(_vm.active_post.title))]
+        )
+      ]),
       _vm._v(" "),
-      _c("div", { staticClass: "modal-card" }, [
-        _c("header", { staticClass: "modal-card-head" }, [
-          _c(
-            "a",
-            {
-              staticClass: "button",
-              attrs: { "aria-label": "close" },
-              on: { click: _vm.toggleWindowState }
-            },
-            [_vm._v("Done")]
-          )
-        ]),
-        _vm._v(" "),
-        _c("section", { staticClass: "modal-card-body" }, [
-          _c("div", { staticClass: "content" }, [
-            _c("a", { attrs: { href: _vm.activepost.url } }, [
-              _c(
-                "h1",
-                {
-                  staticClass:
-                    "has-text-grey-dark is-title is-size-4 has-text-weight-bold"
-                },
-                [_vm._v(_vm._s(_vm.activepost.title))]
-              )
-            ]),
-            _vm._v(" "),
-            _c(
-              "h2",
-              {
-                staticClass:
-                  "has-text-primary is-subtitle is-size-5 is-uppercase has-text-weight-semibold"
-              },
-              [_vm._v(_vm._s(_vm.activepost.source.name))]
-            ),
-            _vm._v(" "),
-            _c("h3", { staticClass: "is-size-6 has-text-grey-light" }, [
-              _vm._v(_vm._s(_vm.activepost.time_ago))
-            ])
-          ]),
-          _vm._v(" "),
-          _c("div", {
-            staticClass: "content",
-            domProps: { innerHTML: _vm._s(_vm.activepost.content) }
-          })
-        ])
+      _c(
+        "h2",
+        {
+          staticClass:
+            "has-text-primary is-subtitle is-size-5 is-uppercase has-text-weight-semibold"
+        },
+        [_vm._v(_vm._s(_vm.active_post.source.name))]
+      ),
+      _vm._v(" "),
+      _c("h3", { staticClass: "is-size-6 has-text-grey-light" }, [
+        _vm._v(_vm._s(_vm.active_post.time_ago))
       ])
-    ]
-  )
+    ]),
+    _vm._v(" "),
+    _c("div", {
+      staticClass: "content",
+      domProps: { innerHTML: _vm._s(_vm.active_post.content) }
+    })
+  ])
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -32178,41 +32178,58 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", [
-    _c("div", { staticClass: "container" }, [
-      _vm.posts_loaded
-        ? _c("div", { staticClass: "row" }, [
-            _c(
-              "ul",
-              _vm._l(_vm.posts, function(post) {
-                return _c(
-                  "li",
-                  [
-                    _c("post-list-item", {
-                      attrs: { post: post },
-                      on: {
-                        toggleReadStatus: function($event) {
-                          _vm.togglePostRead(post)
-                        },
-                        "show-post-details": function($event) {
-                          _vm.showPostDetails(post)
-                        },
-                        "show-source": function($event) {
-                          _vm.showSource(post.source)
-                        }
-                      }
-                    }),
-                    _vm._v(" "),
-                    _c("hr")
-                  ],
-                  1
-                )
-              })
-            )
+  return _c(
+    "div",
+    [
+      _vm.page == "post details"
+        ? _c("post-details", {
+            attrs: { active_post: _vm.active_post },
+            on: {
+              closeWindow: function($event) {
+                _vm.closeDetailsView()
+              }
+            }
+          })
+        : _vm._e(),
+      _vm._v(" "),
+      _vm.page == "post list"
+        ? _c("div", { staticClass: "container" }, [
+            _vm.posts_loaded
+              ? _c("div", { staticClass: "row" }, [
+                  _c(
+                    "ul",
+                    _vm._l(_vm.filtered_posts, function(post) {
+                      return _c(
+                        "li",
+                        [
+                          _c("post-list-item", {
+                            attrs: { post: post },
+                            on: {
+                              "show-post-details": function($event) {
+                                _vm.showPostDetails(post)
+                              },
+                              "toggle-post-read": function($event) {
+                                _vm.togglePostRead(post)
+                              },
+                              "show-source": function($event) {
+                                _vm.showSource(post.source)
+                              }
+                            }
+                          }),
+                          _vm._v(" "),
+                          _c("hr")
+                        ],
+                        1
+                      )
+                    })
+                  )
+                ])
+              : _vm._e()
           ])
         : _vm._e()
-    ])
-  ])
+    ],
+    1
+  )
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -32309,7 +32326,7 @@ var render = function() {
           staticClass: "button",
           on: {
             click: function($event) {
-              _vm.togglePostRead()
+              _vm.togglePostRead(_vm.post)
             }
           }
         },

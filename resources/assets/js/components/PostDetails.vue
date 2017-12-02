@@ -1,29 +1,24 @@
 <template>
-    <div class="modal" :class="{'is-active': visible}">
-    <div class="modal-background"></div>
-    <div class="modal-card">
-        <header class="modal-card-head">
-            <a class="button" @click="toggleWindowState" aria-label="close">Done</a>
-        </header>
-        <section class="modal-card-body">
-           <div class="content">
-               <a :href="activepost.url"><h1 class="has-text-grey-dark is-title is-size-4 has-text-weight-bold">{{ activepost.title }}</h1></a>
-               <h2 class="has-text-primary is-subtitle is-size-5 is-uppercase has-text-weight-semibold">{{ activepost.source.name }}</h2>
-               <h3 class="is-size-6 has-text-grey-light" >{{activepost.time_ago}}</h3>
-           </div>
-           <div class="content" v-html="activepost.content"></div>
-        </section>
+    <div class="container">
+          <div class="content">
+            <a class="button" @click="closeWindow" aria-label="close">Done</a>
+          </div>
+          <div class="content">
+          <a :href="active_post.url"><h1 class="has-text-grey-dark is-title is-size-4 has-text-weight-bold">{{ active_post.title }}</h1></a>
+          <h2 class="has-text-primary is-subtitle is-size-5 is-uppercase has-text-weight-semibold">{{ active_post.source.name }}</h2>
+          <h3 class="is-size-6 has-text-grey-light" >{{active_post.time_ago}}</h3>
+          </div>
+          <div class="content" v-html="active_post.content"></div>     
     </div>
-</div>
 </template>
 <script>
     export default {
-        props: ['activepost','visible'],
+        props: ['active_post'],
         methods:
         {
-            toggleWindowState()
+            closeWindow()
             {
-                this.$emit('toggle'); 
+                this.$emit('closeWindow'); 
             }
         }
     }

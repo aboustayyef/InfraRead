@@ -29,7 +29,7 @@
                 {{ post.excerpt }}
             </p>
             <br>
-            <a class="button" @click="togglePostRead()">{{readButtonMessage()}}</a>
+            <a class="button" @click="togglePostRead(post)">{{readButtonMessage()}}</a>
         </div>
 
     </div>
@@ -49,13 +49,12 @@
             showSource(){
                 this.$emit('show-source');
             },
-            togglePostRead(){
-                this.$emit('toggleReadStatus')
+            togglePostRead(post)
+            {
+                this.$emit('toggle-post-read', post);
             },
             showPostDetails()
             {
-                // mark post as read
-                this.$emit('toggleReadStatus');
 
                 // Tells the the parent components that the current post has changed
                 this.$emit('show-post-details') 
