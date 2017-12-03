@@ -1,44 +1,35 @@
 <template>
-  <div class="modal is-active"> 
-    <div class="modal-background"></div> 
-    <div class="modal-card">
-      <header class="modal-card-head">
-        <a aria-label="close" @click="closeWindow" class="button">Cancel</a>
-      </header> 
-      <section class="modal-card-body">
-        <div class="content">
-          <div class="columns">
+      <div class="section">
+        <div class="container">
+         <div class="level">
+          <a aria-label="close" @click="closeWindow" class="button">Cancel</a>
+         </div> 
+         <div class="columns">
             <div class="column">
-              <nav class="panel">
-                <div class="panel-heading">
-                  Show By Source
-                </div>
-                <div class="panel-block">
-                  <p class="control">
-                    <input v-model="source_filter" class="input is-small" type="text" placeholder="filter">
-                  </p>
-                </div>
-                <a v-for="source in filtered_sources" @click="showSource(source)" class="panel-block" >
-                  {{source.name}}
-                </a>            
-              </nav>
+              <h2 class="has-text-grey-dark is-title is-size-4 has-text-weight-bold">Articles</h2>
+              <ul>
+                <li class="is-primary" @click="showAllPosts()" >Show All Articles</li>
+              </ul>
+              
+              <h2 class="has-text-grey-dark is-title is-size-4 has-text-weight-bold">Categories</h2>
+              <ul>
+                <li class="is-primary"  v-for="category in categories" @click="showCategory(category)">{{category.description}}</li>
+              </ul>
             </div>
-            <div class="column">
-              <nav class="panel">
-                <div class="panel-heading">
-                  Show By Category
-                </div>
-                <a v-for="category in categories" @click="showCategory(category)" class="panel-block" >
-                  {{category.description}}
-                </a>            
-              </nav>
-            </div>
-          </div>
-        </div>
 
-      </section>
-    </div>
-  </div>
+            <div class="column">
+              <h2 class="has-text-grey-dark is-title is-size-4 has-text-weight-bold">Sources</h2>
+              <p class="control">
+                <input v-model="source_filter" class="input is-small" type="text" placeholder="filter">
+              </p>
+              <ul>
+                <li class="is-primary"  v-for="source in filtered_sources" @click="showSource(source)">{{source.name}}</li>
+              </ul>
+            </div>
+
+          </div> 
+        </div>
+      </div>
 </template>
 <script>
     export default {
@@ -51,6 +42,10 @@
         },
         methods:
         {
+            showAllPosts()
+            {
+              this.$emit('showAllPosts');
+            },
             showSource(source)
             {
               this.$emit('showBySource', source);
@@ -75,3 +70,14 @@
         }
     }
 </script>
+<style scoped>
+  ul{
+    margin:1em 0 2em 0;
+  }
+  li{
+    text-transform: uppercase;
+    border-top: 1px solid whitesmoke;
+    padding: 3px 0;
+    cursor: pointer;
+  }
+</style>

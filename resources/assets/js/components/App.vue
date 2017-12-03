@@ -11,17 +11,27 @@
             v-if="page == 'source selector'"
             :sources = "all_sources"
             :categories = "all_categories"
+            v-on:showAllPosts="showAllPosts()"
             v-on:showBySource="showSource(...arguments)"
             v-on:showByCategory="showCategory(...arguments)"
             v-on:closeWindow="hideSourceSelector()">
         </source-selector>
 
-<!-- 
-        <filter-selector></filter-selector>
--->
+       
+        <!-- Read / Unread Tabs -->
+        <div class="level" v-if="page == 'post list'">
+            <div class="container">
+                <div class="tabs is-boxed is-right">
+                  <ul>
+                    <li :class="{'is-active': this.unread_only}" @click="unread_only = true"> <a>Unread</a></li>
+                    <li :class="{'is-active': !this.unread_only}" @click="unread_only = false"> <a>All Posts</a></li>
+                  </ul>
+                </div>
+            </div>
+        </div>
 
-        <!-- List of Posts -->
-        <div class="level">
+        <!-- Breadcrumbs -->
+        <div class="level" v-if="page == 'post list'">
             <div class="container">
                 <nav class="breadcrumb has-arrow-separator" aria-label="breadcrumbs">
                   <ul>
@@ -62,7 +72,7 @@
                 posts : [], // the list of unfiltered posts
                 posts_loaded : false, 
                 active_post : {}, // the posts which is in the post details view mode
-                filter: 'post.read == 0', // default filter = unread posts
+                unread_only: true, // default filter = unread posts
                 all_sources:[],
                 all_categories:[]
             };
@@ -75,12 +85,13 @@
         computed: {
             filtered_posts()
             {
-                if (! this.filter ) { return this.posts }
-
-                return this.posts.filter( (post) => {
-                    return eval(this.filter);
-                });
-
+                if (this.unread_only) 
+                { 
+                    return this.posts.filter((post)=>{
+                        return post.read == 0
+                    });
+                }
+                return this.posts;
             }
         },
         methods: {
@@ -111,6 +122,7 @@
                 this.posts_source = '/api/posts' ;
                 this.posts_description = 'All Posts" ';
                 this.fetchPostList();
+                this.page = "post list";
             },
             showSource(source){
                 this.posts_source = '/api/postsBySource/' + source.id;
