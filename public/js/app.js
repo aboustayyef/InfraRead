@@ -1667,6 +1667,13 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     data: function data() {
@@ -32472,29 +32479,43 @@ var render = function() {
           })
         : _vm._e(),
       _vm._v(" "),
+      _c("div", { staticClass: "level" }, [
+        _c("div", { staticClass: "container" }, [
+          _c(
+            "nav",
+            {
+              staticClass: "breadcrumb has-arrow-separator",
+              attrs: { "aria-label": "breadcrumbs" }
+            },
+            [
+              _c("ul", [
+                _c("li", [
+                  _c(
+                    "a",
+                    {
+                      on: {
+                        click: function($event) {
+                          _vm.showSourceSelector()
+                        }
+                      }
+                    },
+                    [_vm._v("Home")]
+                  )
+                ]),
+                _vm._v(" "),
+                _c("li", { staticClass: "is-active" }, [
+                  _c("a", { attrs: { href: "#" } }, [
+                    _vm._v(_vm._s(_vm.posts_description))
+                  ])
+                ])
+              ])
+            ]
+          )
+        ])
+      ]),
+      _vm._v(" "),
       _vm.page == "post list"
         ? _c("div", { staticClass: "container" }, [
-            _c("div", { staticClass: "container" }, [
-              _vm._v(
-                "\n                " +
-                  _vm._s(_vm.posts_description) +
-                  "\n            "
-              )
-            ]),
-            _vm._v(" "),
-            _c(
-              "a",
-              {
-                staticClass: "button",
-                on: {
-                  click: function($event) {
-                    _vm.showSourceSelector()
-                  }
-                }
-              },
-              [_vm._v("Change")]
-            ),
-            _vm._v(" "),
             _vm.posts_loaded
               ? _c("div", { staticClass: "row" }, [
                   _c(

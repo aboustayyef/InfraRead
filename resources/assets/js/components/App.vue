@@ -21,11 +21,18 @@
 -->
 
         <!-- List of Posts -->
-        <div class="container" v-if="page == 'post list'">
+        <div class="level">
             <div class="container">
-                {{posts_description}}
+                <nav class="breadcrumb has-arrow-separator" aria-label="breadcrumbs">
+                  <ul>
+                    <li><a @click="showSourceSelector()">Home</a></li>
+                    <li class="is-active"><a href="#">{{posts_description}}</a></li>
+                  </ul>
+                </nav>
             </div>
-            <a class="button" @click="showSourceSelector()">Change</a>
+        </div>
+        <div class="container" v-if="page == 'post list'">
+            
             <div v-if="posts_loaded" class='row'>
                 <ul>
                     <li v-for="post in filtered_posts">
