@@ -65,6 +65,9 @@ Route::prefix('api')->middleware('auth')->group(function(){
     Route::get('source', function(){
         return App\Source::all();
     });
+    Route::get('category', function(){
+        return App\Category::all();
+    });
 
 });
 

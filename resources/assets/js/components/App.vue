@@ -5,18 +5,36 @@
             :active_post="active_post" 
             v-on:closeWindow="closeDetailsView()">
         </post-details>
+
+
+        <source-selector 
+            v-if="page == 'source selector'"
+            :sources = "all_sources"
+            :categories = "all_categories"
+            v-on:showBySource="showSource(...arguments)"
+            v-on:showByCategory="showCategory(...arguments)"
+            v-on:closeWindow="hideSourceSelector()">
+        </source-selector>
+
 <!-- 
-        <post-filters></post-filters>
+        <filter-selector></filter-selector>
 -->
+
         <!-- List of Posts -->
         <div class="container" v-if="page == 'post list'">
+            <div class="container">
+                {{posts_description}}
+            </div>
+            <a class="button" @click="showSourceSelector()">Change</a>
             <div v-if="posts_loaded" class='row'>
                 <ul>
                     <li v-for="post in filtered_posts">
                         <!-- When a user clicks on an area of the post, change the current post and mark it as read -->
                         <post-list-item 
+
                             :post="post"
-                            v-on:show-post-details="showPostDetails(post)"
+                        
+                            v-on:show-post-details="showDetailsView(post)"
                             v-on:toggle-post-read="togglePostRead(post)"
                             v-on:show-source="showSource(post.source)"
                         ></post-list-item>
@@ -31,15 +49,20 @@
     export default {
         data() {
             return {
-                page: 'post list',
-                posts : [],
-                posts_loaded : false,
-                active_post : {},
-                filter: null,
-                filter: 'post.read == 0',
+                page: 'post list',    // used to know which view we're in: post list, post details or post filters
+                posts_source: '/api/posts', // which XHR request to get posts
+                posts_description: 'All Posts', 
+                posts : [], // the list of unfiltered posts
+                posts_loaded : false, 
+                active_post : {}, // the posts which is in the post details view mode
+                filter: 'post.read == 0', // default filter = unread posts
+                all_sources:[],
+                all_categories:[]
             };
         },
         created() {
+            this.getAllSources();
+            this.getAllCategories();
             this.fetchPostList();
         },
         computed: {
@@ -56,14 +79,57 @@
         methods: {
             fetchPostList() 
             {
-                let request_string = 'api/posts';
-                axios.get(request_string).then((res) => {
+                axios.get(this.posts_source).then((res) => {
                     this.posts = res.data;
                     this.posts_loaded = true;
                     this.active_post = this.posts[0];
                 });
             },
-            showPostDetails(post){
+            getAllSources() 
+            {
+                axios.get('/api/source').then((res) => {
+                    this.all_sources = res.data;
+                });
+            },
+            getAllCategories() 
+            {
+                axios.get('/api/category').then((res) => {
+                    this.all_categories = res.data;
+                });
+            },
+
+            // Changing Source
+            
+            showAllPosts(){
+                this.posts_source = '/api/posts' ;
+                this.posts_description = 'All Posts" ';
+                this.fetchPostList();
+            },
+            showSource(source){
+                this.posts_source = '/api/postsBySource/' + source.id;
+                this.posts_description = 'Posts By " ' + source.name + ' "';
+                this.fetchPostList();
+                this.page = "post list";
+            },
+            showCategory(category){
+                this.posts_source = '/api/postsByCategory/' + category.id;
+                this.posts_description = 'Posts By " ' + category.description + ' "';
+                this.fetchPostList();
+                this.page = "post list";
+            },
+
+            // Source Selector
+            showSourceSelector(){
+                this.page = "source selector";
+            },
+            hideSourceSelector(){
+                this.page = "post list";
+            },
+
+
+            // Detail View
+            
+            showDetailsView(post){
                 this.active_post = post;
                 this.page = "post details";
             },

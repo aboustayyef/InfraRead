@@ -62,3 +62,8 @@
         },
     }
 </script>
+<style scoped>
+    p {
+         cursor: pointer;
+    }
+</style>

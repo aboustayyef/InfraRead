@@ -1620,8 +1620,24 @@ module.exports = {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -1654,15 +1670,21 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     data: function data() {
-        return _defineProperty({
-            page: 'post list',
-            posts: [],
+        return {
+            page: 'post list', // used to know which view we're in: post list, post details or post filters
+            posts_source: '/api/posts', // which XHR request to get posts
+            posts_description: 'All Posts',
+            posts: [], // the list of unfiltered posts
             posts_loaded: false,
-            active_post: {},
-            filter: null
-        }, 'filter', 'post.read == 0');
+            active_post: {}, // the posts which is in the post details view mode
+            filter: 'post.read == 0', // default filter = unread posts
+            all_sources: [],
+            all_categories: []
+        };
     },
     created: function created() {
+        this.getAllSources();
+        this.getAllCategories();
         this.fetchPostList();
     },
 
@@ -1683,14 +1705,61 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         fetchPostList: function fetchPostList() {
             var _this2 = this;
 
-            var request_string = 'api/posts';
-            axios.get(request_string).then(function (res) {
+            axios.get(this.posts_source).then(function (res) {
                 _this2.posts = res.data;
                 _this2.posts_loaded = true;
                 _this2.active_post = _this2.posts[0];
             });
         },
-        showPostDetails: function showPostDetails(post) {
+        getAllSources: function getAllSources() {
+            var _this3 = this;
+
+            axios.get('/api/source').then(function (res) {
+                _this3.all_sources = res.data;
+            });
+        },
+        getAllCategories: function getAllCategories() {
+            var _this4 = this;
+
+            axios.get('/api/category').then(function (res) {
+                _this4.all_categories = res.data;
+            });
+        },
+
+
+        // Changing Source
+
+        showAllPosts: function showAllPosts() {
+            this.posts_source = '/api/posts';
+            this.posts_description = 'All Posts" ';
+            this.fetchPostList();
+        },
+        showSource: function showSource(source) {
+            this.posts_source = '/api/postsBySource/' + source.id;
+            this.posts_description = 'Posts By " ' + source.name + ' "';
+            this.fetchPostList();
+            this.page = "post list";
+        },
+        showCategory: function showCategory(category) {
+            this.posts_source = '/api/postsByCategory/' + category.id;
+            this.posts_description = 'Posts By " ' + category.description + ' "';
+            this.fetchPostList();
+            this.page = "post list";
+        },
+
+
+        // Source Selector
+        showSourceSelector: function showSourceSelector() {
+            this.page = "source selector";
+        },
+        hideSourceSelector: function hideSourceSelector() {
+            this.page = "post list";
+        },
+
+
+        // Detail View
+
+        showDetailsView: function showDetailsView(post) {
             this.active_post = post;
             this.page = "post details";
         },
@@ -1707,12 +1776,12 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
             this.fetchPostList();
         },
         togglePostRead: function togglePostRead(post) {
-            var _this3 = this;
+            var _this5 = this;
 
             post.read = 1 - post.read; // toggle between 0 and 1
 
             axios.patch('api/posts/' + post.id, { read: post.read }).then(function (res) {
-                _this3.fetchPostList();
+                _this5.fetchPostList();
             }).catch(function (res) {
                 console.log('there was a problem with updating post status');
                 post.read = 1 - post.read;;
@@ -1732,6 +1801,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+//
 //
 //
 //
@@ -1962,6 +2036,86 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             this.$emit('show-post-details');
         }
     }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?{\"cacheDirectory\":true,\"presets\":[[\"env\",{\"modules\":false,\"targets\":{\"browsers\":[\"> 2%\"],\"uglify\":true}}]]}!./node_modules/vue-loader/lib/selector.js?type=script&index=0!./resources/assets/js/components/SourceSelector.vue":
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  props: ['sources', 'categories'],
+  data: function data() {
+    return {
+      source_filter: ''
+    };
+  },
+
+  methods: {
+    showSource: function showSource(source) {
+      this.$emit('showBySource', source);
+    },
+    showCategory: function showCategory(category) {
+      this.$emit('showByCategory', category);
+    },
+    closeWindow: function closeWindow() {
+      this.$emit('closeWindow');
+    }
+  },
+  computed: {
+    filtered_sources: function filtered_sources() {
+      var _this = this;
+
+      return this.sources.filter(function (source) {
+        return source.name.toLowerCase().indexOf(_this.source_filter.toLowerCase()) >= 0;
+      });
+    }
+  }
 });
 
 /***/ }),
@@ -4346,6 +4500,104 @@ if (typeof jQuery === 'undefined') {
   })
 
 }(jQuery);
+
+
+/***/ }),
+
+/***/ "./node_modules/css-loader/index.js!./node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-72b0b406\",\"scoped\":true,\"hasInlineConfig\":true}!./node_modules/vue-loader/lib/selector.js?type=styles&index=0!./resources/assets/js/components/PostListItem.vue":
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__("./node_modules/css-loader/lib/css-base.js")(undefined);
+// imports
+
+
+// module
+exports.push([module.i, "\np[data-v-72b0b406] {\n     cursor: pointer;\n}\n", ""]);
+
+// exports
+
+
+/***/ }),
+
+/***/ "./node_modules/css-loader/lib/css-base.js":
+/***/ (function(module, exports) {
+
+/*
+	MIT License http://www.opensource.org/licenses/mit-license.php
+	Author Tobias Koppers @sokra
+*/
+// css base code, injected by the css-loader
+module.exports = function(useSourceMap) {
+	var list = [];
+
+	// return the list of modules as css string
+	list.toString = function toString() {
+		return this.map(function (item) {
+			var content = cssWithMappingToString(item, useSourceMap);
+			if(item[2]) {
+				return "@media " + item[2] + "{" + content + "}";
+			} else {
+				return content;
+			}
+		}).join("");
+	};
+
+	// import a list of modules into the list
+	list.i = function(modules, mediaQuery) {
+		if(typeof modules === "string")
+			modules = [[null, modules, ""]];
+		var alreadyImportedModules = {};
+		for(var i = 0; i < this.length; i++) {
+			var id = this[i][0];
+			if(typeof id === "number")
+				alreadyImportedModules[id] = true;
+		}
+		for(i = 0; i < modules.length; i++) {
+			var item = modules[i];
+			// skip already imported module
+			// this implementation is not 100% perfect for weird media query combinations
+			//  when a module is imported multiple times with different media queries.
+			//  I hope this will never occur (Hey this way we have smaller bundles)
+			if(typeof item[0] !== "number" || !alreadyImportedModules[item[0]]) {
+				if(mediaQuery && !item[2]) {
+					item[2] = mediaQuery;
+				} else if(mediaQuery) {
+					item[2] = "(" + item[2] + ") and (" + mediaQuery + ")";
+				}
+				list.push(item);
+			}
+		}
+	};
+	return list;
+};
+
+function cssWithMappingToString(item, useSourceMap) {
+	var content = item[1] || '';
+	var cssMapping = item[3];
+	if (!cssMapping) {
+		return content;
+	}
+
+	if (useSourceMap && typeof btoa === 'function') {
+		var sourceMapping = toComment(cssMapping);
+		var sourceURLs = cssMapping.sources.map(function (source) {
+			return '/*# sourceURL=' + cssMapping.sourceRoot + source + ' */'
+		});
+
+		return [content].concat(sourceURLs).concat([sourceMapping]).join('\n');
+	}
+
+	return [content].join('\n');
+}
+
+// Adapted from convert-source-map (MIT)
+function toComment(sourceMap) {
+	// eslint-disable-next-line no-undef
+	var base64 = btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap))));
+	var data = 'sourceMappingURL=data:application/json;charset=utf-8;base64,' + base64;
+
+	return '/*# ' + data + ' */';
+}
 
 
 /***/ }),
@@ -32114,49 +32366,60 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "container" }, [
-    _c("div", { staticClass: "content" }, [
-      _c(
-        "a",
-        {
-          staticClass: "button",
-          attrs: { "aria-label": "close" },
-          on: { click: _vm.closeWindow }
-        },
-        [_vm._v("Done")]
-      )
-    ]),
+  return _c("div", { staticClass: "modal is-active" }, [
+    _c("div", { staticClass: "modal-background" }),
     _vm._v(" "),
-    _c("div", { staticClass: "content" }, [
-      _c("a", { attrs: { href: _vm.active_post.url } }, [
+    _c("div", { staticClass: "modal-card" }, [
+      _c("header", { staticClass: "modal-card-head" }, [
         _c(
-          "h1",
+          "a",
           {
-            staticClass:
-              "has-text-grey-dark is-title is-size-4 has-text-weight-bold"
+            staticClass: "button",
+            attrs: { "aria-label": "close" },
+            on: {
+              click: function($event) {
+                $event.preventDefault()
+                _vm.closeWindow($event)
+              }
+            }
           },
-          [_vm._v(_vm._s(_vm.active_post.title))]
+          [_vm._v("Done")]
         )
       ]),
       _vm._v(" "),
-      _c(
-        "h2",
-        {
-          staticClass:
-            "has-text-primary is-subtitle is-size-5 is-uppercase has-text-weight-semibold"
-        },
-        [_vm._v(_vm._s(_vm.active_post.source.name))]
-      ),
-      _vm._v(" "),
-      _c("h3", { staticClass: "is-size-6 has-text-grey-light" }, [
-        _vm._v(_vm._s(_vm.active_post.time_ago))
+      _c("section", { staticClass: "modal-card-body" }, [
+        _c("div", { staticClass: "content" }, [
+          _c("a", { attrs: { href: _vm.active_post.url } }, [
+            _c(
+              "h1",
+              {
+                staticClass:
+                  "has-text-grey-dark is-title is-size-4 has-text-weight-bold"
+              },
+              [_vm._v(_vm._s(_vm.active_post.title))]
+            )
+          ]),
+          _vm._v(" "),
+          _c(
+            "h2",
+            {
+              staticClass:
+                "has-text-primary is-subtitle is-size-5 is-uppercase has-text-weight-semibold"
+            },
+            [_vm._v(_vm._s(_vm.active_post.source.name))]
+          ),
+          _vm._v(" "),
+          _c("h3", { staticClass: "is-size-6 has-text-grey-light" }, [
+            _vm._v(_vm._s(_vm.active_post.time_ago))
+          ])
+        ]),
+        _vm._v(" "),
+        _c("div", {
+          staticClass: "content",
+          domProps: { innerHTML: _vm._s(_vm.active_post.content) }
+        })
       ])
-    ]),
-    _vm._v(" "),
-    _c("div", {
-      staticClass: "content",
-      domProps: { innerHTML: _vm._s(_vm.active_post.content) }
-    })
+    ])
   ])
 }
 var staticRenderFns = []
@@ -32192,8 +32455,46 @@ var render = function() {
           })
         : _vm._e(),
       _vm._v(" "),
+      _vm.page == "source selector"
+        ? _c("source-selector", {
+            attrs: { sources: _vm.all_sources, categories: _vm.all_categories },
+            on: {
+              showBySource: function($event) {
+                _vm.showSource.apply(void 0, arguments)
+              },
+              showByCategory: function($event) {
+                _vm.showCategory.apply(void 0, arguments)
+              },
+              closeWindow: function($event) {
+                _vm.hideSourceSelector()
+              }
+            }
+          })
+        : _vm._e(),
+      _vm._v(" "),
       _vm.page == "post list"
         ? _c("div", { staticClass: "container" }, [
+            _c("div", { staticClass: "container" }, [
+              _vm._v(
+                "\n                " +
+                  _vm._s(_vm.posts_description) +
+                  "\n            "
+              )
+            ]),
+            _vm._v(" "),
+            _c(
+              "a",
+              {
+                staticClass: "button",
+                on: {
+                  click: function($event) {
+                    _vm.showSourceSelector()
+                  }
+                }
+              },
+              [_vm._v("Change")]
+            ),
+            _vm._v(" "),
             _vm.posts_loaded
               ? _c("div", { staticClass: "row" }, [
                   _c(
@@ -32206,7 +32507,7 @@ var render = function() {
                             attrs: { post: post },
                             on: {
                               "show-post-details": function($event) {
-                                _vm.showPostDetails(post)
+                                _vm.showDetailsView(post)
                               },
                               "toggle-post-read": function($event) {
                                 _vm.togglePostRead(post)
@@ -32243,7 +32544,7 @@ if (false) {
 
 /***/ }),
 
-/***/ "./node_modules/vue-loader/lib/template-compiler/index.js?{\"id\":\"data-v-72b0b406\",\"hasScoped\":false}!./node_modules/vue-loader/lib/selector.js?type=template&index=0!./resources/assets/js/components/PostListItem.vue":
+/***/ "./node_modules/vue-loader/lib/template-compiler/index.js?{\"id\":\"data-v-72b0b406\",\"hasScoped\":true}!./node_modules/vue-loader/lib/selector.js?type=template&index=0!./resources/assets/js/components/PostListItem.vue":
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
@@ -32418,6 +32719,426 @@ if (false) {
      require("vue-hot-reload-api").rerender("data-v-cc85cf54", module.exports)
   }
 }
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/template-compiler/index.js?{\"id\":\"data-v-e23fc862\",\"hasScoped\":false}!./node_modules/vue-loader/lib/selector.js?type=template&index=0!./resources/assets/js/components/SourceSelector.vue":
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", { staticClass: "modal is-active" }, [
+    _c("div", { staticClass: "modal-background" }),
+    _vm._v(" "),
+    _c("div", { staticClass: "modal-card" }, [
+      _c("header", { staticClass: "modal-card-head" }, [
+        _c(
+          "a",
+          {
+            staticClass: "button",
+            attrs: { "aria-label": "close" },
+            on: { click: _vm.closeWindow }
+          },
+          [_vm._v("Cancel")]
+        )
+      ]),
+      _vm._v(" "),
+      _c("section", { staticClass: "modal-card-body" }, [
+        _c("div", { staticClass: "content" }, [
+          _c("div", { staticClass: "columns" }, [
+            _c("div", { staticClass: "column" }, [
+              _c(
+                "nav",
+                { staticClass: "panel" },
+                [
+                  _c("div", { staticClass: "panel-heading" }, [
+                    _vm._v("\n                Show By Source\n              ")
+                  ]),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "panel-block" }, [
+                    _c("p", { staticClass: "control" }, [
+                      _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.source_filter,
+                            expression: "source_filter"
+                          }
+                        ],
+                        staticClass: "input is-small",
+                        attrs: { type: "text", placeholder: "filter" },
+                        domProps: { value: _vm.source_filter },
+                        on: {
+                          input: function($event) {
+                            if ($event.target.composing) {
+                              return
+                            }
+                            _vm.source_filter = $event.target.value
+                          }
+                        }
+                      })
+                    ])
+                  ]),
+                  _vm._v(" "),
+                  _vm._l(_vm.filtered_sources, function(source) {
+                    return _c(
+                      "a",
+                      {
+                        staticClass: "panel-block",
+                        on: {
+                          click: function($event) {
+                            _vm.showSource(source)
+                          }
+                        }
+                      },
+                      [
+                        _vm._v(
+                          "\n                " +
+                            _vm._s(source.name) +
+                            "\n              "
+                        )
+                      ]
+                    )
+                  })
+                ],
+                2
+              )
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "column" }, [
+              _c(
+                "nav",
+                { staticClass: "panel" },
+                [
+                  _c("div", { staticClass: "panel-heading" }, [
+                    _vm._v("\n                Show By Category\n              ")
+                  ]),
+                  _vm._v(" "),
+                  _vm._l(_vm.categories, function(category) {
+                    return _c(
+                      "a",
+                      {
+                        staticClass: "panel-block",
+                        on: {
+                          click: function($event) {
+                            _vm.showCategory(category)
+                          }
+                        }
+                      },
+                      [
+                        _vm._v(
+                          "\n                " +
+                            _vm._s(category.description) +
+                            "\n              "
+                        )
+                      ]
+                    )
+                  })
+                ],
+                2
+              )
+            ])
+          ])
+        ])
+      ])
+    ])
+  ])
+}
+var staticRenderFns = []
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-hot-reload-api").rerender("data-v-e23fc862", module.exports)
+  }
+}
+
+/***/ }),
+
+/***/ "./node_modules/vue-style-loader/index.js!./node_modules/css-loader/index.js!./node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-72b0b406\",\"scoped\":true,\"hasInlineConfig\":true}!./node_modules/vue-loader/lib/selector.js?type=styles&index=0!./resources/assets/js/components/PostListItem.vue":
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__("./node_modules/css-loader/index.js!./node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-72b0b406\",\"scoped\":true,\"hasInlineConfig\":true}!./node_modules/vue-loader/lib/selector.js?type=styles&index=0!./resources/assets/js/components/PostListItem.vue");
+if(typeof content === 'string') content = [[module.i, content, '']];
+if(content.locals) module.exports = content.locals;
+// add the styles to the DOM
+var update = __webpack_require__("./node_modules/vue-style-loader/lib/addStylesClient.js")("2a7512b1", content, false);
+// Hot Module Replacement
+if(false) {
+ // When the styles change, update the <style> tags
+ if(!content.locals) {
+   module.hot.accept("!!../../../../node_modules/css-loader/index.js!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-72b0b406\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./PostListItem.vue", function() {
+     var newContent = require("!!../../../../node_modules/css-loader/index.js!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-72b0b406\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./PostListItem.vue");
+     if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+     update(newContent);
+   });
+ }
+ // When the module is disposed, remove the <style> tags
+ module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+
+/***/ "./node_modules/vue-style-loader/lib/addStylesClient.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+/*
+  MIT License http://www.opensource.org/licenses/mit-license.php
+  Author Tobias Koppers @sokra
+  Modified by Evan You @yyx990803
+*/
+
+var hasDocument = typeof document !== 'undefined'
+
+if (typeof DEBUG !== 'undefined' && DEBUG) {
+  if (!hasDocument) {
+    throw new Error(
+    'vue-style-loader cannot be used in a non-browser environment. ' +
+    "Use { target: 'node' } in your Webpack config to indicate a server-rendering environment."
+  ) }
+}
+
+var listToStyles = __webpack_require__("./node_modules/vue-style-loader/lib/listToStyles.js")
+
+/*
+type StyleObject = {
+  id: number;
+  parts: Array<StyleObjectPart>
+}
+
+type StyleObjectPart = {
+  css: string;
+  media: string;
+  sourceMap: ?string
+}
+*/
+
+var stylesInDom = {/*
+  [id: number]: {
+    id: number,
+    refs: number,
+    parts: Array<(obj?: StyleObjectPart) => void>
+  }
+*/}
+
+var head = hasDocument && (document.head || document.getElementsByTagName('head')[0])
+var singletonElement = null
+var singletonCounter = 0
+var isProduction = false
+var noop = function () {}
+
+// Force single-tag solution on IE6-9, which has a hard limit on the # of <style>
+// tags it will allow on a page
+var isOldIE = typeof navigator !== 'undefined' && /msie [6-9]\b/.test(navigator.userAgent.toLowerCase())
+
+module.exports = function (parentId, list, _isProduction) {
+  isProduction = _isProduction
+
+  var styles = listToStyles(parentId, list)
+  addStylesToDom(styles)
+
+  return function update (newList) {
+    var mayRemove = []
+    for (var i = 0; i < styles.length; i++) {
+      var item = styles[i]
+      var domStyle = stylesInDom[item.id]
+      domStyle.refs--
+      mayRemove.push(domStyle)
+    }
+    if (newList) {
+      styles = listToStyles(parentId, newList)
+      addStylesToDom(styles)
+    } else {
+      styles = []
+    }
+    for (var i = 0; i < mayRemove.length; i++) {
+      var domStyle = mayRemove[i]
+      if (domStyle.refs === 0) {
+        for (var j = 0; j < domStyle.parts.length; j++) {
+          domStyle.parts[j]()
+        }
+        delete stylesInDom[domStyle.id]
+      }
+    }
+  }
+}
+
+function addStylesToDom (styles /* Array<StyleObject> */) {
+  for (var i = 0; i < styles.length; i++) {
+    var item = styles[i]
+    var domStyle = stylesInDom[item.id]
+    if (domStyle) {
+      domStyle.refs++
+      for (var j = 0; j < domStyle.parts.length; j++) {
+        domStyle.parts[j](item.parts[j])
+      }
+      for (; j < item.parts.length; j++) {
+        domStyle.parts.push(addStyle(item.parts[j]))
+      }
+      if (domStyle.parts.length > item.parts.length) {
+        domStyle.parts.length = item.parts.length
+      }
+    } else {
+      var parts = []
+      for (var j = 0; j < item.parts.length; j++) {
+        parts.push(addStyle(item.parts[j]))
+      }
+      stylesInDom[item.id] = { id: item.id, refs: 1, parts: parts }
+    }
+  }
+}
+
+function createStyleElement () {
+  var styleElement = document.createElement('style')
+  styleElement.type = 'text/css'
+  head.appendChild(styleElement)
+  return styleElement
+}
+
+function addStyle (obj /* StyleObjectPart */) {
+  var update, remove
+  var styleElement = document.querySelector('style[data-vue-ssr-id~="' + obj.id + '"]')
+
+  if (styleElement) {
+    if (isProduction) {
+      // has SSR styles and in production mode.
+      // simply do nothing.
+      return noop
+    } else {
+      // has SSR styles but in dev mode.
+      // for some reason Chrome can't handle source map in server-rendered
+      // style tags - source maps in <style> only works if the style tag is
+      // created and inserted dynamically. So we remove the server rendered
+      // styles and inject new ones.
+      styleElement.parentNode.removeChild(styleElement)
+    }
+  }
+
+  if (isOldIE) {
+    // use singleton mode for IE9.
+    var styleIndex = singletonCounter++
+    styleElement = singletonElement || (singletonElement = createStyleElement())
+    update = applyToSingletonTag.bind(null, styleElement, styleIndex, false)
+    remove = applyToSingletonTag.bind(null, styleElement, styleIndex, true)
+  } else {
+    // use multi-style-tag mode in all other cases
+    styleElement = createStyleElement()
+    update = applyToTag.bind(null, styleElement)
+    remove = function () {
+      styleElement.parentNode.removeChild(styleElement)
+    }
+  }
+
+  update(obj)
+
+  return function updateStyle (newObj /* StyleObjectPart */) {
+    if (newObj) {
+      if (newObj.css === obj.css &&
+          newObj.media === obj.media &&
+          newObj.sourceMap === obj.sourceMap) {
+        return
+      }
+      update(obj = newObj)
+    } else {
+      remove()
+    }
+  }
+}
+
+var replaceText = (function () {
+  var textStore = []
+
+  return function (index, replacement) {
+    textStore[index] = replacement
+    return textStore.filter(Boolean).join('\n')
+  }
+})()
+
+function applyToSingletonTag (styleElement, index, remove, obj) {
+  var css = remove ? '' : obj.css
+
+  if (styleElement.styleSheet) {
+    styleElement.styleSheet.cssText = replaceText(index, css)
+  } else {
+    var cssNode = document.createTextNode(css)
+    var childNodes = styleElement.childNodes
+    if (childNodes[index]) styleElement.removeChild(childNodes[index])
+    if (childNodes.length) {
+      styleElement.insertBefore(cssNode, childNodes[index])
+    } else {
+      styleElement.appendChild(cssNode)
+    }
+  }
+}
+
+function applyToTag (styleElement, obj) {
+  var css = obj.css
+  var media = obj.media
+  var sourceMap = obj.sourceMap
+
+  if (media) {
+    styleElement.setAttribute('media', media)
+  }
+
+  if (sourceMap) {
+    // https://developer.chrome.com/devtools/docs/javascript-debugging
+    // this makes source maps inside style tags work properly in Chrome
+    css += '\n/*# sourceURL=' + sourceMap.sources[0] + ' */'
+    // http://stackoverflow.com/a/26603875
+    css += '\n/*# sourceMappingURL=data:application/json;base64,' + btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap)))) + ' */'
+  }
+
+  if (styleElement.styleSheet) {
+    styleElement.styleSheet.cssText = css
+  } else {
+    while (styleElement.firstChild) {
+      styleElement.removeChild(styleElement.firstChild)
+    }
+    styleElement.appendChild(document.createTextNode(css))
+  }
+}
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-style-loader/lib/listToStyles.js":
+/***/ (function(module, exports) {
+
+/**
+ * Translates the list format produced by css-loader into something
+ * easier to manipulate.
+ */
+module.exports = function listToStyles (parentId, list) {
+  var styles = []
+  var newStyles = {}
+  for (var i = 0; i < list.length; i++) {
+    var item = list[i]
+    var id = item[0]
+    var css = item[1]
+    var media = item[2]
+    var sourceMap = item[3]
+    var part = {
+      id: parentId + ':' + i,
+      css: css,
+      media: media,
+      sourceMap: sourceMap
+    }
+    if (!newStyles[id]) {
+      styles.push(newStyles[id] = { id: id, parts: [part] })
+    } else {
+      newStyles[id].parts.push(part)
+    }
+  }
+  return styles
+}
+
 
 /***/ }),
 
@@ -42702,6 +43423,7 @@ window.Vue = __webpack_require__("./node_modules/vue/dist/vue.common.js");
 Vue.component('app', __webpack_require__("./resources/assets/js/components/App.vue"));
 Vue.component('post-details', __webpack_require__("./resources/assets/js/components/PostDetails.vue"));
 Vue.component('post-filters', __webpack_require__("./resources/assets/js/components/PostFilters.vue"));
+Vue.component('source-selector', __webpack_require__("./resources/assets/js/components/SourceSelector.vue"));
 Vue.component('post-list', __webpack_require__("./resources/assets/js/components/PostList.vue"));
 Vue.component('post-list-item', __webpack_require__("./resources/assets/js/components/PostListItem.vue"));
 var app = new Vue({
@@ -42961,15 +43683,19 @@ module.exports = Component.exports
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
+function injectStyle (ssrContext) {
+  if (disposed) return
+  __webpack_require__("./node_modules/vue-style-loader/index.js!./node_modules/css-loader/index.js!./node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-72b0b406\",\"scoped\":true,\"hasInlineConfig\":true}!./node_modules/vue-loader/lib/selector.js?type=styles&index=0!./resources/assets/js/components/PostListItem.vue")
+}
 var normalizeComponent = __webpack_require__("./node_modules/vue-loader/lib/component-normalizer.js")
 /* script */
 var __vue_script__ = __webpack_require__("./node_modules/babel-loader/lib/index.js?{\"cacheDirectory\":true,\"presets\":[[\"env\",{\"modules\":false,\"targets\":{\"browsers\":[\"> 2%\"],\"uglify\":true}}]]}!./node_modules/vue-loader/lib/selector.js?type=script&index=0!./resources/assets/js/components/PostListItem.vue")
 /* template */
-var __vue_template__ = __webpack_require__("./node_modules/vue-loader/lib/template-compiler/index.js?{\"id\":\"data-v-72b0b406\",\"hasScoped\":false}!./node_modules/vue-loader/lib/selector.js?type=template&index=0!./resources/assets/js/components/PostListItem.vue")
+var __vue_template__ = __webpack_require__("./node_modules/vue-loader/lib/template-compiler/index.js?{\"id\":\"data-v-72b0b406\",\"hasScoped\":true}!./node_modules/vue-loader/lib/selector.js?type=template&index=0!./resources/assets/js/components/PostListItem.vue")
 /* styles */
-var __vue_styles__ = null
+var __vue_styles__ = injectStyle
 /* scopeId */
-var __vue_scopeId__ = null
+var __vue_scopeId__ = "data-v-72b0b406"
 /* moduleIdentifier (server only) */
 var __vue_module_identifier__ = null
 var Component = normalizeComponent(
@@ -42993,6 +43719,53 @@ if (false) {(function () {
     hotAPI.createRecord("data-v-72b0b406", Component.options)
   } else {
     hotAPI.reload("data-v-72b0b406", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+
+/***/ "./resources/assets/js/components/SourceSelector.vue":
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+var normalizeComponent = __webpack_require__("./node_modules/vue-loader/lib/component-normalizer.js")
+/* script */
+var __vue_script__ = __webpack_require__("./node_modules/babel-loader/lib/index.js?{\"cacheDirectory\":true,\"presets\":[[\"env\",{\"modules\":false,\"targets\":{\"browsers\":[\"> 2%\"],\"uglify\":true}}]]}!./node_modules/vue-loader/lib/selector.js?type=script&index=0!./resources/assets/js/components/SourceSelector.vue")
+/* template */
+var __vue_template__ = __webpack_require__("./node_modules/vue-loader/lib/template-compiler/index.js?{\"id\":\"data-v-e23fc862\",\"hasScoped\":false}!./node_modules/vue-loader/lib/selector.js?type=template&index=0!./resources/assets/js/components/SourceSelector.vue")
+/* styles */
+var __vue_styles__ = null
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/assets/js/components/SourceSelector.vue"
+if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
+if (Component.options.functional) {console.error("[vue-loader] SourceSelector.vue: functional components are not supported with templates, they should use render functions.")}
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-e23fc862", Component.options)
+  } else {
+    hotAPI.reload("data-v-e23fc862", Component.options)
   }
   module.hot.dispose(function (data) {
     disposed = true
