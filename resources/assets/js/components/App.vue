@@ -2,7 +2,7 @@
     <div>
         <post-details
             v-if="page == 'post details' " 
-            :active_post="active_post" 
+            :active_post="active_post"
             v-on:closeWindow="closeDetailsView()">
         </post-details>
 
@@ -38,10 +38,12 @@
                     <li><a @click="showSourceSelector()">Home</a></li>
                     <li class="is-active"><a href="#">{{posts_description}}</a></li>
                   </ul>
+                  <button v-if=" this.reverse" class="button is-right" @click="reverseOrder()">&darr; Newest on Top</button>
+                  <button v-if=" !this.reverse" class="button is-right" @click="reverseOrder()">&uarr; Oldest On Top</button>
                 </nav>
             </div>
         </div>
-        <div class="container" v-if="page == 'post list'">
+        <div class="container" v-show="page == 'post list'">
             
             <div v-if="posts_loaded" class='row'>
                 <ul>
@@ -74,7 +76,8 @@
                 active_post : {}, // the posts which is in the post details view mode
                 unread_only: true, // default filter = unread posts
                 all_sources:[],
-                all_categories:[]
+                all_categories:[],
+                reverse: false, //location on list page, to remember when exiting details page
             };
         },
         created() {
@@ -85,13 +88,17 @@
         computed: {
             filtered_posts()
             {
+                let posts_list = this.posts;
                 if (this.unread_only) 
                 { 
-                    return this.posts.filter((post)=>{
+                    posts_list = this.posts.filter((post)=>{
                         return post.read == 0
                     });
                 }
-                return this.posts;
+                if (this.reverse) {
+                    return posts_list.reverse();
+                }
+                return posts_list;
             }
         },
         methods: {
@@ -158,12 +165,8 @@
                 if (this.active_post.read == 0) {
                     this.togglePostRead(this.active_post);
                 }
-
                 // change to list view
                 this.page = 'post list';
-
-                // update list of posts
-                this.fetchPostList();
             },
             togglePostRead(post)
             {
@@ -176,6 +179,11 @@
                     console.log('there was a problem with updating post status');
                     post.read = 1 - post.read;;
                 });
+            },
+
+            reverseOrder()
+            {
+                this.reverse = !this.reverse;
             },
 
             updateActivePost(post)
