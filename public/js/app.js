@@ -1834,6 +1834,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     props: ['active_post'],
@@ -32390,59 +32393,72 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "modal is-active" }, [
-    _c("div", { staticClass: "modal-background" }),
+  return _c("div", [
+    _c("div", { staticClass: "level" }),
     _vm._v(" "),
-    _c("div", { staticClass: "modal-card" }, [
-      _c("header", { staticClass: "modal-card-head" }, [
-        _c(
-          "a",
-          {
-            staticClass: "button",
-            attrs: { "aria-label": "close" },
-            on: {
-              click: function($event) {
-                $event.preventDefault()
-                _vm.closeWindow($event)
-              }
+    _c("div", { staticClass: "content" }, [
+      _c(
+        "a",
+        {
+          staticClass: "button",
+          attrs: { "aria-label": "close" },
+          on: {
+            click: function($event) {
+              $event.preventDefault()
+              _vm.closeWindow($event)
             }
+          }
+        },
+        [_vm._v("Done")]
+      )
+    ]),
+    _vm._v(" "),
+    _c("div", { staticClass: "content" }, [
+      _c("a", { attrs: { href: _vm.active_post.url } }, [
+        _c(
+          "h1",
+          {
+            staticClass:
+              "has-text-grey-dark is-title is-size-4 has-text-weight-bold"
           },
-          [_vm._v("Done")]
+          [_vm._v(_vm._s(_vm.active_post.title))]
         )
       ]),
       _vm._v(" "),
-      _c("section", { staticClass: "modal-card-body" }, [
-        _c("div", { staticClass: "content" }, [
-          _c("a", { attrs: { href: _vm.active_post.url } }, [
-            _c(
-              "h1",
-              {
-                staticClass:
-                  "has-text-grey-dark is-title is-size-4 has-text-weight-bold"
-              },
-              [_vm._v(_vm._s(_vm.active_post.title))]
-            )
-          ]),
-          _vm._v(" "),
-          _c(
-            "h2",
-            {
-              staticClass:
-                "has-text-primary is-subtitle is-size-5 is-uppercase has-text-weight-semibold"
-            },
-            [_vm._v(_vm._s(_vm.active_post.source.name))]
-          ),
-          _vm._v(" "),
-          _c("h3", { staticClass: "is-size-6 has-text-grey-light" }, [
-            _vm._v(_vm._s(_vm.active_post.time_ago))
-          ])
-        ]),
-        _vm._v(" "),
-        _c("div", {
-          staticClass: "content",
-          domProps: { innerHTML: _vm._s(_vm.active_post.content) }
-        })
+      _c(
+        "h2",
+        {
+          staticClass:
+            "has-text-primary is-subtitle is-size-5 is-uppercase has-text-weight-semibold"
+        },
+        [_vm._v(_vm._s(_vm.active_post.source.name))]
+      ),
+      _vm._v(" "),
+      _c("h3", { staticClass: "is-size-6 has-text-grey-light" }, [
+        _vm._v(_vm._s(_vm.active_post.time_ago))
       ])
+    ]),
+    _vm._v(" "),
+    _c("div", {
+      staticClass: "content",
+      domProps: { innerHTML: _vm._s(_vm.active_post.content) }
+    }),
+    _vm._v(" "),
+    _c("div", { staticClass: "content" }, [
+      _c(
+        "a",
+        {
+          staticClass: "button",
+          attrs: { "aria-label": "close" },
+          on: {
+            click: function($event) {
+              $event.preventDefault()
+              _vm.closeWindow($event)
+            }
+          }
+        },
+        [_vm._v("Done")]
+      )
     ])
   ])
 }
