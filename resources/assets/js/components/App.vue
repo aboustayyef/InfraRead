@@ -19,7 +19,7 @@
 
        
         <!-- Read / Unread Tabs -->
-        <div class="level" v-if="page == 'post list'">
+        <div class="row" v-if="page == 'post list'">
             <div class="container">
                 <div class="tabs is-boxed is-right">
                   <ul>
@@ -31,20 +31,22 @@
         </div>
 
         <!-- Breadcrumbs -->
-        <div class="level" v-if="page == 'post list'">
             <div class="container">
-                <nav class="breadcrumb has-arrow-separator" aria-label="breadcrumbs">
-                  <ul>
-                    <li><a @click="showSourceSelector()">Home</a></li>
-                    <li class="is-active"><a href="#">{{posts_description}}</a></li>
-                  </ul>
-                  <button v-if=" this.reverse" class="button is-right" @click="reverseOrder()">&darr; Newest on Top</button>
-                  <button v-if=" !this.reverse" class="button is-right" @click="reverseOrder()">&uarr; Oldest On Top</button>
-                </nav>
+                <div class="level">
+                    <nav class="breadcrumb has-arrow-separator" aria-label="breadcrumbs">
+                      <ul>
+                        <li><a @click="showSourceSelector()">Home</a></li>
+                        <li class="is-active"><a href="#">{{posts_description}}</a></li>
+                      </ul>
+                    </nav>
+                    <button v-if=" this.reverse" class="button is-right" @click="reverseOrder()">&darr; Newest on Top</button>
+                    <button v-if=" !this.reverse" class="button is-right" @click="reverseOrder()">&uarr; Oldest On Top</button>
+                </div>
             </div>
-        </div>
         <div class="container" v-show="page == 'post list'">
-            
+            <div class="row" v-if="filtered_posts.length == 0">
+                There are no unread posts... <a @click="unread_only = false">See All posts</a>
+            </div>
             <div v-if="posts_loaded" class='row'>
                 <ul>
                     <li v-for="post in filtered_posts">

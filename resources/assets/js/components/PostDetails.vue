@@ -1,7 +1,6 @@
 <template>
 
-  <div>
-      <div class="level"></div>
+  <div class="container">
       <div class="content">
         <a aria-label="close" @click.prevent="closeWindow" class="button">Done</a>
       </div>
