@@ -23,7 +23,7 @@
             <div class="container">
                 <div class="tabs is-boxed is-right">
                   <ul>
-                    <li :class="{'is-active': this.unread_only}" @click="unread_only = true"> <a>Unread</a></li>
+                    <li :class="{'is-active': this.unread_only}" @click="unread_only = true"> <a>Unread ({{unread_count}})</a></li>
                     <li :class="{'is-active': !this.unread_only}" @click="unread_only = false"> <a>All Posts</a></li>
                   </ul>
                 </div>
@@ -86,6 +86,10 @@
             this.fetchPostList();
         },
         computed: {
+            unread_count()
+            {
+                return this.posts.filter((post) => {return post.read == 0}).length;
+            },
             filtered_posts()
             {
                 let posts_list = this.posts;
