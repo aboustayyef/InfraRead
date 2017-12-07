@@ -39,8 +39,8 @@
                         <li class="is-active"><a href="#">{{posts_description}}</a></li>
                       </ul>
                     </nav>
-                    <button v-if=" this.reverse" class="button is-right" @click="reverseOrder()">&darr; Newest on Top</button>
-                    <button v-if=" !this.reverse" class="button is-right" @click="reverseOrder()">&uarr; Oldest On Top</button>
+                    <button v-if=" this.reverse" class="button is-right" @click="reverseOrder()">&uarr; Oldest On Top</button>
+                    <button v-if=" !this.reverse" class="button is-right" @click="reverseOrder()">&darr; Newest on Top</button>
                 </div>
             </div>
         <div class="container" v-show="page == 'post list'">
