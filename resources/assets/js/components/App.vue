@@ -47,9 +47,6 @@
             <div class="row" v-if="filtered_posts.length == 0 && posts_loaded">
                 There are no unread posts... <a @click="unread_only = false">See All posts</a>
             </div>
-            <div class="row" v-if="! posts_loaded">
-                loading... 
-            </div>
             <div v-if="posts_loaded" class='row'>
                 <ul>
                     <li v-for="post in filtered_posts">
@@ -113,7 +110,6 @@
         methods: {
             fetchPostList() 
             {
-                this.posts_loaded = false;
                 axios.get(this.posts_source).then((res) => {
                     this.posts = res.data;
                     this.posts_loaded = true;
