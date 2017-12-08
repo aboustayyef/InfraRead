@@ -1,7 +1,8 @@
 <template>
     <div>
         <post-details
-            v-if="page == 'post details' " 
+            v-if="posts_loaded" 
+            :page="page" 
             :active_post="active_post"
             v-on:closeWindow="closeDetailsView()">
         </post-details>
@@ -23,7 +24,7 @@
                 <div class="level">
                     <nav class="breadcrumb has-arrow-separator" aria-label="breadcrumbs">
                       <ul>
-                        <li><a @click="showSourceSelector()">Home</a></li>
+                        <li><a href="/app/sources">Home</a></li>
                         <li class="is-active"><a href="#">{{posts_description}}</a></li>
                       </ul>
                     </nav>
@@ -40,12 +41,9 @@
                     <li v-for="post in filtered_posts">
                         <!-- When a user clicks on an area of the post, change the current post and mark it as read -->
                         <post-list-item 
-
                             :post="post"
-                        
                             v-on:show-post-details="showDetailsView(post)"
                             v-on:toggle-post-read="togglePostRead(post)"
-                            v-on:show-source="showSource(post.source)"
                         ></post-list-item>
                         <hr>
                     </li>
@@ -122,7 +120,7 @@
             {
                 post.read = 1 - post.read; // toggle between 0 and 1
 
-                axios.patch('api/posts/'+post.id, {read: post.read})
+                axios.patch('/api/posts/'+post.id, {read: post.read})
                 .then((res) => {
                     this.fetchPostList();
                 }).catch((res) => {

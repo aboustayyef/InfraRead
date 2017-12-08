@@ -9,7 +9,17 @@
     <link rel="stylesheet" type="text/css" href="{{mix('/css/app.css')}}">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
-
+<style>
+  ul{
+    margin:1em 0 2em 0;
+  }
+  li{
+    text-transform: uppercase;
+    border-top: 1px solid  whitesmoke; 
+    padding: 3px 0;
+    cursor: pointer;
+  }
+</style>
 <body> 
       <div class="section">
         <div class="container">

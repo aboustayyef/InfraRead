@@ -32,7 +32,7 @@ Route::get('/app/source/{id}', function($id){
 Route::get('/app/category/{id}', function($id){
     $category = Category::find($id);
     $posts_source = '/api/postsByCategory/'.$id;
-    $posts_description = 'Posts By '. $category->description ;
+    $posts_description = 'Posts In the [ '. $category->description . ' ] Category' ;
     $page = 'post list';
     return view('home')->with(compact('posts_source'))->with(compact('page'))->with(compact('posts_description'));
 })->middleware('auth');
