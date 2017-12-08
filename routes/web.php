@@ -1,32 +1,57 @@
 <?php
 
+use App\Category;
 use App\Post;
+use App\Source;
 use App\Utilities\OpmlImporter;
 use Illuminate\Http\Request;
 
-Route::get('/', 'HomeController@index');
+Route::get('/', function(){
+    return redirect('/app');
+});
 
 Route::get('/setup', function(){
     return view('setup');
 })->middleware('auth');
 
 Route::get('/app', function(){
-
-    // if no sources, are available, go to setup screen
-    if (\App\Source::count() == 0) {
-        return redirect('/setup');
-    }
-    return view('home');
+    $posts_source = '/api/posts';
+    $posts_description = 'All Posts' ;
+    $page = 'post list';
+    return view('home')->with(compact('posts_source'))->with(compact('page'))->with(compact('posts_description'));
 })->middleware('auth');
+
+Route::get('/app/source/{id}', function($id){
+    $source = Source::find($id);
+    $posts_source = '/api/postsBySource/'.$id;
+    $posts_description = 'Posts By '. $source->name ;
+    $page = 'post list';
+    return view('home')->with(compact('posts_source'))->with(compact('page'))->with(compact('posts_description'));
+})->middleware('auth');
+
+Route::get('/app/category/{id}', function($id){
+    $category = Category::find($id);
+    $posts_source = '/api/postsByCategory/'.$id;
+    $posts_description = 'Posts By '. $category->description ;
+    $page = 'post list';
+    return view('home')->with(compact('posts_source'))->with(compact('page'))->with(compact('posts_description'));
+})->middleware('auth');
+
+Route::get('/app/sources', function(){
+
+    $sources = App\Source::all();
+    $categories = App\Category::all();
+
+    return view('sources')->with(compact('sources'))->with(compact('categories'));
+
+})->middleware('auth');
+
 
 // Authentication Routes...
 $this->get('login', 'Auth\LoginController@showLoginForm')->name('login');
 $this->post('login', 'Auth\LoginController@login');
 $this->post('logout', 'Auth\LoginController@logout')->name('logout');
 
-Route::get('/setup', function(){
-    return view('setup');
-})->middleware('auth');
 
 Route::post('/uploadOpml', function(Request $request){
     $request->file('opml')->storeAs('uploaded','feeds.opml');

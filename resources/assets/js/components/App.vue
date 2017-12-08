@@ -5,18 +5,6 @@
             :active_post="active_post"
             v-on:closeWindow="closeDetailsView()">
         </post-details>
-
-
-        <source-selector 
-            v-if="page == 'source selector'"
-            :sources = "all_sources"
-            :categories = "all_categories"
-            v-on:showAllPosts="showAllPosts()"
-            v-on:showBySource="showSource(...arguments)"
-            v-on:showByCategory="showCategory(...arguments)"
-            v-on:closeWindow="hideSourceSelector()">
-        </source-selector>
-
        
         <!-- Read / Unread Tabs -->
         <div class="row" v-if="page == 'post list'">
@@ -70,9 +58,9 @@
     export default {
         data() {
             return {
-                page: 'post list',    // used to know which view we're in: post list, post details or post filters
-                posts_source: '/api/posts', // which XHR request to get posts
-                posts_description: 'All Posts', 
+                page: window.page,    // used to know which view we're in: post list, post details or post filters
+                posts_source: window.posts_source, // which XHR request to get posts
+                posts_description: window.posts_description, 
                 posts : [], // the list of unfiltered posts
                 posts_loaded : false, 
                 active_post : {}, // the posts which is in the post details view mode
@@ -83,8 +71,6 @@
             };
         },
         created() {
-            this.getAllSources();
-            this.getAllCategories();
             this.fetchPostList();
         },
         computed: {
@@ -116,48 +102,6 @@
                     this.active_post = this.posts[0];
                 });
             },
-            getAllSources() 
-            {
-                axios.get('/api/source').then((res) => {
-                    this.all_sources = res.data;
-                });
-            },
-            getAllCategories() 
-            {
-                axios.get('/api/category').then((res) => {
-                    this.all_categories = res.data;
-                });
-            },
-
-            // Changing Source
-            
-            showAllPosts(){
-                this.posts_source = '/api/posts' ;
-                this.posts_description = 'All Posts" ';
-                this.fetchPostList();
-                this.page = "post list";
-            },
-            showSource(source){
-                this.posts_source = '/api/postsBySource/' + source.id;
-                this.posts_description = 'Posts By " ' + source.name + ' "';
-                this.fetchPostList();
-                this.page = "post list";
-            },
-            showCategory(category){
-                this.posts_source = '/api/postsByCategory/' + category.id;
-                this.posts_description = 'Posts By " ' + category.description + ' "';
-                this.fetchPostList();
-                this.page = "post list";
-            },
-
-            // Source Selector
-            showSourceSelector(){
-                this.page = "source selector";
-            },
-            hideSourceSelector(){
-                this.page = "post list";
-            },
-
 
             // Detail View
             

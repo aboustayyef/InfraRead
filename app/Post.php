@@ -17,6 +17,11 @@ class Post extends Model
         'posted_at'
     ]; 
 
+    public static function getLatest($howmany = 60)
+    {
+        return Static::with(['Source','Category'])->OrderBy('posted_at','desc')->take($howmany)->get();
+    }
+
     public function getTimeAgoAttribute()
     {
         return $this->posted_at->diffForHumans();

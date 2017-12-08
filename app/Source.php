@@ -75,7 +75,7 @@ class Source extends Model
       return $posts->count() . ' new posts saved';
     }
 
-    public function getLatestPosts($howmany = 20)
+    public function getLatestPosts($howmany = 60)
     {
       return Post::with(['Source','Category'])->where('source_id', $this->id)->OrderBy('posted_at','desc')->take($howmany)->get();
     }

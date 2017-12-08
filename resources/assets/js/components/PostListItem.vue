@@ -8,8 +8,7 @@
                     @click="showPostDetails()"
                     class="has-text-grey-dark is-title is-size-4 has-text-weight-bold">
                 </h1></a>
-                <a href="#"><h2 
-                    @click.prevent="showSource()" 
+                <a :href='"/app/source/" + post.source.id' ><h2 
                     class="has-text-primary is-subtitle is-size-5 is-uppercase has-text-weight-semibold inline-at-mobile"
                     >{{ post.source.name }}
                 </h2></a>
