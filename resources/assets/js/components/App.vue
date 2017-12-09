@@ -6,20 +6,8 @@
             :active_post="active_post"
             v-on:closeWindow="closeDetailsView()">
         </post-details>
-       
-        <!-- Read / Unread Tabs -->
-        <div class="row" v-if="page == 'post list'">
-            <div class="container">
-                <div class="tabs is-boxed is-right">
-                  <ul>
-                    <li :class="{'is-active': this.unread_only}" @click="unread_only = true"> <a>Unread ({{unread_count}})</a></li>
-                    <li :class="{'is-active': !this.unread_only}" @click="unread_only = false"> <a>All Posts</a></li>
-                  </ul>
-                </div>
-            </div>
-        </div>
 
-        <!-- Breadcrumbs -->
+        <!-- Level with breadcrumbs and settings -->
             <div class="container">
                 <div class="level">
                     <nav class="breadcrumb has-arrow-separator" aria-label="breadcrumbs">
@@ -28,8 +16,23 @@
                         <li class="is-active"><a href="#">{{posts_description}}</a></li>
                       </ul>
                     </nav>
-                    <button v-if=" this.reverse" class="button is-right" @click="reverseOrder()">&uarr; Oldest On Top</button>
-                    <button v-if=" !this.reverse" class="button is-right" @click="reverseOrder()">&darr; Newest on Top</button>
+                    <form>
+                        <div class="field is-horizontal">
+                            <div class="control">
+                                <label class="checkbox">
+                                  <input type="checkbox" v-model="unread_only">
+                                      <span class="field-label">Unread Only</span>
+                                </label>
+                            </div> 
+                            <div class="control is-horizontal">
+                                <label class="checkbox">
+                                  <input type="checkbox" v-model="reverse">
+                                      <span class="field-label">Oldest Post On Top</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="field"></div>
+                    </form>
                 </div>
             </div>
         <div class="container" v-show="page == 'post list'">
@@ -122,7 +125,7 @@
 
                 axios.patch('/api/posts/'+post.id, {read: post.read})
                 .then((res) => {
-                    this.fetchPostList();
+                    // nothing
                 }).catch((res) => {
                     console.log('there was a problem with updating post status');
                     post.read = 1 - post.read;;

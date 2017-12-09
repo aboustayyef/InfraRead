@@ -64,5 +64,9 @@
 <style scoped>
     p {
          cursor: pointer;
+         line-height: 1.5;
+    }
+    .column{
+        padding: 0.5rem 0.75rem;
     }
 </style>
