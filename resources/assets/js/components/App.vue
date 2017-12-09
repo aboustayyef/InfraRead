@@ -17,21 +17,17 @@
                       </ul>
                     </nav>
                     <form>
-                        <div class="field is-horizontal">
-                            <div class="control">
-                                <label class="checkbox">
-                                  <input type="checkbox" v-model="unread_only">
-                                      <span class="field-label">Unread Only</span>
-                                </label>
-                            </div> 
-                            <div class="control is-horizontal">
-                                <label class="checkbox">
-                                  <input type="checkbox" v-model="reverse">
-                                      <span class="field-label">Oldest Post On Top</span>
-                                </label>
-                            </div>
-                        </div>
-                        <div class="field"></div>
+                        <label class="ios7-switch">
+                            <input type="checkbox" v-model="unread_only">
+                            <span></span>
+                            Unread Only <span v-if="unread_count>0">({{unread_count}})</span>
+                            &nbsp;&nbsp;
+                        </label>
+                         <label class="ios7-switch">
+                            <input type="checkbox" v-model="reverse">
+                            <span></span>
+                            Oldest On Top
+                        </label>                           
                     </form>
                 </div>
             </div>
