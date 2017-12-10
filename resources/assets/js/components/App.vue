@@ -57,7 +57,7 @@
             return {
                 page: window.page,    // used to know which view we're in: post list, post details or post filters
                 posts_source: window.posts_source, // which XHR request to get posts
-                posts_description: window.posts_description, 
+                posts_description: window.posts_description,
                 posts : [], // the list of unfiltered posts
                 posts_loaded : false, 
                 active_post : {}, // the posts which is in the post details view mode
@@ -68,9 +68,24 @@
             };
         },
         created() {
+            // Start with local storage
+            this.posts = JSON.parse(localStorage.getItem(this.posts_storage_key) || '[]');
+            if (this.posts.length > 0) {
+                this.posts_loaded = true;
+                this.active_post = this.posts[0];
+            }
             this.fetchPostList();
         },
+        watch: {
+            posts: function(){
+                localStorage.setItem(this.posts_storage_key, JSON.stringify(this.posts));
+            }
+        },
         computed: {
+            posts_storage_key()
+            {
+               return 'feedreader-' + this.posts_source;
+            },
             unread_count()
             {
                 return this.posts.filter((post) => {return post.read == 0}).length;
