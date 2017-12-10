@@ -13,6 +13,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
 </head>
+<noscript>
+    <h3>
+        This App Requires Javascript to Work
+    </h3>
+    <p>Sorry For Inconvenience</p>
+</noscript>
 <body>
     <div id="app" v-cloak>
         <app ></app>

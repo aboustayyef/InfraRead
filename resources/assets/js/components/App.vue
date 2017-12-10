@@ -35,6 +35,13 @@
             <div class="row" v-if="filtered_posts.length == 0 && posts_loaded">
                 There are no unread posts... <a @click="unread_only = false">See All posts</a>
             </div>
+
+            <article class="message is-warning" v-if="posts_loaded == 'storage'">
+              <div class="message-body ">
+                Updating posts...
+              </div>
+            </article>
+
             <div v-if="posts_loaded" class='row'>
                 <ul>
                     <li v-for="post in filtered_posts">
@@ -71,7 +78,7 @@
             // Start with local storage
             this.posts = JSON.parse(localStorage.getItem(this.posts_storage_key) || '[]');
             if (this.posts.length > 0) {
-                this.posts_loaded = true;
+                this.posts_loaded = 'storage';
                 this.active_post = this.posts[0];
             }
             this.fetchPostList();
@@ -110,7 +117,7 @@
             {
                 axios.get(this.posts_source).then((res) => {
                     this.posts = res.data;
-                    this.posts_loaded = true;
+                    this.posts_loaded = 'server';
                     this.active_post = this.posts[0];
                 });
             },
