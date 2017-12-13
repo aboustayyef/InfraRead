@@ -2,7 +2,7 @@
 
 # InfraRead
 
-InfraRead (pronounced _infrared_) is an elegant self-hosted RSS feed reader optimized for reading and comfort. It is inspired by [Unread](https://itunes.apple.com/us/app/unread-rss-reader/id1252376153?mt=8) and built with [Laravel](https://laravel.com) and [VueJs](https://vuejs.org/).
+InfraRead (pronounced _infrared_ ) is an elegant self-hosted RSS feed reader optimized for reading and comfort. It is inspired by [Unread](https://itunes.apple.com/us/app/unread-rss-reader/id1252376153?mt=8) and built with [Laravel](https://laravel.com) and [VueJs](https://vuejs.org/).
 
 ![](public/img/screenshot.png?raw=true)
 

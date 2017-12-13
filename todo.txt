@@ -5,3 +5,4 @@
 - Add manage buttons to the home view (manage sources and categories)
 - Pocket and Instapaper APIs ?
 - In modal view, add (go to top) link and make it default action whenever it's active.
+- Licensing
