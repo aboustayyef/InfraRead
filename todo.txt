@@ -1,4 +1,3 @@
-- Improve the loading spinner before Vue is mounted.
 - Save state offline (unread only and oldest first)
 - Continue Readme File (Installation.. etc)
 - Make it easier to go to All Posts from source or category (without having to go through home first)
@@ -10,3 +9,4 @@
 - In modal view, add (go to top) link and make it default action whenever it's active.
 - Licensing
 - (done) remove unused .vue files and reference to them
+- (done) Improve the loading spinner before Vue is mounted.
