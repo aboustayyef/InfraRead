@@ -29,6 +29,9 @@
         {
             closeWindow()
             {
+
+                // Scroll to top first.
+                document.getElementsByClassName('modal-card-body')[0].scrollTop = 0;
                 this.$emit('closeWindow'); 
             }
         }
