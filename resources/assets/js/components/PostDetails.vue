@@ -11,7 +11,7 @@
           <h2 class="has-text-primary subtitle is-5 is-uppercase has-text-weight-semibold">{{ active_post.source.name }}</h2>
           <p class="is-6 has-text-grey-light" >
             {{active_post.time_ago}}
-            <span v-if="active_post.author.length > 0">
+            <span v-if="active_post.author">
               by {{active_post.author}}
             </span>
           </p>          
@@ -25,10 +25,10 @@
     export default {
         props: ['page','active_post'],
         computed: {
-            sanitized_content (){
+            sanitized_content(){
               var san = this.active_post.content.replace(/http\:/gi, 'https\:') || this.active_post.content;
               return san;
-          }
+            }
         },
         methods:
         {
