@@ -1,4 +1,4 @@
-<img src="public/img/touch/infrared144.png" width="72" height="72">
+<img src="public/img/touch/infraread144.png" width="72" height="72">
 
 # InfraRead
 
