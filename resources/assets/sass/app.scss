@@ -8,9 +8,7 @@ $link: $primary;
 
 @import "../../../node_modules/bulma/bulma";
 @import "ios-7-switch";
-.content{
-    font-size:1.25rem;
-}
+
 p{
     line-height:1.8;
 }
@@ -20,26 +18,11 @@ p{
 .read{
     opacity: 0.5;
 }
-.content{
-    max-width:800px;
-    margin:auto;
-    line-height:2;
-}
-.modal-card-head{
-    width: 100%;
-    max-width: 800px;
-    padding-left: 0;
-    margin: auto;
-}
-.modal-card{
-    height: calc(100% - 20px);
-    width:  calc(100% - 20px);
-    max-height:  calc(100% - 20px);
-    max-width: calc(100% - 20px);
-}
+
 hr{
     margin: 0 0 1.5rem 0;
 }
+
 .inline-at-mobile{
     @media screen and (max-width: 768px){
         display:inline-block;

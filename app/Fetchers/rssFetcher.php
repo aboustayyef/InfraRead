@@ -43,15 +43,22 @@ class rssFetcher implements Fetchable
 		// get all Items in the RSS feed
 		$items = collect($feed->get_items());
 
-		// keep only url and id
 		$items = $items->map(function($item) {
+			
+			if (is_object($item->get_author())) {
+				$author = $item->get_author()->get_name();
+			}else{
+				$author = "";
+			}
+
 			return 
 			[
 				'url' => $item->get_link(), 
 				'uid' => $item->get_id(),
 				'date'=> $item->get_date(),
 				'title'=> html_entity_decode($item->get_title()),
-				'url'	=> $item->get_link(),	
+				'url'	=> $item->get_link(),
+				'author' => $author,
 				'content' => $item->get_content(),
 			];
 		});
@@ -78,6 +85,7 @@ class rssFetcher implements Fetchable
 			$post->content = $item['content'];
 			$post->title = $item['title'];
 			$post->url = $item['url'];
+			$post->author = $item['author'];
 			$post->excerpt = str_limit(strip_tags($item['content']), 280);
 			// $post->original_image = $e->image;
 			$post->posted_at = new Carbon($item['date']);
