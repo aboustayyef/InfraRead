@@ -18,13 +18,23 @@
                     </nav>
                     <form>
                         <label class="ios7-switch">
-                            <input type="checkbox" v-model="unread_only">
+                            <input
+                              type="checkbox"
+                              v-model="unread_only"
+                              true-value="true"
+                              false-value="false"
+                            >
                             <span></span>
                             Unread Only <span v-if="unread_count>0">({{unread_count}})</span>
                             &nbsp;&nbsp;
                         </label>
                          <label class="ios7-switch">
-                            <input type="checkbox" v-model="reverse">
+                            <input
+                              type="checkbox"
+                              v-model="oldest_on_top"
+                              true-value="true"
+                              false-value="false"
+                            >
                             <span></span>
                             Oldest On Top
                         </label>                           
@@ -68,15 +78,17 @@
                 posts : [], // the list of unfiltered posts
                 posts_loaded : false, 
                 active_post : {}, // the posts which is in the post details view mode
-                unread_only: true, // default filter = unread posts
+                unread_only: "true", // default filter = unread posts
                 all_sources:[],
                 all_categories:[],
-                reverse: false, //location on list page, to remember when exiting details page
+                oldest_on_top: "false", //location on list page, to remember when exiting details page
             };
         },
         created() {
             // Start with local storage
             this.posts = JSON.parse(localStorage.getItem(this.posts_storage_key) || '[]');
+            this.unread_only = localStorage.getItem('infraread-unread-only') || "true";
+            this.oldest_on_top = localStorage.getItem('infraread-oldest-on-top') || "false";
             if (this.posts.length > 0) {
                 this.posts_loaded = 'storage';
                 this.active_post = this.posts[0];
@@ -86,7 +98,13 @@
         watch: {
             posts: function(){
                 localStorage.setItem(this.posts_storage_key, JSON.stringify(this.posts));
-            }
+            },
+            unread_only: function(){
+                localStorage.setItem('infraread-unread-only', this.unread_only);
+            },
+            oldest_on_top: function(){
+                localStorage.setItem('infraread-oldest-on-top', this.oldest_on_top);
+            },
         },
         computed: {
             posts_storage_key()
@@ -100,13 +118,13 @@
             filtered_posts()
             {
                 let posts_list = this.posts;
-                if (this.unread_only) 
+                if (this.unread_only == "true") 
                 { 
                     posts_list = this.posts.filter((post)=>{
                         return post.read == 0
                     });
                 }
-                if (this.reverse) {
+                if (this.oldest_on_top == "true") {
                     return posts_list.reverse();
                 }
                 return posts_list;
