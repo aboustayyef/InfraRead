@@ -2,6 +2,9 @@
 
 @section('content')
 <div class="container">
+    <div style="text-align: center;margin:2.5em" class="row">
+        <img src="/img/touch/infraread96.png"> 
+    </div>
     <div class="row">
         <div class="col-md-8 col-md-offset-2">
             <div class="panel panel-default">
