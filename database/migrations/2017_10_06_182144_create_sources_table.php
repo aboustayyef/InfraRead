@@ -19,8 +19,8 @@ class CreateSourcesTable extends Migration
             $table->text('description')->nullable();
             $table->string('url');
             $table->string('author')->nullable();
-            $table->string('fetcher_kind');
-            $table->string('fetcher_source');
+            $table->string('fetcher_kind'); // only option so far: rss // future plans: twitter?
+            $table->string('fetcher_source'); // rss feed now // future plans: twitter user homepage
             $table->boolean('active')->default(1);
             $table->text('why_deactivated')->nullable();
             $table->integer('category_id')->unsigned();

@@ -88,11 +88,9 @@ class Source extends Model
     {
         $available_fetcher_kinds = ['rss'];
         $rules =  [
-            'name'  =>  'required|min:6',
+            'name'  =>  'required',
             'url'   =>  'required|url',
-            'nickname'=> 'required|alpha_num',
             'description'   =>  'max:140',
-            'twitter'  =>   'required|alpha_dash',
             'fetcher_source'   =>  'required|url',      
             'fetcher_kind'   =>  'in:'. implode(',', $available_fetcher_kinds),      
        ];
