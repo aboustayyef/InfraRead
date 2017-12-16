@@ -38,12 +38,9 @@ Route::get('/app/category/{id}', function($id){
 })->middleware('auth');
 
 Route::get('/app/sources', function(){
-
     $sources = App\Source::all();
     $categories = App\Category::all();
-
     return view('sources')->with(compact('sources'))->with(compact('categories'));
-
 })->middleware('auth');
 
 
@@ -64,7 +61,7 @@ Route::get('/markallread', function(){
         $post->read = 1;
         $post->save();
     });
-    return redirect('/');
+    return redirect('/app');
 });
 
 

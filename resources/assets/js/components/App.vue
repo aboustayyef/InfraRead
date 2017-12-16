@@ -6,7 +6,7 @@
             :active_post="active_post"
             v-on:closeWindow="closeDetailsView()">
         </post-details>
-
+        
         <!-- Level with breadcrumbs and settings -->
             <div class="container">
                 <div class="level">
@@ -39,6 +39,17 @@
                             Oldest On Top
                         </label>                           
                     </form>
+                </div>
+                <div class="level" v-if="unread_count > 0">
+                    <div class="level-left">
+                        <!-- Nothing here -->
+                    </div>
+                    <div class="level-right buttons">
+                        <button class="button" v-show="!areyousure" @click="toggleAreYouSure()">Mark All Posts as Read</button>
+                        <p v-show="areyousure" class="level-item">Are you sure?</p>
+                        <a v-show="areyousure" class="level-item button is-danger" href="/markallread">Yes</a>
+                        <a v-show="areyousure" class="level-item button" @click="toggleAreYouSure">No</a>
+                    </div>
                 </div>
             </div>
         <div class="container" v-show="page == 'post list'">
@@ -82,6 +93,7 @@
                 all_sources:[],
                 all_categories:[],
                 oldest_on_top: "false", //location on list page, to remember when exiting details page
+                areyousure: false,
             };
         },
         created() {
@@ -138,6 +150,11 @@
                     this.posts_loaded = 'server';
                     this.active_post = this.posts[0];
                 });
+            },
+
+            toggleAreYouSure()
+            {
+                this.areyousure = !this.areyousure;
             },
 
             // Detail View
