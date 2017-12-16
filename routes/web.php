@@ -80,6 +80,9 @@ Route::prefix('api')->middleware('auth')->group(function(){
     
     Route::resource('/posts', 'PostController')->only(['index','update']);
 
+    // crawl for new posts /per source
+    Route::get('/refresh/{source}', 'RefreshPostsController@handle');
+
     // Get a List of posts of a particular source
     Route::get('/postsBySource/{source}','PostsBySourceController@index');
 
