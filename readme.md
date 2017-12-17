@@ -10,11 +10,10 @@ InfraRead (pronounced _infrared_ ) is an elegant self-hosted RSS feed reader and
 
 <img src="public/img/toggle-details.png?raw=true" width="365" height="42">
 
-*  Straightforward to Install and setup
 *  Distraction free. Attention to details and optimized for reading
 *  Import your own OPML or add feeds manually
-*  Progressive Web App installable on Android devices 
-(Lighthouse score 100)
+*  100% responsive
+*  Progressive Web App (PWA)
 
 ## Requirements
 
@@ -27,10 +26,11 @@ InfraRead (pronounced _infrared_ ) is an elegant self-hosted RSS feed reader and
 *  run ```composer install```
 *  run ```php artisan key:generate```
 *  make a copy of ```.env.example``` and save as ```.env```
-*  enter your admin details in ```.env```
-*  enter your database details in ```.env```
+*  fill your admin details in ```.env```
+*  fill your database details in ```.env```
 *  run ```php artisan migrate``` to migrate the database
 *  run ```php artisan db:seed```, this will populate your admin details in the database
+*  add this line to your Crontab: ```* * * * * php /path/to/your/site/artisan schedule:run >> /dev/null 2>&1```
 *  If you want to modify the js and css assets, also run: ```npm install```, and then ```npm run dev```
 
 ## License
@@ -43,4 +43,5 @@ Find me on [Twitter](https://twitter.com/beirutspring)
 
 ## Built on top of
 
-Laravel, VueJs, Bulma, Bootstrap, [Will Vincent Feeds](https://github.com/willvincent/feeds)
+[Laravel](laravel.com), [VueJs](vuejs.org), [Bulma](bulma.io), [Bootstrap](https://getbootstrap.com/), [Will Vincent Feeds](https://github.com/willvincent/feeds) who 
+builds on top of [SimplePie](http://simplepie.org/)
