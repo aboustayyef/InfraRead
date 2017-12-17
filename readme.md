@@ -10,10 +10,11 @@ InfraRead (pronounced _infrared_ ) is an elegant self-hosted RSS feed reader and
 
 <img src="public/img/toggle-details.png?raw=true" width="365" height="42">
 
-*  Distraction free. Attention to details and optimized for reading
-*  Import your own OPML or add feeds manually
-*  100% responsive
-*  Progressive Web App (PWA)
+*   Distraction free. Attention to details and optimized for reading
+*   Access From any device and feeds stay synced
+*   Import your own OPML or add feeds manually
+*   100% responsive
+*   Progressive Web App (PWA) with offline persistence
 
 ## Requirements
 
