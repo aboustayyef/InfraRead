@@ -30,7 +30,7 @@ class OpmlImporter
 
             // populate group feeds 
             foreach ($group['outline'] as $source) {
-                $source_details = $source['@attributes'];
+                $source_details = isset($source['@attributes'])? $source['@attributes'] : $source;
                 $result = Source::create([
                     'name'              =>  $source_details['text'],
                     'description'       =>  $source_details['title'],
