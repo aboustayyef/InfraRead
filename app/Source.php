@@ -94,9 +94,6 @@ class Source extends Model
             'fetcher_source'   =>  'required|url',      
             'fetcher_kind'   =>  'in:'. implode(',', $available_fetcher_kinds),      
        ];
-       if ($create) {
-           $rules['nickname'] .= '|unique:blogs';
-       }
        return $rules;
     }
     public function categories()
