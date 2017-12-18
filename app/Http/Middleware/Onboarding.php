@@ -20,10 +20,6 @@ class Onboarding
             return response("Hello. It seems you haven't set up your user account yet. <br>Kindly make sure you add your information in the .env file then run <code>php artisan db:seed</code>");
         }
 
-        // If a user exists, but not RSS feeds is set up
-        if (\App\Source::count() == 0) {
-            return redirect('/setup');
-        }
         return $next($request);
     }
 }

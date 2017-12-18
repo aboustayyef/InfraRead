@@ -7,6 +7,10 @@ use App\Utilities\OpmlImporter;
 use Illuminate\Http\Request;
 
 Route::get('/', function(){
+    // If a user exists, but not RSS feeds is set up
+    if (\App\Source::count() == 0) {
+        return redirect('/setup');
+    }
     return redirect('/app');
 });
 
