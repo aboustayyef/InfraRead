@@ -22,11 +22,13 @@
 
         <!-- Right Pane -->
         <div class="column is-half">
-            <p
-                @click="showPostDetails()"
-                class="has-text-grey">
-                {{ post.excerpt }}
-            </p>
+            <a :href="post.url" target="_blank">
+                <p
+                    @click="showPostDetails($event)"
+                    class="has-text-grey">
+                    {{ post.excerpt }}
+                </p>
+            </a>
             <br>
             <a class="button" @click="togglePostRead(post)">{{readButtonMessage()}}</a>
         </div>
@@ -54,7 +56,7 @@
             },
             showPostDetails(event)
             {
-                if(event && event.ctrlKey) {
+                if((event && event.ctrlKey) || (event && event.metaKey)) {
                     return;
                 }
                 event.preventDefault();
