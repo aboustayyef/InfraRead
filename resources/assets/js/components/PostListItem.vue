@@ -4,8 +4,8 @@
         <!-- Left Pane -->
         <div class="column is-half">
             <div class="content">
-                <a href="#"><h1 v-html="post.title" 
-                    @click="showPostDetails()"
+                <a :href="post.url" target="_blank"><h1 v-html="post.title"
+                    @click="showPostDetails($event)"
                     class="has-text-grey-dark is-title is-size-4 has-text-weight-bold">
                 </h1></a>
                 <a :href='"/app/source/" + post.source.id' ><h2 
@@ -13,7 +13,7 @@
                     >{{ post.source.name }}
                 </h2></a>
                 <h3 
-                    @click="showPostDetails()" 
+                    @click="showPostDetails()"
                     class="is-size-6 has-text-grey-light inline-at-mobile" >
                     {{post.time_ago}}
                 </h3>
@@ -23,7 +23,7 @@
         <!-- Right Pane -->
         <div class="column is-half">
             <p
-                @click="showPostDetails()" 
+                @click="showPostDetails()"
                 class="has-text-grey">
                 {{ post.excerpt }}
             </p>
@@ -52,11 +52,14 @@
             {
                 this.$emit('toggle-post-read', post);
             },
-            showPostDetails()
+            showPostDetails(event)
             {
-
+                if(event && event.ctrlKey) {
+                    return;
+                }
+                event.preventDefault();
                 // Tells the the parent components that the current post has changed
-                this.$emit('show-post-details') 
+                this.$emit('show-post-details')
             }
         },
     }
