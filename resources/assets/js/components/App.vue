@@ -13,7 +13,15 @@
                     <nav class="breadcrumb has-arrow-separator level-left" style="margin-bottom:0" aria-label="breadcrumbs">
                       <ul>
                         <li><a href="/app/sources">Home</a></li>
-                        <li class="is-active"><a href="#">{{posts_description}}</a>
+                        <li class="is-active">&nbsp;
+                            <span v-if="posts_description == 'All Posts'">
+                            {{posts_description}}
+                            </span>
+                            <span v-else class="tag" >
+                                {{posts_description}} &nbsp; 
+                                <button class="delete is-small" @click="showallposts()"></button>
+                            </span>
+
                         </li>
                       </ul>
                     </nav>
@@ -45,12 +53,7 @@
                 </div>
                 <div class="level" v-if="unread_count > 0">
                     <div class="level-left">
-                        <a href="/" class="level-item is-hidden-mobile" v-if="posts_description != 'All Posts'">
-                            <span class="tag is-medium" >
-                                <button class="delete is-small"></button>
-                                &nbsp; Show all Posts
-                            </span>
-                        </a>
+                        
                     </div>
                     <div class="level-right buttons">
                         <button class="button" v-show="!areyousure" @click="toggleAreYouSure()">Mark All Posts as Read</button>
@@ -148,6 +151,10 @@
                     return posts_list.reverse();
                 }
                 return posts_list;
+            },
+            showallposts()
+            {
+                window.location = "/";
             }
         },
         methods: {
