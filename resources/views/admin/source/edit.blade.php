@@ -2,6 +2,9 @@
 
 @section('content')
 <div class="container">
+
+    <h2>Edit Source "{{$source->name}}"</h2>
+    <hr>
     <form method="POST" action="/admin/source/{{$source->id}}" >
         <input name="_method" type="hidden" value="PUT">
         @include('admin.source._form')

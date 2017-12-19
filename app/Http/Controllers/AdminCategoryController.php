@@ -88,7 +88,14 @@ class AdminCategoryController extends Controller
      */
     public function destroy(Category $category)
     {
+        // First, unset category references of sources in this category
+        $sources = $category->sources;
+        $sources->each(function($source){
+            $source->category_id = null;
+            $source->save();
+        });
         $category->delete();
+
         return redirect(route('admin.category.index'))->with('message', 'Category Succesfully Deleted'); 
     }
 }

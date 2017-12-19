@@ -30,7 +30,7 @@
                 <a href="/app"><li class="is-primary" >Show All Articles</li></a>
               </ul>
               
-              <h2 class="has-text-grey-dark is-title is-size-4 has-text-weight-bold">Categories</h2>
+              <h2 class="has-text-grey-dark is-title is-size-4 has-text-weight-bold">Categories <a class="button is-outlined  is-pulled-right" href="/admin/category/"> manage </a></h2>
               <ul>
                 @foreach($categories as $category)
                     <a href="{{'/app/category/' . $category->id}}"><li class="is-primary" >{{$category->description}}</li></a>
@@ -39,7 +39,7 @@
             </div>
 
             <div class="column">
-              <h2 class="has-text-grey-dark is-title is-size-4 has-text-weight-bold">Sources</h2>
+              <h2 class="has-text-grey-dark is-title is-size-4 has-text-weight-bold">Sources <a class="button is-outlined  is-pulled-right" href="/admin/source/"> manage </a></h2>
               <ul>
                 @foreach($sources as $source)
                     <a href="{{'/app/source/' . $source->id}}"><li class="is-primary" >{{$source->name}}</li></a>

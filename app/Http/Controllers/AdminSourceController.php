@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Category;
 use App\Source;
 use Illuminate\Http\Request;
 
@@ -25,7 +26,8 @@ class AdminSourceController extends Controller
     public function create()
     {
         $source = new Source;
-        return view('admin.source.create')->with(compact('source'));
+        $categories = Category::all();
+        return view('admin.source.create')->with(compact('source'))->with(compact('categories'));
     }
 
     /**
@@ -62,7 +64,8 @@ class AdminSourceController extends Controller
     public function edit(Source $source)
     {
        if ($source) {
-           return view('admin.source.edit')->with(compact('source')); 
+            $categories = Category::all();
+           return view('admin.source.edit')->with(compact('source'))->with(compact('categories')); 
        }
        return response('Record Not Found', 404);
     }
