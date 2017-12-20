@@ -5,7 +5,7 @@
     "license": "MIT",
     "type": "project",
     "require": {
-        "php": ">=7.0.0",
+        "php": ">=7.1.0",
         "doctrine/dbal": "^2.6",
         "embed/embed": "^3.2",
         "fideloper/proxy": "~3.3",
