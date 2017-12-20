@@ -179,7 +179,17 @@
                     this.posts_loaded = 'server';
                     this.active_post = this.posts[0];
                     this.last_fetch_posts = Date.now();
+                    this.updateDocumentTitle();
                 });
+            },
+
+            updateDocumentTitle()
+            {
+                if (this.unread_count > 0) {
+                    document.title = `(${this.unread_count}) InfraRead`;
+                } else {
+                    document.title = `InfraRead`;
+                }
             },
 
             toggleAreYouSure()
@@ -204,8 +214,8 @@
             },
             togglePostRead(post)
             {
-                post.read = 1 - post.read; // toggle between 0 and 1
-
+                post.read = 1 - post.read ; // toggle between 0 and 1
+                this.updateDocumentTitle() ;
                 axios.patch('/api/posts/'+post.id, {read: post.read})
                 .then((res) => {
                     // nothing
