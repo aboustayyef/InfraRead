@@ -2,7 +2,7 @@
 @section('content')
     <div class="container">
         <h2>Create new source</h2>
-        <form method="POST" action="/admin/source/" >
+        <form method="POST" action="{{route('admin.source.store')}}">
             @include('admin.source._form')
         <input type="submit" class="btn btn-primary"></input>
         </form>
