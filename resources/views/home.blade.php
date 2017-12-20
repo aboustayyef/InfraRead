@@ -23,7 +23,7 @@
 </noscript>
 <body>
     <div id="app" v-cloak>
-        <app ></app>
+        <app refreshInterval="{!! config('infraread.refresh_interval') !!}" ></app>
     </div>
     <script src="{{ mix('/js/app.js') }}"></script>
 </body>
