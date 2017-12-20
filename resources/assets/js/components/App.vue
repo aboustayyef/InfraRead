@@ -1,12 +1,12 @@
 <template>
     <div>
         <post-details
-            v-if="posts_loaded" 
-            :page="page" 
+            v-if="posts_loaded"
+            :page="page"
             :active_post="active_post"
             v-on:closeWindow="closeDetailsView()">
         </post-details>
-        
+
         <!-- Level with breadcrumbs and settings -->
             <div class="container">
                 <div class="level">
@@ -53,7 +53,7 @@
                 </div>
                 <div class="level" v-if="unread_count > 0">
                     <div class="level-left">
-                        
+
                     </div>
                     <div class="level-right buttons">
                         <button class="button" v-show="!areyousure" @click="toggleAreYouSure()">Mark All Posts as Read</button>
@@ -78,7 +78,7 @@
                 <ul>
                     <li v-for="post in filtered_posts">
                         <!-- When a user clicks on an area of the post, change the current post and mark it as read -->
-                        <post-list-item 
+                        <post-list-item
                             :post="post"
                             v-on:show-post-details="showDetailsView(post)"
                             v-on:toggle-post-read="togglePostRead(post)"
@@ -92,15 +92,19 @@
 </template>
 <script>
     export default {
+        props: [
+            'refreshinterval'
+        ],
         data() {
             return {
                 page: window.page,    // used to know which view we're in: post list, post details or post filters
                 posts_source: window.posts_source, // which XHR request to get posts
                 posts_description: window.posts_description,
                 posts : [], // the list of unfiltered posts
-                posts_loaded : false, 
+                posts_loaded : false,
                 active_post : {}, // the posts which is in the post details view mode
                 unread_only: "true", // default filter = unread posts
+                last_fetch_posts: 0,
                 all_sources:[],
                 all_categories:[],
                 oldest_on_top: "false", //location on list page, to remember when exiting details page
@@ -117,6 +121,7 @@
                 this.active_post = this.posts[0];
             }
             this.fetchPostList();
+            window.onfocus = this.autoRefreshPosts;
         },
         watch: {
             posts: function(){
@@ -141,8 +146,8 @@
             filtered_posts()
             {
                 let posts_list = this.posts;
-                if (this.unread_only == "true") 
-                { 
+                if (this.unread_only == "true")
+                {
                     posts_list = this.posts.filter((post)=>{
                         return post.read == 0
                     });
@@ -158,12 +163,22 @@
             }
         },
         methods: {
-            fetchPostList() 
+
+            autoRefreshPosts()
+            {
+                //refresh posts when last fetch is older than this.refreshinterval
+                if((Date.now() - this.last_fetch_posts) > (this.refreshinterval * 60000)) {
+                    this.fetchPostList();
+                }
+            },
+
+            fetchPostList()
             {
                 axios.get(this.posts_source).then((res) => {
                     this.posts = res.data;
                     this.posts_loaded = 'server';
                     this.active_post = this.posts[0];
+                    this.last_fetch_posts = Date.now();
                 });
             },
 
@@ -173,7 +188,7 @@
             },
 
             // Detail View
-            
+
             showDetailsView(post){
                 this.active_post = post;
                 this.page = "post details";
