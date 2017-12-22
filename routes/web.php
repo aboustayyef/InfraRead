@@ -94,9 +94,14 @@ Route::prefix('api')->middleware('auth')->group(function(){
     Route::get('source', function(){
         return App\Source::all();
     });
+
+    // Get a list of categories. Used for administering categories
     Route::get('category', function(){
         return App\Category::all();
     });
+
+    // analyze URL for quick add
+    Route::get('urlAnalyze', 'UrlAnalysisController@index');
 
 });
 
