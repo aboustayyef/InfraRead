@@ -7,3 +7,14 @@
 
 // Bootstrap
 @import "~bootstrap-sass/assets/stylesheets/bootstrap";
+
+
+[v-cloak] > * { display:none; }
+[v-cloak]{ 
+  background-image: url(/img/rss-loader.svg);
+  background-color: #4e4e4e;
+  height: 100vh;
+  width: 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+}

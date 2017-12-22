@@ -24,7 +24,7 @@ class UrlAnalyzer
 
         // Check url is valid
         if (filter_var($url, FILTER_VALIDATE_URL) === FALSE) {
-            return $this->abort('URL is not valid');
+            return $this->abort('URL is not valid. Make Sure it starts with http:// or https://');
         }
 
 
