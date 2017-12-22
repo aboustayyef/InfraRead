@@ -101,7 +101,7 @@ Route::prefix('api')->middleware('auth')->group(function(){
     });
 
     // analyze URL for quick add
-    Route::get('urlAnalyze', 'UrlAnalysisController@index');
+    Route::get('urlanalyze', 'UrlAnalysisController@index');
 
 });
 
