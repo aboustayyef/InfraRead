@@ -6,6 +6,7 @@ use App\Post;
 use App\Source;
 use Carbon\Carbon;
 use Embed\Embed;
+use GuzzleHttp\Client;
 
 class rssFetcher implements Fetchable
 {
@@ -79,10 +80,24 @@ class rssFetcher implements Fetchable
 		});
 		
 		$posts = $new_links->map(function($item){
+
+			// Content Depends on whether source wants full Feed
+			if ($this->source->full_content == 1) {
+				
+				$content = $this->get_full_content_from_link($item['url']);
+
+				// if there's a problem, fall back to rss content:
+				if (!$content) { 
+					$content = $item['content'];
+				}
+
+			} else {
+				$content = $item['content'];
+			}
 			// $e = Embed::create($item['url']);  
 			$post = new Post;
 			$post->uid = $item['uid'];
-			$post->content = $item['content'];
+			$post->content = $content;
 			$post->title = $item['title'];
 			$post->url = $item['url'];
 			$post->author = $item['author'];
@@ -95,4 +110,27 @@ class rssFetcher implements Fetchable
 
 		return $posts;
 	}
+
+	// private function get_full_content_from_link($url)
+	public static function get_full_content_from_link($url)
+	{
+		$client = new Client();
+            try {            
+                $response = $client->request('GET', 'https://mercury.postlight.com/parser', [
+                    'query' => [ 
+                    	'url'=>$url,
+                    ],
+                    'headers' => [ 
+	                    'Content-Type:' => 'application/json',
+	                    'x-api-key' => env('MERCURY_API_KEY')
+                    ],
+                ]);
+                $content = json_decode($response->getBody());
+                return $content->content;
+            } catch (\Exception $e) {
+            	return false;	
+            }
+	}
+
+
 }

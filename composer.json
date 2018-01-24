@@ -9,6 +9,7 @@
         "doctrine/dbal": "^2.6",
         "embed/embed": "^3.2",
         "fideloper/proxy": "~3.3",
+        "guzzlehttp/guzzle": "^6.3",
         "itsgoingd/clockwork": "^2.0",
         "laravel/framework": "5.5.*",
         "laravel/tinker": "~1.0",

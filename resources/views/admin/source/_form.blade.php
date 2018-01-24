@@ -32,6 +32,17 @@
             <input class="form-control" name="fetcher_source" type="text" id="fetcher_source" value="{{old('fetcher_source', $source->fetcher_source)}}">
             <small class="text-danger">{{ $errors->first('fetcher_source') }}</small>
         </div> 
+       
+        <input type="hidden" name="full_content" value=0> {{-- In case unchecked below, value to pass is 0 --}} 
+        <div class="form-group">
+            <div class="checkbox">
+                <label>
+                  <input type="checkbox" name="full_content" value=1 @if($source->full_content == 1) checked @endif >Force Full Content (Readability mode) 
+                </label>
+            </div>
+            <small class="text-danger">{{ $errors->first('full_content') }}</small>
+        </div>
+
     </div> <!-- /col-md-8 -->
 
     <div class="col-md-4">    
