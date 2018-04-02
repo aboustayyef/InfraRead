@@ -3,7 +3,9 @@
 namespace App\Console\Commands;
 
 use App\Source;
+use Carbon\Carbon;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Storage;
 
 class PostsUpdater extends Command
 {
@@ -67,5 +69,6 @@ class PostsUpdater extends Command
         $end_time = time();
         $diff = $end_time - $start_time;
         $this->info('process took ' . $diff . ' seconds');
+        Storage::disk('local')->put('LastSuccessfulCrawl.txt', new Carbon);
     }
 }

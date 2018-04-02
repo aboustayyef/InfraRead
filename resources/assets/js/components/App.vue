@@ -53,7 +53,8 @@
                 </div>
                 <div class="level" v-if="unread_count > 0">
                     <div class="level-left">
-
+                    <small class="has-text-grey-light" v-if="last_successful_crawl !== 'problem'">Last Update: {{last_successful_crawl}}</small>
+                    <span v-else class="tag is-small is-warning">There was a problem updating</span>
                     </div>
                     <div class="level-right buttons">
                         <button class="button" v-show="!areyousure" @click="toggleAreYouSure()">Mark All Posts as Read</button>
@@ -93,7 +94,7 @@
 <script>
     export default {
         props: [
-            'refreshinterval'
+            'refreshinterval','last_successful_crawl'
         ],
         data() {
             return {

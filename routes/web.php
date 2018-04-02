@@ -22,7 +22,12 @@ Route::get('/app', function(){
     $posts_source = '/api/posts';
     $posts_description = 'All Posts' ;
     $page = 'post list';
-    return view('home')->with(compact('posts_source'))->with(compact('page'))->with(compact('posts_description'));
+    $last_successful_crawl = getLastSuccesfulCrawl();
+    return view('home')
+        ->with(compact('posts_source'))
+        ->with(compact('page'))
+        ->with(compact('posts_description'))
+        ->with(compact('last_successful_crawl'));
 })->middleware('auth');
 
 Route::get('/app/source/{id}', function($id){
@@ -30,7 +35,12 @@ Route::get('/app/source/{id}', function($id){
     $posts_source = '/api/postsBySource/'.$id;
     $posts_description = 'Posts By '. $source->name ;
     $page = 'post list';
-    return view('home')->with(compact('posts_source'))->with(compact('page'))->with(compact('posts_description'));
+    $last_successful_crawl = getLastSuccesfulCrawl();
+    return view('home')
+        ->with(compact('posts_source'))
+        ->with(compact('page'))
+        ->with(compact('posts_description'))
+        ->with(compact('last_successful_crawl'));
 })->middleware('auth');
 
 Route::get('/app/category/{id}', function($id){
@@ -38,7 +48,12 @@ Route::get('/app/category/{id}', function($id){
     $posts_source = '/api/postsByCategory/'.$id;
     $posts_description = 'Posts In the [ '. $category->description . ' ] Category' ;
     $page = 'post list';
-    return view('home')->with(compact('posts_source'))->with(compact('page'))->with(compact('posts_description'));
+    $last_successful_crawl = getLastSuccesfulCrawl();
+    return view('home')
+        ->with(compact('posts_source'))
+        ->with(compact('page'))
+        ->with(compact('posts_description'))
+        ->with(compact('last_successful_crawl'));
 })->middleware('auth');
 
 Route::get('/app/sources', function(){
@@ -103,5 +118,17 @@ Route::prefix('api')->middleware('auth')->group(function(){
     // analyze URL for quick add
     Route::get('urlanalyze', 'UrlAnalysisController@index');
 
+    function getLastSuccesfulCrawl(){
+        try {
+            $last_crawl = new Carbon\Carbon(Storage::get('LastSuccessfulCrawl.txt'));
+            // If more than 30 minutes ago, there's a problem that needs to be looked into
+            if ($last_crawl->diffInMinutes() > 30) {
+                return 'problem';
+            }
+            return $last_crawl->diffForHumans();
+        } catch (\Exception $e) {
+            return 'problem';
+        }
+    }
 });
 

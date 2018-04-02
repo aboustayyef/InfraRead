@@ -23,7 +23,7 @@
 </noscript>
 <body>
     <div id="app" v-cloak>
-        <app refreshInterval="{!! config('infraread.refresh_interval') !!}" ></app>
+        <app refreshInterval="{!! config('infraread.refresh_interval') !!}" last_successful_crawl="{{$last_successful_crawl}}" ></app>
     </div>
     <script src="{{ mix('/js/app.js') }}"></script>
 </body>
