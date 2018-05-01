@@ -42,7 +42,7 @@ return [
   |
   */
   'strip_html_tags.disabled'=> false,
-
+  'ssl_check.disabled'  =>  true,
   /*
   |--------------------------------------------------------------------------
   | Striped Html Tags
