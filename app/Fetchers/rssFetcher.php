@@ -76,7 +76,7 @@ class rssFetcher implements Fetchable
 	{
 		//filter out posts that already exist in the database
 		$new_links = $this->list_of_post_links->filter(function($item) {
-			return ! Post::uidExists($item['uid']);
+			return ! Post::uidExists(substr($item['uid'],0,190));
 		});
 		
 		$posts = $new_links->map(function($item){
@@ -96,7 +96,7 @@ class rssFetcher implements Fetchable
 			}
 			// $e = Embed::create($item['url']);  
 			$post = new Post;
-			$post->uid = $item['uid'];
+			$post->uid = substr($item['uid'],0,190);
 			$post->content = $content;
 			$post->title = $item['title'];
 			$post->url = $item['url'];
