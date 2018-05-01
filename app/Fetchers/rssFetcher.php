@@ -3,6 +3,7 @@
 namespace App\Fetchers;
 
 use App\Post;
+use App\SlashdotPrettifier;
 use App\Source;
 use Carbon\Carbon;
 use Embed\Embed;
@@ -52,6 +53,13 @@ class rssFetcher implements Fetchable
 				$author = "";
 			}
 
+			// Do the Slashdot magic
+			$content = $item->get_content();
+			if (str_contains($item->get_base('href'),'slashdot')) {
+				$clean_content = (new SlashdotPrettifier($content))->get();
+				$content = $clean_content;
+			}
+
 			return 
 			[
 				'url' => $item->get_link(), 
@@ -60,7 +68,7 @@ class rssFetcher implements Fetchable
 				'title'=> html_entity_decode($item->get_title()),
 				'url'	=> $item->get_link(),
 				'author' => $author,
-				'content' => $item->get_content(),
+				'content' => $content,
 			];
 		});
 
@@ -79,7 +87,7 @@ class rssFetcher implements Fetchable
 			return ! Post::uidExists(substr($item['uid'],0,190));
 		});
 		
-		$posts = $new_links->map(function($item){
+		$posts = $new_links->map(function($item) {
 
 			// Content Depends on whether source wants full Feed
 			if ($this->source->full_content == 1) {
