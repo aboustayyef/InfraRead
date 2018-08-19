@@ -2,6 +2,7 @@
 
 use App\Category;
 use App\Post;
+use App\SDLog;
 use App\Source;
 use App\Utilities\OpmlImporter;
 use Illuminate\Http\Request;
@@ -12,6 +13,11 @@ Route::get('/', function(){
         return redirect('/setup');
     }
     return redirect('/app');
+});
+
+Route::get('/slashdot_prettifier_log', function(){
+    $posts = SDLog::all();
+    return view('debug')->with(['posts'=>$posts]);
 });
 
 Route::get('/setup', function(){

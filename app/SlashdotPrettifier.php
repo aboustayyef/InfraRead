@@ -1,6 +1,9 @@
 <?php 
 namespace App;
 
+use App\SDLog;
+use Illuminate\Support\Facades\Cache;
+
 class SlashdotPrettifier
 {
 
@@ -20,23 +23,25 @@ class SlashdotPrettifier
 
         // clean up content
 
-        //-- turn new lines into breaks
-        $content_with_line_breaks = nl2br($content);
-        //-- break up first paragraph.
-        //------get first paragraph
-        $first_paragraph = explode("<br />", $content_with_line_breaks)[0];
-        $words_in_first_paragraph = sizeof(explode(" ", $first_paragraph));
-
-        if ($words_in_first_paragraph > $max_length_of_paragraph) {
-            //get all phrases (separated by full stops)
-            $phrases = $this->breakLongText($first_paragraph, 130, $max_length_of_paragraph);
-            $first_paragraph = '<p>' . implode($phrases,'</p><p>').'</p>';
-        }
+        //-- remove line breaks
+        $content = str_replace("\n", "", $content);
+        $content = str_replace("\r", "", $content);
+        
+        $phrases = $this->breakLongText($content, 130, $max_length_of_paragraph);
+        $content = '<p>' . implode($phrases,'</p><p>').'</p>';
 
         // then re-attach it
-        $parts[0] = $first_paragraph;
+        $parts[0] = $content;
+        $cleaned_content = implode($parts);
 
-        return implode($parts);
+        // For Debugging: uncomment to log how the cleaning worked out
+
+        // $l = new SDLog;
+        // $l->original_content = $this->original_content;
+        // $l->cleaned_content = $cleaned_content;
+        // $l->save();
+
+        return $cleaned_content;
     }
 
     // Source: http://www.brainbell.com/tutorials/php/long-to-small-paragraph.html
@@ -54,7 +59,7 @@ class SlashdotPrettifier
          }
 
          //Guess sentence completion
-         $needle = '.';
+         $needle = '. ';
 
          /*iterate over $text length 
            as substr_replace deleting it*/  
