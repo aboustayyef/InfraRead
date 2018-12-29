@@ -201,11 +201,14 @@
             // Detail View
 
             showDetailsView(post){
+                window.scrollTo(0,0);
                 this.active_post = post;
                 this.page = "post details";
             },
             closeDetailsView()
             {
+                window.scrollTo(0,0);
+
                 // mark post as read if unread
                 if (this.active_post.read == 0) {
                     this.togglePostRead(this.active_post);

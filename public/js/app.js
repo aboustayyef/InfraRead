@@ -1814,10 +1814,13 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         // Detail View
 
         showDetailsView: function showDetailsView(post) {
+            window.scrollTo(0, 0);
             this.active_post = post;
             this.page = "post details";
         },
         closeDetailsView: function closeDetailsView() {
+            window.scrollTo(0, 0);
+
             // mark post as read if unread
             if (this.active_post.read == 0) {
                 this.togglePostRead(this.active_post);
