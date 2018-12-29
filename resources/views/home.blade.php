@@ -5,10 +5,13 @@
     <title>InfraRead</title>
     <!-- CSRF Stuff -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    {{-- Transfer Variables from PHP to Js --}}
     <script>window.Laravel = { csrfToken: '{{ csrf_token() }}' }</script> 
     <script>window.posts_source = '{{$posts_source}}'</script> 
     <script>window.posts_description = '{{$posts_description}}'</script> 
     <script>window.page = '{{$page}}'</script> 
+    
     <link rel="stylesheet" type="text/css" href="{{mix('/css/app.css')}}">
     <link rel="manifest" href="/manifest.json">
     <meta name="viewport" content="width=device-width, initial-scale=1">
