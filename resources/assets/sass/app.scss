@@ -9,6 +9,16 @@ $link: $primary;
 @import "../../../node_modules/bulma/bulma";
 @import "ios-7-switch";
 
+html {
+  font-size: 14px;
+  @include tablet {
+    font-size: 16px;
+  }
+  @include desktop {
+    font-size: 18px;
+  }
+}
+
 p{
     line-height:1.8;
 }
