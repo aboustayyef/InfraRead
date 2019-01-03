@@ -207,6 +207,7 @@
             },
             closeDetailsView()
             {
+                this.page = 'loading';
                 window.scrollTo(0,0);
 
                 // mark post as read if unread
