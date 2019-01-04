@@ -1,6 +1,6 @@
 <template>
   <section id="details-area" :class="{'open': page == 'post details'}" >
-    <div class="container">
+    <div class="container is-paddingless">
       <div class="content" style="max-width:800px; margin:auto">
           <p><a aria-label="close" @click.prevent="closeWindow" class="button">Done</a></p>
           <hr>
@@ -60,7 +60,8 @@
 </script>
 <style scoped>
   #details-area{
-      padding:2em;
+      padding:1em;
+      padding-top:3em;
       position: fixed;
       top: 0;
       left: 0;
