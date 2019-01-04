@@ -201,15 +201,13 @@
             // Detail View
 
             showDetailsView(post){
-                window.scrollTo(0,0);
+                document.getElementById('details-area').scrollTop=0;
                 this.active_post = post;
                 this.page = "post details";
             },
             closeDetailsView()
             {
-                this.page = 'loading';
-                window.scrollTo(0,0);
-
+                console.log('called');
                 // mark post as read if unread
                 if (this.active_post.read == 0) {
                     this.togglePostRead(this.active_post);

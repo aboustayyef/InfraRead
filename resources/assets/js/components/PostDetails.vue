@@ -1,6 +1,6 @@
 <template>
-  <section class="section" v-if="page == 'post details'">
-    <div class="container is-paddingless">
+  <section id="details-area" :class="{'open': page == 'post details'}" >
+    <div class="container">
       <div class="content" style="max-width:800px; margin:auto">
           <p><a aria-label="close" @click.prevent="closeWindow" class="button">Done</a></p>
           <hr>
@@ -59,4 +59,18 @@
     }
 </script>
 <style scoped>
+  #details-area{
+      padding:2em;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      bottom:0;
+      overflow-y:scroll;
+      transform: translateX(100%);
+      transition: transform 0.2s ease;
+  }
+  #details-area.open{
+    transform: translateX(0%);
+  }
 </style>
