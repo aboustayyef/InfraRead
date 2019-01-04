@@ -68,6 +68,7 @@
       width: 100%;
       bottom:0;
       overflow-y:scroll;
+      -webkit-overflow-scrolling: touch;
       transform: translateX(100%);
       transition: transform 0.2s ease;
   }
