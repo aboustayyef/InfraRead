@@ -60,6 +60,8 @@
 </script>
 <style scoped>
   #details-area{
+      background-color: white;
+      z-index:200;
       padding:1em;
       padding-top:3em;
       position: fixed;
@@ -70,7 +72,7 @@
       overflow-y:scroll;
       -webkit-overflow-scrolling: touch;
       transform: translateX(100%);
-      transition: transform 0.2s ease;
+      transition: transform 0.3s ease;
   }
   #details-area.open{
     transform: translateX(0%);

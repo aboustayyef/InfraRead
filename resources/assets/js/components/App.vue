@@ -9,7 +9,7 @@
 
             <div class="container">
             <!-- Level with breadcrumbs and settings -->
-                <div class="level" v-if="page == 'post list'">
+                <div class="level">
                     <nav class="breadcrumb has-arrow-separator level-left" style="margin-bottom:0" aria-label="breadcrumbs">
                       <ul>
                         <li><a href="/app/sources">Home</a></li>
@@ -51,7 +51,7 @@
                         </div>
                     </form>
                 </div>
-                <div class="level" v-if="unread_count > 0" v-show="page == 'post list'">
+                <div class="level" v-if="unread_count > 0" >
                     <div class="level-left">
                     <small class="has-text-grey-light" v-if="last_successful_crawl !== 'problem'">Last Update: {{last_successful_crawl}}</small>
                     <span v-else class="tag is-small is-warning">There was a problem updating</span>
@@ -64,7 +64,7 @@
                     </div>
                 </div>
             </div>
-        <div class="container" v-show="page == 'post list'">
+        <div class="container">
             <div class="row" v-if="filtered_posts.length == 0 && posts_loaded">
                 There are no unread posts... <a @click="unread_only = false">See All posts</a>
             </div>
