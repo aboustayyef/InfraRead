@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div :class="{'preven-scrolling': page == 'post details'}">
         <post-details
             v-if="posts_loaded"
             :page="page"
@@ -245,3 +245,9 @@
         }
     }
 </script>
+<style scoped>
+    .prevent-scrolling{
+        height:100vh;
+        overflow-y:hidden;
+    }
+</style>
