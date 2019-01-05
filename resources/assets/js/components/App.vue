@@ -7,7 +7,6 @@
         >
         </post-details>
         <bottom-nav
-            v-show="page=='post details'"
             v-on:closeWindow="closeDetailsView()"
             :page="page"
         ></bottom-nav>

@@ -53,7 +53,6 @@
     transform: translateX(0%);
   }
   .content{
-    max-width:800px;
     margin-bottom:5em;
     overflow-x: hidden;
   }
