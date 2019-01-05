@@ -32,4 +32,7 @@
     position:fixed;
     bottom:0;
   }
+  .container{
+    padding: 1em 2em;
+  }
 </style>
