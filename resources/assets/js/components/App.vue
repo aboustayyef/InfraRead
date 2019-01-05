@@ -4,9 +4,13 @@
             v-if="posts_loaded"
             :page="page"
             :active_post="active_post"
-            v-on:closeWindow="closeDetailsView()">
+        >
         </post-details>
-
+        <bottom-nav
+            v-show="page=='post details'"
+            v-on:closeWindow="closeDetailsView()"
+            :page="page"
+        ></bottom-nav>
             <div class="container">
             <!-- Level with breadcrumbs and settings -->
                 <div class="level">

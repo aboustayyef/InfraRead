@@ -1,9 +1,7 @@
 <template>
   <section id="details-area" :class="{'open': page == 'post details'}" >
-    <div class="container is-paddingless">
+    <div class="container">
       <div class="content" style="max-width:800px; margin:auto">
-          <p><a aria-label="close" @click.prevent="closeWindow" class="button">Done</a></p>
-          <hr>
           <a :href="active_post.url"><h1 class="has-text-grey-dark title is-4 has-text-weight-bold">{{ active_post.title }}</h1></a>
           <h2 class="has-text-primary subtitle is-5 is-uppercase has-text-weight-semibold">{{ active_post.source.name }}</h2>
           <p class="is-6 has-text-grey-light" >
@@ -13,8 +11,6 @@
             </span>
           </p>          
           <div v-html="sanitized_content"></div>
-          <hr>
-          <p><a aria-label="close" @click.prevent="closeWindow" class="button">Done</a></p>
         </div> 
     </div>
   </section>
