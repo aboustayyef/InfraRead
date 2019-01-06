@@ -28,9 +28,10 @@ window.Vue = require('vue');
  */
 
 Vue.component('app', require('./components/App.vue'));
+Vue.component('header-settings', require('./components/HeaderSettings.vue'));
+Vue.component('bottom-nav', require('./components/BottomNav.vue'));
 Vue.component('post-details', require('./components/PostDetails.vue'));
 Vue.component('post-list-item', require('./components/PostListItem.vue'));
-Vue.component('bottom-nav', require('./components/BottomNav.vue'));
 const app = new Vue({
     el: '#app'
 });

@@ -4,69 +4,23 @@
             v-if="posts_loaded"
             :page="page"
             :active_post="active_post"
-        >
-        </post-details>
+        ></post-details>
+        
         <bottom-nav
             v-on:closeWindow="closeDetailsView()"
             :page="page"
         ></bottom-nav>
-            <div class="container">
-            <!-- Level with breadcrumbs and settings -->
-                <div class="level">
-                    <nav class="breadcrumb has-arrow-separator level-left" style="margin-bottom:0" aria-label="breadcrumbs">
-                      <ul>
-                        <li><a href="/app/sources">Home</a></li>
-                        <li class="is-active">&nbsp;
-                            <span v-if="posts_description == 'All Posts'">
-                            {{posts_description}}
-                            </span>
-                            <span v-else class="tag" >
-                                {{posts_description}} &nbsp; 
-                                <button class="delete is-small" @click="showallposts()"></button>
-                            </span>
-
-                        </li>
-                      </ul>
-                    </nav>
-                    <form>
-                        <div class="level-right">
-                            <label class="ios7-switch">
-                                <input
-                                  type="checkbox"
-                                  v-model="unread_only"
-                                  true-value="true"
-                                  false-value="false"
-                                >
-                                <span></span>
-                                Unread Only <span v-if="unread_count>0">({{unread_count}})</span>
-                                &nbsp;&nbsp;
-                            </label>
-                             <label class="ios7-switch">
-                                <input
-                                  type="checkbox"
-                                  v-model="oldest_on_top"
-                                  true-value="true"
-                                  false-value="false"
-                                >
-                                <span></span>
-                                Oldest On Top
-                            </label>
-                        </div>
-                    </form>
-                </div>
-                <div class="level" v-if="unread_count > 0" >
-                    <div class="level-left">
-                    <small class="has-text-grey-light" v-if="last_successful_crawl !== 'problem'">Last Update: {{last_successful_crawl}}</small>
-                    <span v-else class="tag is-small is-warning">There was a problem updating</span>
-                    </div>
-                    <div class="level-right buttons">
-                        <button class="button" v-show="!areyousure" @click="toggleAreYouSure()">Mark All Posts as Read</button>
-                        <p v-show="areyousure" class="level-item">Are you sure?</p>
-                        <a v-show="areyousure" class="level-item button is-danger" href="/markallread">Yes</a>
-                        <a v-show="areyousure" class="level-item button" @click="toggleAreYouSure">No</a>
-                    </div>
-                </div>
-            </div>
+        
+        <header-settings
+            :posts_description="posts_description"
+            :unread_count="unread_count"
+            :unread_only="unread_only"
+            v-on:UnreadOnlyToggle="ToggleUnreadOnly"
+            :oldest_on_top="oldest_on_top"
+            v-on:OldestOnTopToggle="ToggleOldestOnTop"
+            :last_successful_crawl="last_successful_crawl"
+        ></header-settings>
+            
         <div class="container">
             <div class="row" v-if="filtered_posts.length == 0 && posts_loaded">
                 There are no unread posts... <a @click="unread_only = false">See All posts</a>
@@ -107,36 +61,28 @@
                 posts : [], // the list of unfiltered posts
                 posts_loaded : false,
                 active_post : {}, // the posts which is in the post details view mode
-                unread_only: "true", // default filter = unread posts
+                unread_only: true, // default filter = unread posts
                 last_fetch_posts: 0,
                 all_sources:[],
                 all_categories:[],
-                oldest_on_top: "false", //location on list page, to remember when exiting details page
+                oldest_on_top: true, //location on list page, to remember when exiting details page
                 areyousure: false,
             };
         },
         created() {
             // Start with local storage
             this.posts = JSON.parse(localStorage.getItem(this.posts_storage_key) || '[]');
-            this.unread_only = localStorage.getItem('infraread-unread-only') || "true";
-            this.oldest_on_top = localStorage.getItem('infraread-oldest-on-top') || "false";
             if (this.posts.length > 0) {
                 this.posts_loaded = 'storage';
                 this.active_post = this.posts[0];
             }
             this.fetchPostList();
-            window.onfocus = this.autoRefreshPosts;
+            //window.onfocus = this.autoRefreshPosts;
         },
         watch: {
             posts: function(){
                 localStorage.setItem(this.posts_storage_key, JSON.stringify(this.posts));
-            },
-            unread_only: function(){
-                localStorage.setItem('infraread-unread-only', this.unread_only);
-            },
-            oldest_on_top: function(){
-                localStorage.setItem('infraread-oldest-on-top', this.oldest_on_top);
-            },
+            }
         },
         computed: {
             posts_storage_key()
@@ -149,18 +95,17 @@
             },
             filtered_posts()
             {
-                let posts_list = this.posts;
-                if (this.unread_only == "true")
-                {
-                    posts_list = this.posts.filter((post)=>{
-                        return post.read == 0
-                    });
+                let posts_copy = this.posts.slice(); //used slice() because reverse() mutates original array
+                if (this.oldest_on_top) {
+                    posts_copy.reverse(); 
+                } 
+                // if only unread posts, filter
+                if (this.unread_only) {
+                    posts_copy = posts_copy.filter((post)=> post.read == 0);
                 }
-                if (this.oldest_on_top == "true") {
-                    return posts_list.reverse();
-                }
-                return posts_list;
+                return posts_copy;
             },
+
             showallposts()
             {
                 window.location = "/";
@@ -168,9 +113,20 @@
         },
         methods: {
 
+            ToggleUnreadOnly()
+            {
+                this.unread_only = !this.unread_only;
+            },
+
+            ToggleOldestOnTop(d)
+            {
+                this.oldest_on_top = d;
+            },
+
             autoRefreshPosts()
             {
                 //refresh posts when last fetch is older than this.refreshinterval
+                console.log('refreshing posts');
                 if((Date.now() - this.last_fetch_posts) > (this.refreshinterval * 60000)) {
                     this.fetchPostList();
                 }
@@ -194,11 +150,6 @@
                 } else {
                     document.title = `InfraRead`;
                 }
-            },
-
-            toggleAreYouSure()
-            {
-                this.areyousure = !this.areyousure;
             },
 
             // Detail View
@@ -229,11 +180,6 @@
                     console.log('there was a problem with updating post status');
                     post.read = 1 - post.read;;
                 });
-            },
-
-            reverseOrder()
-            {
-                this.reverse = !this.reverse;
             },
 
             updateActivePost(post)
