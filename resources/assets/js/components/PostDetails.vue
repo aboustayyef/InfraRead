@@ -37,7 +37,6 @@
   #details-area{
       background-color: white;
       z-index:200;
-      padding:1em;
       padding-top:3em;
       position: fixed;
       top: 0;
@@ -51,6 +50,9 @@
   }
   #details-area.open{
     transform: translateX(0%);
+  }
+  .container{
+    padding:1em;
   }
   .content{
     margin-bottom:5em;

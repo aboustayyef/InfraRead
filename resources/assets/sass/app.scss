@@ -10,12 +10,12 @@ $link: $primary;
 @import "ios-7-switch";
 
 html {
-  font-size: 14px;
+  font-size: 18px;
   @include tablet {
-    font-size: 16px;
+    font-size: 20px;
   }
   @include desktop {
-    font-size: 18px;
+    font-size: 20px;
   }
 }
 
@@ -23,7 +23,7 @@ p{
     line-height:1.8;
 }
 .container{
-    padding:2em;
+    padding:1em;
 }
 .read{
     opacity: 0.5;
