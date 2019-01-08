@@ -57,6 +57,7 @@
   .content{
     margin-bottom:5em;
     overflow-x: hidden;
+    max-width: 750px;
   }
   .content img{
       max-width:100%;

@@ -19,15 +19,17 @@
 </script>
 <style scoped>
   nav{  
-    background-color:#efefef;
+    background-color:white;
     z-index:300;
-    border-top:1px solid #da2525;
+    border-top:1px dotted silver;
     width:100%;
     padding-bottom:1em;
     position:fixed;
     bottom:0;
+    padding-bottom:0;
     transform: translateX(100%);
     transition: transform 0.3s ease;
+    box-shadow: 0 2px 2px -2px rgba(0,0,0,.2);
   }
   .button{
     padding-left:2em;
@@ -37,6 +39,6 @@
     transform: translateX(0%);
   }
   .container{
-    padding: 1em 2em;
+    padding: 1em;
   }
 </style>
