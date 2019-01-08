@@ -6,7 +6,7 @@
             <div class="content">
                 <a :href="post.url" target="_blank"><h1 v-html="post.title"
                     @click="showPostDetails($event)"
-                    class="has-text-grey-dark is-title is-size-4 has-text-weight-bold">
+                    class="has-text-grey-dark is-title is-size-5 has-text-weight-bold">
                 </h1></a>
                 <a :href='"/app/source/" + post.source.id' ><h2 
                     class="has-text-primary is-subtitle is-size-5 is-uppercase has-text-weight-semibold inline-at-mobile"

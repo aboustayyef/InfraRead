@@ -1,5 +1,5 @@
 <template>
-    <div :class="{'preven-scrolling': page == 'post details'}">
+    <div :class="{'prevent-scrolling': page == 'post details'}">
         <post-details
             v-if="posts_loaded"
             :page="page"
