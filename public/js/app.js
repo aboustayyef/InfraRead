@@ -1670,6 +1670,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     props: ['refreshinterval', 'last_successful_crawl'],
@@ -1726,9 +1727,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 });
             }
             return posts_copy;
-        },
-        showallposts: function showallposts() {
-            window.location = "/";
         }
     },
     methods: {
@@ -1906,6 +1904,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
   methods: {
     toggleAreYouSure: function toggleAreYouSure() {
       this.areyousure = !this.areyousure;
+    },
+    showallposts: function showallposts() {
+      window.location = '/';
     }
   }
 });
@@ -4447,7 +4448,7 @@ exports = module.exports = __webpack_require__("./node_modules/css-loader/lib/cs
 
 
 // module
-exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
 
 // exports
 
@@ -32719,7 +32720,8 @@ var render = function() {
                       staticClass: "delete is-small",
                       on: {
                         click: function($event) {
-                          _vm.showallposts()
+                          $event.preventDefault()
+                          return _vm.showallposts($event)
                         }
                       }
                     })

@@ -11,7 +11,7 @@
                   </span>
                   <span v-else class="tag" >
                       {{posts_description}} &nbsp; 
-                      <button class="delete is-small" @click="showallposts()"></button>
+                      <button class="delete is-small" @click.prevent="showallposts"></button>
                   </span>
 
               </li>
@@ -80,7 +80,11 @@
           {
               this.areyousure = !this.areyousure;
           },
-      }
+        showallposts()
+          {
+            window.location ='/';
+          }
+      },
     }
 </script>
 <style scoped></style>

@@ -19,6 +19,7 @@
             :oldest_on_top="oldest_on_top"
             v-on:OldestOnTopToggle="ToggleOldestOnTop"
             :last_successful_crawl="last_successful_crawl"
+
         ></header-settings>
             
         <div class="container">
@@ -105,11 +106,6 @@
                 }
                 return posts_copy;
             },
-
-            showallposts()
-            {
-                window.location = "/";
-            }
         },
         methods: {
 
