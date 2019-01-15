@@ -1,7 +1,7 @@
 <template>
   <section id="details-area" :class="{'open': page == 'post details'}" >
     <div class="container">
-      <div class="content">
+      <div class="content is-marginless">
           <a :href="active_post.url"><h1 class="has-text-grey-dark title is-4 has-text-weight-bold">{{ active_post.title }}</h1></a>
           <h2 class="has-text-primary subtitle is-5 is-uppercase has-text-weight-semibold">{{ active_post.source.name }}</h2>
           <p class="is-6 has-text-grey-light" >
@@ -10,6 +10,9 @@
               by {{active_post.author}}
             </span>
           </p>          
+      </div>
+      <hr>
+      <div class="content has-columns">
           <div v-html="sanitized_content"></div>
         </div> 
     </div>
@@ -57,8 +60,13 @@
   .content{
     margin-bottom:5em;
     overflow-x: hidden;
-    max-width: 750px;
   }
+  .content.has-columns{
+    column-width: 22em;
+    column-count:2;
+    column-rule: 1px dotted #ddd;
+  }
+
   .content img{
       max-width:100%;
     }

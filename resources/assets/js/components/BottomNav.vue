@@ -19,9 +19,9 @@
 </script>
 <style scoped>
   nav{  
-    background-color:white;
+    background-color:#484848;
     z-index:300;
-    border-top:1px dotted silver;
+    border-top:2px solid white;
     width:100%;
     padding-bottom:1em;
     position:fixed;
