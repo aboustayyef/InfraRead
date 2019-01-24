@@ -1,9 +1,7 @@
 <template>
-  <nav :class="{'open': page == 'post details' }">
     <div class="container">
-      <a aria-label="close" @click.prevent="closeWindow" class="button is-medium">Done</a>
+      <a v-if="page == 'post details'" aria-label="close" @click.prevent="closeWindow" class="fab is-medium">&times;</a>
     </div>
-  </nav>
 </template>
 <script>
     export default {
@@ -18,23 +16,31 @@
     }
 </script>
 <style scoped>
-  nav{  
-    background-color:#484848;
-    z-index:300;
-    border-top:2px solid white;
-    width:100%;
-    padding-bottom:1em;
-    position:fixed;
-    bottom:0;
-    padding-bottom:0;
-    transform: translateX(100%);
-    transition: transform 0.3s ease;
-    box-shadow: 0 2px 2px -2px rgba(0,0,0,.2);
-  }
-  .button{
-    padding-left:2em;
-    padding-right:2em;
-  }
+  .fab {
+    z-index: 300;
+    width: 70px;
+    height: 70px;
+    background-color: black;
+    border-radius: 50%;
+    -webkit-box-shadow: 0 6px 10px 0 #666;
+    box-shadow: 0 6px 10px 0 #666;
+    -webkit-transition: all 0.1s ease-in-out;
+    transition: all 0.1s ease-in-out;
+    font-size: 50px;
+    color: white;
+    text-align: center;
+    line-height: 60px;
+    position: fixed;
+    left: 50px;
+    bottom: 50px;
+    font-weight: 700;
+    font-size: 65px;
+}
+ 
+.fab:hover {
+   box-shadow: 0 6px 14px 0 #666;
+   transform: scale(1.05);
+}
   nav.open{
     transform: translateX(0%);
   }
