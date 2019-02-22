@@ -23,39 +23,13 @@ class OpmlImporter
 
         foreach ($feeds as $key => $group) {
             
-            // OPML from inoreader allow to have folders or having a source without a folder so there is no outline
+            // create group as Category
+            $category = Category::Create([
+                'description'       =>  $group['@attributes']['title'],
+            ]);
 
-            if(isset($group['outline'])){
-
-                // create group as Category
-                $category = Category::Create([
-                    'description'       =>  $group['@attributes']['title'],
-                ]);
-
-                // populate group feeds 
-                foreach ($group['outline'] as $source) {
-                    $source_details = isset($source['@attributes'])? $source['@attributes'] : $source;
-                    $result = Source::create([
-                        'name'              =>  $source_details['text'],
-                        'description'       =>  $source_details['title'],
-                        'url'               =>  $source_details['htmlUrl'],
-                        'author'            =>  '',
-                        'fetcher_kind'      =>  'rss',
-                        'fetcher_source'    =>  $source_details['xmlUrl'],
-                        'active'            =>  1,
-                        'why_deactivated'   => null,
-                        'category_id'            => $category->id
-                    ]);
-                }
-
-            }else{
-
-                $source = $group;
-
-                $category = Category::firstOrCreate([
-                    'description'       =>  'NULL',
-                ]);
-
+            // populate group feeds 
+            foreach ($group['outline'] as $source) {
                 $source_details = isset($source['@attributes'])? $source['@attributes'] : $source;
                 $result = Source::create([
                     'name'              =>  $source_details['text'],
@@ -68,7 +42,7 @@ class OpmlImporter
                     'why_deactivated'   => null,
                     'category_id'            => $category->id
                 ]);
-            }            
+            }
         }
     }
 }
