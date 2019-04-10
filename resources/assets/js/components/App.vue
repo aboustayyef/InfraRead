@@ -6,6 +6,10 @@
             :active_post="active_post"
         ></post-details>
         
+        <unread-count
+            :page="page"
+            :unread_count="unread_count">
+        </unread-count>
         <bottom-nav
             v-on:closeWindow="closeDetailsView()"
             :page="page"
@@ -13,7 +17,6 @@
         
         <header-settings
             :posts_description="posts_description"
-            :unread_count="unread_count"
             :unread_only="unread_only"
             v-on:UnreadOnlyToggle="ToggleUnreadOnly"
             :oldest_on_top="oldest_on_top"
