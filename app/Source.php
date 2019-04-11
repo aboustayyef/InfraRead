@@ -71,6 +71,7 @@ class Source extends Model
       foreach ($posts as $post) {
         $post->source_id = $this->id;
         $post->save(); 
+        $post->applyPlugins();
       }
       return $posts->count() . ' new posts saved';
     }
@@ -99,5 +100,11 @@ class Source extends Model
     public function categories()
     {
       return $this->BelongsToMany('App\Category');
+    }
+    
+    public function shortname()
+    {
+      // www.slashdot.com --> wwwslashdotcom
+      return \Illuminate\Support\Str::slug($this->url);
     }
 }

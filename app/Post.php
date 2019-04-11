@@ -5,6 +5,7 @@ namespace App;
 use App\Media;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use App\Plugins\Kernel;
 
 class Post extends Model
 {
@@ -109,5 +110,20 @@ class Post extends Model
             $image->post_id = $this->id;
             $image->save();
         }
+    }
+    public function applyPlugins(){
+        // Get list of Plugins for this source from Plugins kernel
+        $all_plugins = (new Kernel)->get();
+
+        // Find out if this source has any plugins for it. Otherwise abort
+        if ( ! isset($all_plugins[$this->source->shortname()])) {
+           dd('no applicable Plugins');
+        }
+        $applicable_plugins = $all_plugins[$this->source->shortname()];
+        dd($applicable_plugins);
+        // for each plugin
+        //      $post = (new PluginName($this))->apply()
+        //      $post->save();
+        // end for     
     }
 }

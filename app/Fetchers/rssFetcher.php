@@ -53,13 +53,6 @@ class rssFetcher implements Fetchable
 				$author = "";
 			}
 
-			// Do the Slashdot magic
-			$content = $item->get_content();
-			if (str_contains($item->get_base('href'),'slashdot')) {
-				$clean_content = (new SlashdotPrettifier($content))->get();
-				$content = $clean_content;
-			}
-
 			return 
 			[
 				'url' => $item->get_link(), 
@@ -68,7 +61,7 @@ class rssFetcher implements Fetchable
 				'title'=> html_entity_decode($item->get_title()),
 				'url'	=> $item->get_link(),
 				'author' => $author,
-				'content' => $content,
+				'content' => $item->get_content(),
 			];
 		});
 
@@ -90,22 +83,9 @@ class rssFetcher implements Fetchable
 		$posts = $new_links->map(function($item) {
 
 			// Content Depends on whether source wants full Feed
-			if ($this->source->full_content == 1) {
-				
-				$content = $this->get_full_content_from_link($item['url']);
-
-				// if there's a problem, fall back to rss content:
-				if (!$content) { 
-					$content = $item['content'];
-				}
-
-			} else {
-				$content = $item['content'];
-			}
-			// $e = Embed::create($item['url']);  
 			$post = new Post;
 			$post->uid = substr($item['uid'],0,190);
-			$post->content = $content;
+			$post->content = $item['content'];
 			$post->title = $item['title'];
 			$post->url = $item['url'];
 			$post->author = $item['author'];
