@@ -25,7 +25,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->command('app:update_posts')
-            ->cron('*/' . config('infraread.refresh_interval') . ' * * * * *');
+            ->cron('*/10 * * * *');
     }
 
     /**
