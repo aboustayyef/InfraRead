@@ -112,18 +112,20 @@ class Post extends Model
         }
     }
     public function applyPlugins(){
-        // Get list of Plugins for this source from Plugins kernel
+        // Get list of Plugins for this Post from Plugins kernel
         $all_plugins = (new Kernel)->get();
 
-        // Find out if this source has any plugins for it. Otherwise abort
+        // Find out if this post's source has plugins. Otherwise abort
         if ( ! isset($all_plugins[$this->source->shortname()])) {
            dd('no applicable Plugins');
         }
+
         $applicable_plugins = $all_plugins[$this->source->shortname()];
-        dd($applicable_plugins);
-        // for each plugin
-        //      $post = (new PluginName($this))->apply()
-        //      $post->save();
-        // end for     
+        
+        foreach ($applicable_plugins as $plugin) {
+            $className = 'App\Plugins\Plugin'.$plugin;
+            $post = (new $className($this))->handle();
+        }
+
     }
 }

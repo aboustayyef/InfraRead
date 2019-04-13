@@ -1,8 +1,9 @@
 <?php
 namespace App\Plugins;
 /**
- * 
+ *  Plugins are classes that Modify Post objects depending on Source
  */
+
 class Kernel
 {
 
@@ -10,7 +11,7 @@ class Kernel
     {
         return 
         [
-            'httpsslashdotorg'  =>  ['MakeTextLegible','ReplaceTitleLink']
+            'httpsslashdotorg'  =>  ['MakeTextLegible'],
         ];
     }    
 
