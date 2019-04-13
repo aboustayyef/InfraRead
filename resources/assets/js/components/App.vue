@@ -38,15 +38,15 @@
 
             <div v-if="posts_loaded" class='row'>
                 <ul>
-                    <li v-for="post in filtered_posts">
-                        <!-- When a user clicks on an area of the post, change the current post and mark it as read -->
-                        <post-list-item
-                            :post="post"
-                            v-on:show-post-details="showDetailsView(post)"
-                            v-on:toggle-post-read="togglePostRead(post)"
-                        ></post-list-item>
-                        <hr>
-                    </li>
+                        <li v-for="post in filtered_posts" >
+                            <!-- When a user clicks on an area of the post, change the current post and mark it as read -->
+                            <post-list-item v-if="!(unread_only && post.read)"
+                                :post="post"
+                                v-on:show-post-details="showDetailsView(post)"
+                                v-on:toggle-post-read="togglePostRead(post)"
+                            ></post-list-item>
+                            <hr v-if="!(unread_only && post.read)">
+                        </li>
                 </ul>
             </div>
         </div>
@@ -103,10 +103,6 @@
                 if (this.oldest_on_top) {
                     posts_copy.reverse(); 
                 } 
-                // if only unread posts, filter
-                if (this.unread_only) {
-                    posts_copy = posts_copy.filter((post)=> post.read == 0);
-                }
                 return posts_copy;
             },
         },
