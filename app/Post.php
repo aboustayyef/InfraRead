@@ -115,16 +115,14 @@ class Post extends Model
         // Get list of Plugins for this Post from Plugins kernel
         $all_plugins = (new Kernel)->get();
 
-        // Find out if this post's source has plugins. Otherwise abort
-        if ( ! isset($all_plugins[$this->source->shortname()])) {
-           dd('no applicable Plugins');
-        }
-
-        $applicable_plugins = $all_plugins[$this->source->shortname()];
-        
-        foreach ($applicable_plugins as $plugin) {
-            $className = 'App\Plugins\Plugin'.$plugin;
-            $post = (new $className($this))->handle();
+        // If this post's source has plugins, apply them
+        if ( isset($all_plugins[$this->source->shortname()])) {
+            $applicable_plugins = $all_plugins[$this->source->shortname()];
+            
+            foreach ($applicable_plugins as $plugin) {
+                $className = 'App\Plugins\Plugin'.$plugin;
+                $post = (new $className($this))->handle();
+            }
         }
 
     }
