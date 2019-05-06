@@ -15,11 +15,6 @@ Route::get('/', function(){
     return redirect('/app');
 });
 
-Route::get('/slashdot_prettifier_log', function(){
-    $posts = SDLog::all();
-    return view('debug')->with(['posts'=>$posts]);
-});
-
 Route::get('/setup', function(){
     return view('setup');
 })->middleware('auth');
