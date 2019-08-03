@@ -81,6 +81,6 @@
         overflow-x:hidden;
     }
     .highlighted{
-        background-color: beige;
+        background-color: #f5f5dc6e;
     }
 </style>
