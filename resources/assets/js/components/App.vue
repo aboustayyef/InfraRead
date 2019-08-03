@@ -12,6 +12,7 @@
         </unread-count>
         <bottom-nav
             v-on:closeWindow="closeDetailsView()"
+            v-on:keyup.esc="closeDetailsView()"
             :page="page"
         ></bottom-nav>
         
@@ -38,15 +39,16 @@
 
             <div v-if="posts_loaded" class='row'>
                 <ul>
-                        <li v-for="post in filtered_posts" >
-                            <!-- When a user clicks on an area of the post, change the current post and mark it as read -->
-                            <post-list-item v-if="!(unread_only && post.read)"
-                                :post="post"
-                                v-on:show-post-details="showDetailsView(post)"
-                                v-on:toggle-post-read="togglePostRead(post)"
-                            ></post-list-item>
-                            <hr v-if="!(unread_only && post.read)">
-                        </li>
+                    <li v-for="(post,i) in filtered_posts" v-bind:key="post.id">
+                        <!-- When a user clicks on an area of the post, change the current post and mark it as read -->
+                        <post-list-item v-if="!(unread_only && post.read)"
+                            :index="i"
+                            :post="post"
+                            v-on:show-post-details="showDetailsView(post)"
+                            v-on:toggle-post-read="togglePostRead(post)"
+                        ></post-list-item>
+                        <hr v-if="!(unread_only && post.read)">
+                    </li>
                 </ul>
             </div>
         </div>
@@ -71,6 +73,8 @@
                 all_categories:[],
                 oldest_on_top: true, //location on list page, to remember when exiting details page
                 areyousure: false,
+                keyboard_navigation_active:false,
+                keyboard_navigation_index:0,
             };
         },
         created() {
@@ -81,7 +85,10 @@
                 this.active_post = this.posts[0];
             }
             this.fetchPostList();
-            //window.onfocus = this.autoRefreshPosts;
+
+            // Capture Keyboard input
+            document.addEventListener('keydown', this.handleKeyboardInput);
+
         },
         watch: {
             posts: function(){
@@ -89,6 +96,7 @@
             }
         },
         computed: {
+
             posts_storage_key()
             {
                return 'feedreader-' + this.posts_source;
@@ -101,13 +109,28 @@
             {
                 let posts_copy = this.posts.slice(); //used slice() because reverse() mutates original array
                 if (this.oldest_on_top) {
-                    posts_copy.reverse(); 
+                    posts_copy.reverse().map((post, i)=>post.position = i); 
                 } 
                 return posts_copy;
             },
         },
         methods: {
 
+            handleKeyboardInput(e) {
+                console.log(` ${e.code}`);
+                // escape key 
+                if(e.code == 'Escape' ) {
+                    // exits details view if there
+                    if ( this.page == "post details" ) {
+                        this.closeDetailsView();
+                    }
+                    //otherwise deactivates keyboard navigation
+                     else {
+                         keyboard_navigation_active = false;
+                    }
+                    
+                }
+            },
             ToggleUnreadOnly()
             {
                 this.unread_only = !this.unread_only;

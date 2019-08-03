@@ -27,12 +27,12 @@ window.Vue = require('vue');
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
-Vue.component('app', require('./components/App.vue'));
-Vue.component('header-settings', require('./components/HeaderSettings.vue'));
-Vue.component('unread-count', require('./components/UnreadCount.vue'));
-Vue.component('bottom-nav', require('./components/BottomNav.vue'));
-Vue.component('post-details', require('./components/PostDetails.vue'));
-Vue.component('post-list-item', require('./components/PostListItem.vue'));
+Vue.component('app', require('./components/App.vue').default);
+Vue.component('header-settings', require('./components/HeaderSettings.vue').default);
+Vue.component('unread-count', require('./components/UnreadCount.vue').default);
+Vue.component('bottom-nav', require('./components/BottomNav.vue').default);
+Vue.component('post-details', require('./components/PostDetails.vue').default);
+Vue.component('post-list-item', require('./components/PostListItem.vue').default);
 const app = new Vue({
     el: '#app'
 });
