@@ -41,11 +41,13 @@
                 <ul>
                     <li v-for="(post,i) in filtered_posts" v-bind:key="post.id">
                         <!-- When a user clicks on an area of the post, change the current post and mark it as read -->
-                        <post-list-item v-if="!(unread_only && post.read)"
+                        <post-list-item 
                             :index="i"
                             :post="post"
                             v-on:show-post-details="showDetailsView(post)"
                             v-on:toggle-post-read="togglePostRead(post)"
+                            :keyboard_navigation_active="keyboard_navigation_active"
+                            :keyboard_navigation_index="keyboard_navigation_index"
                         ></post-list-item>
                         <hr v-if="!(unread_only && post.read)">
                     </li>
@@ -88,7 +90,7 @@
 
             // Capture Keyboard input
             document.addEventListener('keydown', this.handleKeyboardInput);
-
+            
         },
         watch: {
             posts: function(){
@@ -109,7 +111,10 @@
             {
                 let posts_copy = this.posts.slice(); //used slice() because reverse() mutates original array
                 if (this.oldest_on_top) {
-                    posts_copy.reverse().map((post, i)=>post.position = i); 
+                    posts_copy.reverse(); 
+                }
+                if (this.unread_only) {
+                    posts_copy = posts_copy.filter((post) => !post.read);
                 } 
                 return posts_copy;
             },
@@ -126,10 +131,50 @@
                     }
                     //otherwise deactivates keyboard navigation
                      else {
-                         keyboard_navigation_active = false;
+                         this.keyboard_navigation_active = false;
                     }
-                    
                 }
+                // J (move down the posts)
+                if (e.code == 'KeyJ') {
+                    // if keyboard navigation is not active, turn it on
+                    // and reset position of highlight                    
+                    if (!this.keyboard_navigation_active) {
+                        this.keyboard_navigation_active = true;
+                        this.keyboard_navigation_index = 0;
+                    // otherwise augment by 1
+                    } else {
+                       if (this.keyboard_navigation_index < this.filtered_posts.length - 1) {
+                           this.keyboard_navigation_index += 1;
+                       } 
+                    }
+                }
+                // K (move up the posts)
+                if (e.code == 'KeyK') {
+                    // if keyboard navigation is not active, turn it on
+                    // and reset position of highlight                    
+                    if (!this.keyboard_navigation_active) {
+                        this.keyboard_navigation_active = true;
+                        this.keyboard_navigation_index = 0;
+                    // otherwise augment by 1
+                    } else {
+                       if (this.keyboard_navigation_index > 0) {
+                           this.keyboard_navigation_index -= 1;
+                       } 
+                    }
+                } 
+                // O or Enter (open highlighted post)
+                if (e.code == 'KeyO' && this.keyboard_navigation_active) {
+                    // open highlighted post                    
+                    this.showDetailsView(this.filtered_posts[this.keyboard_navigation_index]);
+                }
+                if (e.code == 'KeyR' && this.keyboard_navigation_active) {
+                    // open highlighted post                    
+                    this.togglePostRead(this.filtered_posts[this.keyboard_navigation_index]);
+                }
+            },
+            NavigateToNthPost(n)
+            {
+                //
             },
             ToggleUnreadOnly()
             {

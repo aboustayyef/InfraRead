@@ -1,6 +1,6 @@
 <template>
     <!-- When a user clicks on an area of the post, change the current post and mark it as read -->
-    <div class="columns" :class=" {read: post.read}">
+    <div class="columns" :class=" {read: post.read, highlighted: highlighted}">
         <!-- Left Pane -->
         <div class="column is-half">
             <div class="content">
@@ -38,7 +38,7 @@
 
 <script>
     export default {
-        props: ['post'],       
+        props: ['post','index','keyboard_navigation_active','keyboard_navigation_index'],       
         methods: {
             readButtonMessage()
             {
@@ -64,6 +64,11 @@
                 this.$emit('show-post-details')
             }
         },
+        computed: {
+            highlighted(){
+                return (this.keyboard_navigation_active && this.keyboard_navigation_index == this.index);
+            }
+        },
     }
 </script>
 <style scoped>
@@ -74,5 +79,8 @@
     .column{
         padding: 0.5rem 0.75rem;
         overflow-x:hidden;
+    }
+    .highlighted{
+        background-color: beige;
     }
 </style>
