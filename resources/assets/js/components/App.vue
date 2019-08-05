@@ -163,11 +163,12 @@
                     }
                 } 
                 // O or Enter (open highlighted post)
-                if (e.code == 'KeyO' && this.keyboard_navigation_active) {
+                if ( (e.code == 'KeyO' || e.code == 'KeyEnter') && this.keyboard_navigation_active) {
                     // open highlighted post                    
                     this.showDetailsView(this.filtered_posts[this.keyboard_navigation_index]);
                 }
-                if (e.code == 'KeyR' && this.keyboard_navigation_active) {
+                // R or E (Mark Post as read)
+                if ((e.code == 'KeyR' || e.code == 'KeyE') && this.keyboard_navigation_active) {
                     // open highlighted post                    
                     this.togglePostRead(this.filtered_posts[this.keyboard_navigation_index]);
                 }
