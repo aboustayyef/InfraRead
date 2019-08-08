@@ -169,8 +169,10 @@
                 }
                 // R or E (Mark Post as read)
                 if ((e.code == 'KeyR' || e.code == 'KeyE') && this.keyboard_navigation_active) {
-                    // open highlighted post                    
                     this.togglePostRead(this.filtered_posts[this.keyboard_navigation_index]);
+                    if (this.page == "post details") {
+                       this.closeDetailsView(); 
+                    }
                 }
             },
             NavigateToNthPost(n)
