@@ -164,8 +164,13 @@
                 } 
                 // O or Enter (open highlighted post)
                 if ( (e.code == 'KeyO' || e.code == 'KeyEnter') && this.keyboard_navigation_active) {
-                    // open highlighted post                    
-                    this.showDetailsView(this.filtered_posts[this.keyboard_navigation_index]);
+                    // open highlighted post if we're in list mode                    
+                    if (this.page == "post list") {
+                        this.showDetailsView(this.filtered_posts[this.keyboard_navigation_index]);
+                    // Navigate to url if we're in details mode
+                    }else{
+                        window.open(this.filtered_posts[this.keyboard_navigation_index].url, '_blank');
+                    }
                 }
                 // R or E (Mark Post as read)
                 if ((e.code == 'KeyR' || e.code == 'KeyE') && this.keyboard_navigation_active) {
