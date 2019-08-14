@@ -136,30 +136,40 @@
                 }
                 // J (move down the posts)
                 if (e.code == 'KeyJ') {
-                    // if keyboard navigation is not active, turn it on
-                    // and reset position of highlight                    
-                    if (!this.keyboard_navigation_active) {
-                        this.keyboard_navigation_active = true;
-                        this.keyboard_navigation_index = 0;
-                    // otherwise augment by 1
+                    if (this.page == 'post details') {
+                        // use J for scrolling down if in details view
+                        document.getElementById('details-area').scrollBy(0,200);
                     } else {
-                       if (this.keyboard_navigation_index < this.filtered_posts.length - 1) {
-                           this.keyboard_navigation_index += 1;
-                       } 
+                        // if keyboard navigation is not active, turn it on
+                        // and reset position of highlight                    
+                        if (!this.keyboard_navigation_active) {
+                            this.keyboard_navigation_active = true;
+                            this.keyboard_navigation_index = 0;
+                        // otherwise augment by 1
+                        } else {
+                        if (this.keyboard_navigation_index < this.filtered_posts.length - 1) {
+                            this.keyboard_navigation_index += 1;
+                        } 
+                        }
                     }
                 }
                 // K (move up the posts)
                 if (e.code == 'KeyK') {
-                    // if keyboard navigation is not active, turn it on
-                    // and reset position of highlight                    
-                    if (!this.keyboard_navigation_active) {
-                        this.keyboard_navigation_active = true;
-                        this.keyboard_navigation_index = 0;
-                    // otherwise augment by 1
+                    if (this.page == 'post details') {
+                        // use K for scrolling up if in details view
+                        document.getElementById('details-area').scrollBy(0,-200);
                     } else {
-                       if (this.keyboard_navigation_index > 0) {
-                           this.keyboard_navigation_index -= 1;
-                       } 
+                        // if keyboard navigation is not active, turn it on
+                        // and reset position of highlight                    
+                        if (!this.keyboard_navigation_active) {
+                            this.keyboard_navigation_active = true;
+                            this.keyboard_navigation_index = 0;
+                        // otherwise augment by 1
+                        } else {
+                        if (this.keyboard_navigation_index > 0) {
+                            this.keyboard_navigation_index -= 1;
+                        } 
+                        }
                     }
                 } 
                 // O or Enter (open highlighted post)
