@@ -23,7 +23,7 @@ class ReadlaterController extends Controller
             try {
                 $save_status = file_get_contents($saving_string);
             } catch (\Exception $e) {
-                $save_status = 403;  
+                $save_status = 'server error';  
             }
 
             return response($save_status);
