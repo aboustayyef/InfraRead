@@ -10,6 +10,13 @@
             :page="page"
             :unread_count="unread_count">
         </unread-count>
+
+        <div id="savinglater">
+            <progress v-if="saving_later_status == 'saving'" class="progress is-primary" max="100">30%</progress>
+            <span v-if="saving_later_status == 'success'">Saved!</span>
+            <span v-if="saving_later_status == 'failure'">couldn't save!</span>
+        </div>
+        
         <bottom-nav
             v-on:closeWindow="closeDetailsView()"
             v-on:keyup.esc="closeDetailsView()"
@@ -57,6 +64,7 @@
     </div>
 </template>
 <script>
+import { setTimeout } from 'timers';
     export default {
         props: [
             'refreshinterval','last_successful_crawl'
@@ -77,6 +85,7 @@
                 areyousure: false,
                 keyboard_navigation_active:false,
                 keyboard_navigation_index:0,
+                saving_later_status: 'nothing', // options: 'nothing', 'saving' , 'success' , 'failure'
             };
         },
         created() {
@@ -271,13 +280,17 @@
                 });
             },
             savetoinstapaper(url){
-                console.log('saving to instapaper: '+ url);
+                this.saving_later_status = 'saving';
                 axios.get('app/readlater?url='+encodeURI(url)).
                 then((res) => {
                     if (res.data.bookmark_id) {
-                        console.log('succesfully saved');
+                        this.saving_later_status = 'success';
+                        // remove success message after 1 second
+                        setTimeout((t) => {
+                           this.saving_later_status = 'nothing'; 
+                        }, 2000);
                     } else {
-                        console.log('could not save');
+                        this.saving_later_status = 'failure';
                     }
                 }).catch((res) => {
                     // nothing
@@ -295,5 +308,16 @@
     .prevent-scrolling{
         height:100vh;
         overflow-y:hidden;
+    }
+    #savinglater{
+        position: fixed;
+        right: 1em;
+        top: 0;
+        padding: 3px;
+        color:grey;
+        font-size: 12px;
+    }
+    .progress{
+        height:5px;
     }
 </style>
