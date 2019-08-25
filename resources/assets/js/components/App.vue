@@ -122,7 +122,7 @@
         methods: {
 
             handleKeyboardInput(e) {
-                console.log(` ${e.code}`);
+                // console.log(` ${e.code}`);
                 // escape key 
                 if(e.code == 'Escape' ) {
                     // exits details view if there
@@ -187,6 +187,14 @@
                     this.togglePostRead(this.filtered_posts[this.keyboard_navigation_index]);
                     if (this.page == "post details") {
                        this.closeDetailsView(); 
+                    }
+                }
+                if (e.code == 'KeyI'){
+                    if (this.page == "post list" && this.keyboard_navigation_active) {
+                        this.savetoinstapaper(this.filtered_posts[this.keyboard_navigation_index].url);
+                    // Navigate to url if we're in details mode
+                    }else if (this.page =="post details"){
+                        this.savetoinstapaper(this.active_post.url);
                     }
                 }
             },
@@ -259,10 +267,22 @@
                     // nothing
                 }).catch((res) => {
                     console.log('there was a problem with updating post status');
-                    post.read = 1 - post.read;;
+                    post.read = 1 - post.read;
                 });
             },
-
+            savetoinstapaper(url){
+                console.log('saving to instapaper: '+ url);
+                axios.get('app/readlater?url='+encodeURI(url)).
+                then((res) => {
+                    if (res.data.bookmark_id) {
+                        console.log('succesfully saved');
+                    } else {
+                        console.log('could not save');
+                    }
+                }).catch((res) => {
+                    // nothing
+                });
+            },
             updateActivePost(post)
             {
                 this.activepost = post;
