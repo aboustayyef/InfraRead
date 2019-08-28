@@ -281,7 +281,7 @@ import { setTimeout } from 'timers';
             },
             savetoinstapaper(url){
                 this.saving_later_status = 'saving';
-                axios.get('app/readlater?url='+encodeURI(url)).
+                axios.get('/app/readlater?url='+encodeURI(url)).
                 then((res) => {
                     if (res.data.bookmark_id) {
                         this.saving_later_status = 'success';
