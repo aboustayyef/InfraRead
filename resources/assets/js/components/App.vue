@@ -253,7 +253,7 @@ import { setTimeout } from 'timers';
             // Detail View
 
             showDetailsView(post){
-                document.getElementById('details-area').scrollTop=0;
+                document.getElementById('details-area').scrollTo(0,0);
                 this.active_post = post;
                 this.page = "post details";
             },
@@ -310,6 +310,7 @@ import { setTimeout } from 'timers';
         overflow-y:hidden;
     }
     #savinglater{
+        z-index: 300; 
         position: fixed;
         right: 1em;
         top: 0;
