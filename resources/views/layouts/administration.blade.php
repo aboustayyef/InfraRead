@@ -11,6 +11,7 @@
     <title>InfraRead</title>
 
     <!-- Styles -->
+    <link href="https://fonts.googleapis.com/css?family=Bebas+Neue|Catamaran:400,600&display=swap" rel="stylesheet"> 
     <link href="{{ mix('css/admin.css') }}" rel="stylesheet">
 </head>
 <body>

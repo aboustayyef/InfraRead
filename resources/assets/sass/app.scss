@@ -8,6 +8,7 @@ $link: $primary;
 
 @import "../../../node_modules/bulma/bulma";
 @import "ios-7-switch";
+@import url('https://fonts.googleapis.com/css?family=Catamaran:400,600&display=swap');
 
 html {
   font-size: 18px;
@@ -19,8 +20,12 @@ html {
   }
 }
 
+body{
+  font-family: 'Catamaran', sans-serif;
+}
+
 p{
-    line-height:1.8;
+    line-height:1.5;
 }
 .container{
     padding:1em;
