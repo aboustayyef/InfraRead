@@ -200,10 +200,10 @@ import { setTimeout } from 'timers';
                 }
                 if (e.code == 'KeyI'){
                     if (this.page == "post list" && this.keyboard_navigation_active) {
-                        this.savetoinstapaper(this.filtered_posts[this.keyboard_navigation_index].url);
+                        this.saveforlater(this.filtered_posts[this.keyboard_navigation_index].url);
                     // Navigate to url if we're in details mode
                     }else if (this.page =="post details"){
-                        this.savetoinstapaper(this.active_post.url);
+                        this.saveforlater(this.active_post.url);
                     }
                 }
             },
@@ -279,7 +279,7 @@ import { setTimeout } from 'timers';
                     post.read = 1 - post.read;
                 });
             },
-            savetoinstapaper(url){
+            saveforlater(url){
                 this.saving_later_status = 'saving';
                 axios.get('/app/readlater?url='+encodeURI(url)).
                 then((res) => {

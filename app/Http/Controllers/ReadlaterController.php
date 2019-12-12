@@ -17,22 +17,62 @@ class ReadlaterController extends Controller
     {
         if ($request->has('url')) {
 
-            $saving_string = 'https://www.instapaper.com/api/add?'.
-            'username='. urlencode(env('INSTAPAPER_USERNAME')).
-            '&password='. urlencode(env('INSTAPAPER_PASSWORD')).
-            '&url='. urlencode($request->get('url'));
+            $url = urlencode($request->get('url'));
+            $readlaterservice = env('PREFERED_READLATER_SERVICE'); 
 
-            $client = new Client();
-            $res = $client->request('GET', $saving_string, [
-                'headers' => [
-                    'Accept' => 'application/json', 
-                    'Content-type' => 'application/json'
-                ]
-            ]);
+            if ( $readlaterservice == 'pocket') {
+                return $this->saveToPocket($url);
+            }
 
-            return response($res->getBody());
+            if ($readlaterservice == 'instapaper') {
+                return $this->saveToInstapaper($url);
+            }
+
+            return "You need to Choose a prefered Read Later Service at .env. 
+            It has to be either 'instapaper' or 'pocket'";
+
         }
 
         return response('This request needs a url', 403);
+    }
+
+    public function saveToPocket($url){
+        if (request()->session()->has('pocket_request_token')) {
+        
+        } else {
+            // return "you need a pocket request token";
+            $client = new Client(); 
+            $res= $client->request('POST', 'https://getpocket.com/v3/oauth/request', [
+                'form_params' => [
+                    'consumer_key' => env('POCKET_CONSUMER_KEY'),
+                    'redirect_uri' => env('APP_URL'). '/app/pocketredirect',
+                ]
+            ]);
+
+            $returned_string = (string) $res->getBody();
+            if (str_contains($returned_string, 'code=')) {
+                // Store request token
+                session(['pocket_request_token' => str_replace('code=','',$returned_string));
+            }
+
+        }
+        return "Saving To Pocket";
+    }
+
+    public function saveToInstapaper($url){
+        $saving_string = 'https://www.instapaper.com/api/add?'.
+        'username='. urlencode(env('INSTAPAPER_USERNAME')).
+        '&password='. urlencode(env('INSTAPAPER_PASSWORD')).
+        '&url='. $url;
+
+        $client = new Client();
+        $res = $client->request('GET', $saving_string, [
+            'headers' => [
+                'Accept' => 'application/json', 
+                'Content-type' => 'application/json'
+            ]
+        ]);
+
+        return response($res->getBody());
     }
 }

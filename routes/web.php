@@ -69,8 +69,11 @@ $this->get('login', 'Auth\LoginController@showLoginForm')->name('login');
 $this->post('login', 'Auth\LoginController@login');
 $this->post('logout', 'Auth\LoginController@logout')->name('logout');
 
-// Saving to Instapaper
+// Saving for later 
 $this->get('/app/readlater', '\App\Http\Controllers\ReadlaterController@index')->middleware('auth');
+$this->get('/app/pocketredirect', function(){
+    dd(request()->all());
+});
 
 Route::post('/uploadOpml', function(Request $request){
     $request->file('opml')->storeAs('uploaded','feeds.opml');
