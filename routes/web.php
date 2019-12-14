@@ -71,9 +71,8 @@ $this->post('logout', 'Auth\LoginController@logout')->name('logout');
 
 // Saving for later 
 $this->get('/app/readlater', '\App\Http\Controllers\ReadlaterController@index')->middleware('auth');
-$this->get('/app/pocketredirect', function(){
-    dd(request()->all());
-});
+$this->get('/app/setuppocket/authorise', '\App\Http\Controllers\PocketSetupController@authorise')->middleware('auth');
+$this->get('/app/setuppocket', '\App\Http\Controllers\PocketSetupController@index')->middleware('auth');
 
 Route::post('/uploadOpml', function(Request $request){
     $request->file('opml')->storeAs('uploaded','feeds.opml');

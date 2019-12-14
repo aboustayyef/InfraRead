@@ -18,8 +18,7 @@ class ReadlaterController extends Controller
         if ($request->has('url')) {
 
             $url = urlencode($request->get('url'));
-            $readlaterservice = env('PREFERED_READLATER_SERVICE'); 
-
+            $readlaterservice = env('PREFERRED_READLATER_SERVICE'); 
             if ( $readlaterservice == 'pocket') {
                 return $this->saveToPocket($url);
             }
@@ -37,26 +36,19 @@ class ReadlaterController extends Controller
     }
 
     public function saveToPocket($url){
-        if (request()->session()->has('pocket_request_token')) {
-        
-        } else {
-            // return "you need a pocket request token";
+        if (strlen(env('POCKET_ACCESS_TOKEN')) > 1){
             $client = new Client(); 
-            $res= $client->request('POST', 'https://getpocket.com/v3/oauth/request', [
+            $res= $client->request('POST', 'https://getpocket.com/v3/add', [
                 'form_params' => [
+                    'url' => urldecode($url),
                     'consumer_key' => env('POCKET_CONSUMER_KEY'),
-                    'redirect_uri' => env('APP_URL'). '/app/pocketredirect',
+                    'access_token' => env('POCKET_ACCESS_TOKEN'),
                 ]
             ]);
-
-            $returned_string = (string) $res->getBody();
-            if (str_contains($returned_string, 'code=')) {
-                // Store request token
-                session(['pocket_request_token' => str_replace('code=','',$returned_string));
-            }
-
+            return response($res->getBody());
+        } else {
+            return redirect('/app/setuppocket');
         }
-        return "Saving To Pocket";
     }
 
     public function saveToInstapaper($url){

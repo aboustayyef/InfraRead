@@ -198,7 +198,7 @@ import { setTimeout } from 'timers';
                        this.closeDetailsView(); 
                     }
                 }
-                if (e.code == 'KeyI'){
+                if (e.code == 'KeyS'){
                     if (this.page == "post list" && this.keyboard_navigation_active) {
                         this.saveforlater(this.filtered_posts[this.keyboard_navigation_index].url);
                     // Navigate to url if we're in details mode
@@ -283,7 +283,7 @@ import { setTimeout } from 'timers';
                 this.saving_later_status = 'saving';
                 axios.get('/app/readlater?url='+encodeURI(url)).
                 then((res) => {
-                    if (res.data.bookmark_id) {
+                    if (res.data.bookmark_id || res.data.status == 1) {
                         this.saving_later_status = 'success';
                         // remove success message after 1 second
                         setTimeout((t) => {
