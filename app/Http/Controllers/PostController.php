@@ -15,7 +15,9 @@ class PostController extends Controller
      */
     public function index()
     {
-        return Post::with(['Source','Category'])->OrderBy('posted_at','desc')->take(60)->get();
+        $oldestUnreadPost = Post::getOldestUnreadPost();
+        // dd($oldestUnreadPost);
+        return Post::with(['Source','Category'])->Where('posted_at','>',$oldestUnreadPost->posted_at)->OrderBy('posted_at','desc')->get();
     }
 
 

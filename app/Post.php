@@ -23,6 +23,11 @@ class Post extends Model
         return Static::with(['Source','Category'])->OrderBy('posted_at','desc')->take($howmany)->get();
     }
 
+    public static function getOldestUnreadPost(){
+        $post = Static::where('read',0)->orderBy('posted_at','asc')->take(1)->get()->first();
+        return $post;
+    }
+
     public function getTimeAgoAttribute()
     {
         return $this->posted_at->diffForHumans();
