@@ -101,11 +101,6 @@ import { setTimeout } from 'timers';
             document.addEventListener('keydown', this.handleKeyboardInput);
             
         },
-        watch: {
-            posts: function(){
-                localStorage.setItem(this.posts_storage_key, JSON.stringify(this.posts));
-            }
-        },
         computed: {
 
             posts_storage_key()
@@ -129,7 +124,9 @@ import { setTimeout } from 'timers';
             },
         },
         methods: {
-
+            updateLocalStorage(){
+                localStorage.setItem(this.posts_storage_key, JSON.stringify(this.posts));
+            },
             handleKeyboardInput(e) {
                 // console.log(` ${e.code}`);
                 // escape key 
@@ -273,7 +270,7 @@ import { setTimeout } from 'timers';
                 this.updateDocumentTitle() ;
                 axios.patch('/api/posts/'+post.id, {read: post.read})
                 .then((res) => {
-                    // nothing
+                    this.updateLocalStorage();
                 }).catch((res) => {
                     console.log('there was a problem with updating post status');
                     post.read = 1 - post.read;
