@@ -115,18 +115,24 @@ import { setTimeout } from 'timers';
         computed: {
            unread_count()
             {
-                return this.posts.filter((post) => {return post.read == 0}).length;
+                if (this.posts_loaded) {
+                    return this.posts.filter((post) => {return post.read == 0}).length;
+                }
+                return 0;
             },
             filtered_posts()
             {
-                let posts_copy = this.posts.slice(); //used slice() because reverse() mutates original array
-                if (this.oldest_on_top) {
-                    posts_copy.reverse(); 
+                if (this.posts_loaded) {
+                    let posts_copy = this.posts.slice(); //used slice() because reverse() mutates original array
+                    if (this.oldest_on_top) {
+                        posts_copy.reverse(); 
+                    }
+                    if (this.unread_only) {
+                        posts_copy = posts_copy.filter((post) => !post.read);
+                    } 
+                    return posts_copy;
                 }
-                if (this.unread_only) {
-                    posts_copy = posts_copy.filter((post) => !post.read);
-                } 
-                return posts_copy;
+                return false;
             },
         },
         methods: {
