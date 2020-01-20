@@ -1,16 +1,3 @@
-// service worker stuff
-if (!('serviceWorker' in navigator)) {
-    console.log('service worker not supported');
-} else {
-    // register service worker
-    navigator.serviceWorker.register(
-        '/service-worker.js'
-    )
-    .then(function(registration){
-        console.log(`SW Registered! Scope is: ${registration.scope}`);
-    });
-}
-
 /**
  * First we will load all of this project's JavaScript dependencies which
  * includes Vue and other libraries. It is a great starting point when
