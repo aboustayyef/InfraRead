@@ -38,11 +38,11 @@
                 There are no unread posts... <a @click="unread_only = false">See All posts</a>
             </div>
 
-            <article class="message is-warning" v-if="!posts_loaded">
+            <!-- <article class="message is-warning" v-if="!posts_loaded">
               <div class="message-body ">
                 Updating posts...
               </div>
-            </article>
+            </article> -->
 
             <div v-if="posts_loaded" class='row'>
                 <ul>
@@ -63,6 +63,10 @@
             <div v-else>
                 <!-- show placeholder until posts load -->
                 <ul>
+                    <li><empty-post-list-item></empty-post-list-item></li>
+                    <hr>
+                    <li><empty-post-list-item></empty-post-list-item></li>
+                    <hr>
                     <li><empty-post-list-item></empty-post-list-item></li>
                     <hr>
                     <li><empty-post-list-item></empty-post-list-item></li>

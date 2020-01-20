@@ -8,7 +8,6 @@ $link: $primary;
 
 @import "../../node_modules/bulma/bulma";
 @import "ios-7-switch";
-@import url('https://fonts.googleapis.com/css?family=Catamaran:400,600&display=swap');
 
 html {
   font-size: 18px;
@@ -18,10 +17,6 @@ html {
   @include desktop {
     font-size: 20px;
   }
-}
-
-body{
-  font-family: 'Catamaran', sans-serif;
 }
 
 p{
