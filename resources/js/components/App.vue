@@ -38,7 +38,7 @@
                 There are no unread posts... <a @click="unread_only = false">See All posts</a>
             </div>
 
-            <article class="message is-warning" v-if="posts_loaded == 'storage'">
+            <article class="message is-warning" v-if="!posts_loaded">
               <div class="message-body ">
                 Updating posts...
               </div>
@@ -58,6 +58,18 @@
                         ></post-list-item>
                         <hr v-if="!(unread_only && post.read)">
                     </li>
+                </ul>
+            </div>
+            <div v-else>
+                <!-- show placeholder until posts load -->
+                <ul>
+                    <li><empty-post-list-item></empty-post-list-item></li>
+                    <hr>
+                    <li><empty-post-list-item></empty-post-list-item></li>
+                    <hr>
+                    <li><empty-post-list-item></empty-post-list-item></li>
+                    <hr>
+                    <li><empty-post-list-item></empty-post-list-item></li>
                 </ul>
             </div>
         </div>
@@ -89,12 +101,7 @@ import { setTimeout } from 'timers';
             };
         },
         created() {
-            // Start with local storage
-            this.posts = JSON.parse(localStorage.getItem(this.posts_storage_key) || '[]');
-            if (this.posts.length > 0) {
-                this.posts_loaded = 'storage';
-                this.active_post = this.posts[0];
-            }
+
             this.fetchPostList();
 
             // Capture Keyboard input
@@ -102,12 +109,7 @@ import { setTimeout } from 'timers';
             
         },
         computed: {
-
-            posts_storage_key()
-            {
-               return 'feedreader-' + this.posts_source;
-            },
-            unread_count()
+           unread_count()
             {
                 return this.posts.filter((post) => {return post.read == 0}).length;
             },
@@ -124,10 +126,7 @@ import { setTimeout } from 'timers';
             },
         },
         methods: {
-            updateLocalStorage(){
-                localStorage.setItem(this.posts_storage_key, JSON.stringify(this.posts));
-            },
-            handleKeyboardInput(e) {
+           handleKeyboardInput(e) {
                 // console.log(` ${e.code}`);
                 // escape key 
                 if(e.code == 'Escape' ) {
@@ -231,7 +230,7 @@ import { setTimeout } from 'timers';
             {
                 axios.get(this.posts_source).then((res) => {
                     this.posts = res.data;
-                    this.posts_loaded = 'server';
+                    this.posts_loaded = true;
                     this.active_post = this.posts[0];
                     this.last_fetch_posts = Date.now();
                     this.updateDocumentTitle();
@@ -270,7 +269,7 @@ import { setTimeout } from 'timers';
                 this.updateDocumentTitle() ;
                 axios.patch('/api/posts/'+post.id, {read: post.read})
                 .then((res) => {
-                    this.updateLocalStorage();
+                    //nothing
                 }).catch((res) => {
                     console.log('there was a problem with updating post status');
                     post.read = 1 - post.read;

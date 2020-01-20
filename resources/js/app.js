@@ -33,6 +33,7 @@ Vue.component('unread-count', require('./components/UnreadCount.vue').default);
 Vue.component('bottom-nav', require('./components/BottomNav.vue').default);
 Vue.component('post-details', require('./components/PostDetails.vue').default);
 Vue.component('post-list-item', require('./components/PostListItem.vue').default);
+Vue.component('empty-post-list-item', require('./components/EmptyPostListItem.vue').default);
 const app = new Vue({
     el: '#app'
 });
