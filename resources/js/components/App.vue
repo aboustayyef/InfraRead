@@ -115,7 +115,7 @@ import { setTimeout } from 'timers';
         computed: {
            unread_count()
             {
-                if (this.posts_loaded) {
+                if (this.posts_loaded == true) {
                     return this.posts.filter((post) => {return post.read == 0}).length;
                 }
                 return 0;
@@ -240,10 +240,10 @@ import { setTimeout } from 'timers';
             {
                 axios.get(this.posts_source).then((res) => {
                     this.posts = res.data;
-                    this.posts_loaded = true;
                     this.active_post = this.posts[0];
                     this.last_fetch_posts = Date.now();
                     this.updateDocumentTitle();
+                    this.posts_loaded = true;
                 });
             },
 

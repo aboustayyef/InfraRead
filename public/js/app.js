@@ -1979,7 +1979,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   computed: {
     unread_count: function unread_count() {
-      if (this.posts_loaded) {
+      if (this.posts_loaded == true) {
         return this.posts.filter(function (post) {
           return post.read == 0;
         }).length;
@@ -2107,11 +2107,12 @@ __webpack_require__.r(__webpack_exports__);
 
       axios.get(this.posts_source).then(function (res) {
         _this.posts = res.data;
-        _this.posts_loaded = true;
         _this.active_post = _this.posts[0];
         _this.last_fetch_posts = Date.now();
 
         _this.updateDocumentTitle();
+
+        _this.posts_loaded = true;
       });
     },
     updateDocumentTitle: function updateDocumentTitle() {
