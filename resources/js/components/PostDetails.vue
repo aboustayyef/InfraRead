@@ -20,12 +20,22 @@
 </template>
 <script>
     export default {
-        props: ['page','active_post'],
+        props: ['page','active_post','active_post_content'],
+        data() {
+          return {
+            content: 'loading..'
+          }
+        },
         computed: {
             sanitized_content(){
-              var san = this.active_post.content.replace(/http\:/gi, 'https\:') || this.active_post.content;
+              var san = this.active_post_content.replace(/http\:/gi, 'https\:') || this.active_post_content;
               return san;
             }
+        },
+        mounted () {
+          axios.get('/api/postContentById/' + this.active_post.id).then((res) => {
+                    this.content = res.data.content;
+                });
         },
         methods:
         {

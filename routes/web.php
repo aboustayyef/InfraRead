@@ -99,6 +99,7 @@ Route::prefix('admin')->middleware('auth')->group(function(){
 // Ajax
 Route::prefix('api')->middleware('auth')->group(function(){
     
+    Route::get('/postContentById/{post}', 'PostController@getContentById');
     Route::resource('/posts', 'PostController')->only(['index','update']);
 
     // crawl for new posts /per source

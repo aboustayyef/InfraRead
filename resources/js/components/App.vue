@@ -4,6 +4,7 @@
             v-if="posts_loaded"
             :page="page"
             :active_post="active_post"
+            :active_post_content="active_post_content"
         ></post-details>
         
         <unread-count
@@ -93,6 +94,7 @@ import { setTimeout } from 'timers';
                 posts : [], // the list of unfiltered posts
                 posts_loaded : false,
                 active_post : {}, // the posts which is in the post details view mode
+                active_post_content: 'loading...',
                 unread_only: true, // default filter = unread posts
                 last_fetch_posts: 0,
                 all_sources:[],
@@ -262,6 +264,9 @@ import { setTimeout } from 'timers';
                 document.getElementById('details-area').scrollTo(0,0);
                 this.active_post = post;
                 this.page = "post details";
+                axios.get('/api/postContentById/' + this.active_post.id).then((res) => {
+                    this.active_post_content=res.data.content;
+                });
             },
             closeDetailsView()
             {
@@ -270,6 +275,7 @@ import { setTimeout } from 'timers';
                 if (this.active_post.read == 0) {
                     this.togglePostRead(this.active_post);
                 }
+                this.active_post_content="loading...";
                 // change to list view
                 this.page = 'post list';
             },
