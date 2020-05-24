@@ -2,6 +2,8 @@
     <div :class="{'prevent-scrolling': page == 'post details'}">
 
         <!-- Content of a Single Post -->
+        <!-- This view is hidden at the start (using: X-translate 100% to the right) -->
+        <!-- It only comes into view (X-translate:0%) when the page kind is 'post details'  -->
         <post-details
             v-if="posts_loaded"
             :page="page"
@@ -83,7 +85,7 @@ import { setTimeout } from 'timers';
         ],
         data() {
             return {
-                page: window.page,    // used to know which view we're in: post list, post details or post filters
+                page: window.page,    // used to know which view we're in: options: 'post list', 'post details' or 'post filters'
                 posts_source: window.posts_source, // which XHR request to get posts
                 posts_description: window.posts_description,
                 posts : [], // the list of unfiltered posts
