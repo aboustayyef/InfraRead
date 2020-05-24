@@ -31,24 +31,24 @@
             :oldest_on_top="oldest_on_top"
             v-on:OldestOnTopToggle="ToggleOldestOnTop"
             :last_successful_crawl="last_successful_crawl"
-
         ></header-settings>
             
         <div class="container">
-            <div class="row" v-if="filtered_posts.length == 0 && posts_loaded">
+            
+            <!-- If all posts are read, display 'there are no unread posts' message  -->
+            <div class="row" 
+                v-if="filtered_posts.length == 0 && posts_loaded"
+            >
                 There are no unread posts... <a @click="unread_only = false">See All posts</a>
             </div>
-
-            <!-- <article class="message is-warning" v-if="!posts_loaded">
-              <div class="message-body ">
-                Updating posts...
-              </div>
-            </article> -->
+            
 
             <div v-if="posts_loaded" class='row'>
                 <ul>
-                    <li v-for="(post,i) in filtered_posts" v-bind:key="post.id">
-                        <!-- When a user clicks on an area of the post, change the current post and mark it as read -->
+                    <li v-for="(post,i) in filtered_posts" 
+                        v-bind:key="post.id"
+                    >
+                    <!-- When a user clicks on an area of the post, change the current post and mark it as read -->
                         <post-list-item 
                             :index="i"
                             :post="post"
@@ -64,17 +64,10 @@
             <div v-else>
                 <!-- show placeholder until posts load -->
                 <ul>
-                    <li><empty-post-list-item></empty-post-list-item></li>
-                    <hr>
-                    <li><empty-post-list-item></empty-post-list-item></li>
-                    <hr>
-                    <li><empty-post-list-item></empty-post-list-item></li>
-                    <hr>
-                    <li><empty-post-list-item></empty-post-list-item></li>
-                    <hr>
-                    <li><empty-post-list-item></empty-post-list-item></li>
-                    <hr>
-                    <li><empty-post-list-item></empty-post-list-item></li>
+                    <li v-for="n in 6">
+                        <empty-post-list-item></empty-post-list-item>
+                        <hr>
+                    </li>
                 </ul>
             </div>
         </div>
@@ -138,7 +131,7 @@ import { setTimeout } from 'timers';
             },
         },
         methods: {
-           handleKeyboardInput(e) {
+            handleKeyboardInput(e) {
                 // console.log(` ${e.code}`);
                 // escape key 
                 if(e.code == 'Escape' ) {
@@ -215,31 +208,23 @@ import { setTimeout } from 'timers';
                     }
                 }
             },
-            NavigateToNthPost(n)
-            {
+            NavigateToNthPost(n){
                 //
             },
-            ToggleUnreadOnly()
-            {
+            ToggleUnreadOnly() {
                 this.unread_only = !this.unread_only;
             },
-
-            ToggleOldestOnTop(d)
-            {
+            ToggleOldestOnTop(d) {
                 this.oldest_on_top = d;
             },
-
-            autoRefreshPosts()
-            {
+            autoRefreshPosts() {
                 //refresh posts when last fetch is older than this.refreshinterval
                 console.log('refreshing posts');
                 if((Date.now() - this.last_fetch_posts) > (this.refreshinterval * 60000)) {
                     this.fetchPostList();
                 }
             },
-
-            fetchPostList()
-            {
+            fetchPostList() {
                 axios.get(this.posts_source).then((res) => {
                     this.posts = res.data;
                     this.active_post = this.posts[0];
@@ -248,18 +233,13 @@ import { setTimeout } from 'timers';
                     this.posts_loaded = true;
                 });
             },
-
-            updateDocumentTitle()
-            {
+            updateDocumentTitle() {
                 if (this.unread_count > 0) {
                     document.title = `(${this.unread_count}) InfraRead`;
                 } else {
                     document.title = `InfraRead`;
                 }
             },
-
-            // Detail View
-
             showDetailsView(post){
                 document.getElementById('details-area').scrollTo(0,0);
                 this.active_post = post;
@@ -268,8 +248,7 @@ import { setTimeout } from 'timers';
                     this.active_post_content=res.data.content;
                 });
             },
-            closeDetailsView()
-            {
+            closeDetailsView() {
                 console.log('called');
                 // mark post as read if unread
                 if (this.active_post.read == 0) {
@@ -279,8 +258,7 @@ import { setTimeout } from 'timers';
                 // change to list view
                 this.page = 'post list';
             },
-            togglePostRead(post)
-            {
+            togglePostRead(post) {
                 post.read = 1 - post.read ; // toggle between 0 and 1
                 this.updateDocumentTitle() ;
                 axios.patch('/api/posts/'+post.id, {read: post.read})
@@ -297,7 +275,7 @@ import { setTimeout } from 'timers';
                 then((res) => {
                     if (res.data.bookmark_id || res.data.status == 1) {
                         this.saving_later_status = 'success';
-                        // remove success message after 1 second
+                        // remove success message after 2 seconds
                         setTimeout((t) => {
                            this.saving_later_status = 'nothing'; 
                         }, 2000);
@@ -308,8 +286,7 @@ import { setTimeout } from 'timers';
                     // nothing
                 });
             },
-            updateActivePost(post)
-            {
+            updateActivePost(post) {
                 this.activepost = post;
                 this.visible = ! this.visible;
             }
