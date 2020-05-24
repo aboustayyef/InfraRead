@@ -1,5 +1,7 @@
 <template>
     <div :class="{'prevent-scrolling': page == 'post details'}">
+
+        <!-- Content of a Single Post -->
         <post-details
             v-if="posts_loaded"
             :page="page"
@@ -7,23 +9,27 @@
             :active_post_content="active_post_content"
         ></post-details>
         
+        <!-- UI Element to show Unread Count -->
         <unread-count
             :page="page"
             :unread_count="unread_count">
         </unread-count>
 
+        <!-- UI Element to show "saving" status when saving for later -->
         <div id="savinglater">
             <progress v-if="saving_later_status == 'saving'" class="progress is-primary" max="100">30%</progress>
             <span v-if="saving_later_status == 'success'">Saved!</span>
             <span v-if="saving_later_status == 'failure'">couldn't save!</span>
         </div>
         
+        <!-- UI Element to show Close Button for Article (to return to list view) -->
         <bottom-nav
             v-on:closeWindow="closeDetailsView()"
             v-on:keyup.esc="closeDetailsView()"
             :page="page"
         ></bottom-nav>
         
+        <!-- UI Collection of Toggle Settings Elements at the Top -->
         <header-settings
             :posts_description="posts_description"
             :unread_only="unread_only"
@@ -33,21 +39,17 @@
             :last_successful_crawl="last_successful_crawl"
         ></header-settings>
             
+        <!-- List of Posts -->
         <div class="container">
             
             <!-- If all posts are read, display 'there are no unread posts' message  -->
-            <div class="row" 
-                v-if="filtered_posts.length == 0 && posts_loaded"
-            >
+            <div class="row" v-if="filtered_posts.length == 0 && posts_loaded" >
                 There are no unread posts... <a @click="unread_only = false">See All posts</a>
             </div>
-            
 
             <div v-if="posts_loaded" class='row'>
                 <ul>
-                    <li v-for="(post,i) in filtered_posts" 
-                        v-bind:key="post.id"
-                    >
+                    <li v-for="(post,i) in filtered_posts" v-bind:key="post.id" >
                     <!-- When a user clicks on an area of the post, change the current post and mark it as read -->
                         <post-list-item 
                             :index="i"
@@ -64,7 +66,7 @@
             <div v-else>
                 <!-- show placeholder until posts load -->
                 <ul>
-                    <li v-for="n in 6">
+                    <li v-for="n in 6" :key="n">
                         <empty-post-list-item></empty-post-list-item>
                         <hr>
                     </li>
