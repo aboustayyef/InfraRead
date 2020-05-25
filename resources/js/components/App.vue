@@ -333,13 +333,15 @@ import { setTimeout } from 'timers';
                 let highlighted_item_distance_from_top_of_viewport = highlighted_item_distance_from_top - scroll_amount + 109; 
                 let highlighted_item_distance_to_bottom_of_viewport = viewport_height - highlighted_item_distance_from_top_of_viewport - highlighted_item_height;
 
+                let margin = 120;
+
                 // if highlighted item is below the viewport, scroll up
                 if (highlighted_item_distance_to_bottom_of_viewport < 0) {
-                    window.scrollBy(0, - highlighted_item_distance_to_bottom_of_viewport);
+                    window.scrollBy(0, - highlighted_item_distance_to_bottom_of_viewport + margin);
                 }
                 console.log(highlighted_item_distance_from_top_of_viewport);
                 if (highlighted_item_distance_from_top_of_viewport < 0) {
-                    window.scrollBy(0,highlighted_item_distance_from_top_of_viewport);
+                    window.scrollBy(0,highlighted_item_distance_from_top_of_viewport - margin);
                 }
 
             }
