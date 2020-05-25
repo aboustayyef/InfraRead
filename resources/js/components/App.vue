@@ -1,5 +1,5 @@
 <template>
-    <div :class="{'prevent-scrolling': page == 'post details'}">
+    <div id="scrollable_body" :class="{'prevent-scrolling': page == 'post details'}">
 
         <!-- Content of a Single Post -->
         <!-- This view is hidden at the start (using: X-translate 100% to the right) -->
@@ -42,7 +42,7 @@
         ></header-settings>
             
         <!-- List of Posts -->
-        <div class="container">
+        <div id="list_of_posts" class="container">
             
             <!-- If all posts are read, display 'there are no unread posts' message  -->
             <div class="row" v-if="filtered_posts.length == 0 && posts_loaded" >
@@ -51,7 +51,7 @@
 
             <div v-if="posts_loaded" class='row'>
                 <ul>
-                    <li v-for="(post,i) in filtered_posts" v-bind:key="post.id" >
+                    <li class="post_list_item" v-for="(post,i) in filtered_posts" v-bind:key="post.id" >
                     <!-- When a user clicks on an area of the post, change the current post and mark it as read -->
                         <post-list-item 
                             :index="i"
@@ -144,10 +144,34 @@ import { setTimeout } from 'timers';
                         this.closeDetailsView();
                     }
                     //otherwise deactivates keyboard navigation
-                     else {
-                         this.keyboard_navigation_active = false;
+                    else {
+                        this.keyboard_navigation_active = false;
                     }
                 }
+
+                // L (log distances and dimensions for figuring out scrolling)
+                if (e.code == 'KeyL') {
+                    let all_posts_window = document.getElementById('scrollable_body');
+                    let height_of_all_posts_window = all_posts_window.offsetHeight;
+                    const height_of_post_list_item = document.getElementsByClassName('post_list_item').item(0).offsetHeight;
+                    let highlighted_item = document.getElementsByClassName('highlighted').item(0);
+                    let scroll_amount = window.pageYOffset;
+                    let viewport_height = window.innerHeight;
+                    let highlighted_item_distance_from_top = highlighted_item.offsetTop;
+                    let highlighted_item_height = highlighted_item.offsetHeight;
+                    let highlighted_item_distance_from_top_of_viewport = highlighted_item_distance_from_top - scroll_amount + 109; 
+                    let highlighted_item_distance_to_bottom_of_viewport = viewport_height - highlighted_item_distance_from_top_of_viewport - highlighted_item_height;
+                    console.table({
+                        "page height" : height_of_all_posts_window,
+                        "scroll amount" : scroll_amount,
+                        "Viewport height" : viewport_height,
+                        "Highlighted Item Height": highlighted_item_height,
+                        "Highlighted Item Distance From Top" : highlighted_item_distance_from_top,
+                        "Highlighted Item Distance From Top Of Viewport" : highlighted_item_distance_from_top_of_viewport,
+                        "Highlighted Item Distance to Bottom Of Viewport": highlighted_item_distance_to_bottom_of_viewport
+                    });
+                }
+
                 // J (move down the posts)
                 if (e.code == 'KeyJ') {
                     if (this.page == 'post details') {
@@ -161,9 +185,10 @@ import { setTimeout } from 'timers';
                             this.keyboard_navigation_index = 0;
                         // otherwise augment by 1
                         } else {
-                        if (this.keyboard_navigation_index < this.filtered_posts.length - 1) {
-                            this.keyboard_navigation_index += 1;
-                        } 
+                            if (this.keyboard_navigation_index < this.filtered_posts.length - 1) {
+                                this.keyboard_navigation_index += 1;
+                                this.make_sure_highlighted_item_stays_visible();
+                            } 
                         }
                     }
                 }
@@ -182,6 +207,7 @@ import { setTimeout } from 'timers';
                         } else {
                         if (this.keyboard_navigation_index > 0) {
                             this.keyboard_navigation_index -= 1;
+                            this.make_sure_highlighted_item_stays_visible();
                         } 
                         }
                     }
@@ -293,7 +319,31 @@ import { setTimeout } from 'timers';
             updateActivePost(post) {
                 this.activepost = post;
                 this.visible = ! this.visible;
+            },
+            make_sure_highlighted_item_stays_visible(){
+                // Set the variables for dimensions and offsets
+                let all_posts_window = document.getElementById('scrollable_body');
+                let height_of_all_posts_window = all_posts_window.offsetHeight;
+                const height_of_post_list_item = document.getElementsByClassName('post_list_item').item(0).offsetHeight;
+                let highlighted_item = document.getElementsByClassName('post_list_item').item(this.keyboard_navigation_index);
+                let scroll_amount = window.pageYOffset;
+                let viewport_height = window.innerHeight;
+                let highlighted_item_distance_from_top = highlighted_item.offsetTop;
+                let highlighted_item_height = highlighted_item.offsetHeight;
+                let highlighted_item_distance_from_top_of_viewport = highlighted_item_distance_from_top - scroll_amount + 109; 
+                let highlighted_item_distance_to_bottom_of_viewport = viewport_height - highlighted_item_distance_from_top_of_viewport - highlighted_item_height;
+
+                // if highlighted item is below the viewport, scroll up
+                if (highlighted_item_distance_to_bottom_of_viewport < 0) {
+                    window.scrollBy(0, - highlighted_item_distance_to_bottom_of_viewport);
+                }
+                console.log(highlighted_item_distance_from_top_of_viewport);
+                if (highlighted_item_distance_from_top_of_viewport < 0) {
+                    window.scrollBy(0,highlighted_item_distance_from_top_of_viewport);
+                }
+
             }
+
         }
     }
 </script>

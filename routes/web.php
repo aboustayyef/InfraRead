@@ -32,7 +32,7 @@ Route::get('/app', function(){
 })->middleware('auth');
 
 Route::get('/app/source/{id}', function($id){
-    $source = Source::find($id);
+    $source = Source::findOrFail($id);
     $posts_source = '/api/postsBySource/'.$id;
     $posts_description = 'Posts By '. $source->name ;
     $page = 'post list';
@@ -45,7 +45,7 @@ Route::get('/app/source/{id}', function($id){
 })->middleware('auth');
 
 Route::get('/app/category/{id}', function($id){
-    $category = Category::find($id);
+    $category = Category::findOrFail($id);
     $posts_source = '/api/postsByCategory/'.$id;
     $posts_description = 'Posts In the [ '. $category->description . ' ] Category' ;
     $page = 'post list';
