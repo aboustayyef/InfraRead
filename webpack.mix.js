@@ -15,3 +15,8 @@ mix.js('resources/js/administration/admin.js', 'public/js').version();
 mix.js('resources/js/app.js', 'public/js').version()
 mix.sass('resources/sass/app.scss', 'public/css').version()
 mix.sass('resources/sass/administration/admin.scss', 'public/css').version() ;
+
+// V2
+
+mix.js('resources/v2/js/app.js', 'public/v2/js').version();
+mix.sass('resources/v2/css/app.scss', 'public/v2/css').version();

@@ -1,0 +1,27 @@
+//
+//
+// INFRAREAD VERSION 2
+//
+//
+
+$primary: #da2525;
+$modal-content-width: calc(100% - 40px);
+$modal-card-head-background-color: white;
+$modal-card-margin:5px;
+$modal-background-background-color: white;
+$modal-close-dimensions: 60px;
+$link: $primary;
+
+@import "../../../node_modules/bulma/bulma";
+// @import "ios-7-switch";
+
+[v-cloak] > * { display:none; }
+[v-cloak]{ 
+  background-image: url(/img/rss-loader.svg);
+  background-color: #4e4e4e;
+  height: 100vh;
+  width: 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
