@@ -7,6 +7,18 @@ use App\Source;
 use App\Utilities\OpmlImporter;
 use Illuminate\Http\Request;
 
+
+// VERSION 2
+Route::get('/vtwo', function () {
+    $last_successful_crawl = getLastSuccesfulCrawl();
+    return view('v2.home')->with(compact('last_successful_crawl'));
+});
+
+
+
+
+
+
 Route::get('/', function(){
     // If a user exists, but not RSS feeds is set up
     if (\App\Source::count() == 0) {
