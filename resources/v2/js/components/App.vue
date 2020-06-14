@@ -3,7 +3,7 @@
     <div class="container">
         <div class="columns">
             <div class="column is-one-quarter" style="background-color:silver">
-                <sources></sources>
+                <sources :sources="JSON.parse(sources)" :categories="JSON.parse(categories)" :posts="JSON.parse(posts)"></sources>
             </div>
             <div class="column is-one-quarter" style="background-color:beige">Posts</div>
             <div class="column" style="background-color:teal">Post Details</div>
@@ -14,7 +14,7 @@
 <script>
     export default {
         props: [
-            'refreshinterval','last_successful_crawl'
+            'posts','categories','sources','refreshinterval','last_successful_crawl'
         ],
         data() {
             return {

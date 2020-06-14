@@ -1874,7 +1874,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ['refreshinterval', 'last_successful_crawl'],
+  props: ['posts', 'categories', 'sources', 'refreshinterval', 'last_successful_crawl'],
   data: function data() {
     return {};
   },
@@ -1898,7 +1898,27 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-/* harmony default export */ __webpack_exports__["default"] = ({});
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ __webpack_exports__["default"] = ({
+  props: ['sources', 'categories', 'posts'],
+  methods: {
+    unreadBySource: function unreadBySource(s_id) {
+      return this.posts.filter(function (post) {
+        return post.source_id == s_id && post.read == 0;
+      }).length;
+    }
+  }
+});
 
 /***/ }),
 
@@ -15595,7 +15615,15 @@ var render = function() {
             staticClass: "column is-one-quarter",
             staticStyle: { "background-color": "silver" }
           },
-          [_c("sources")],
+          [
+            _c("sources", {
+              attrs: {
+                sources: JSON.parse(_vm.sources),
+                categories: JSON.parse(_vm.categories),
+                posts: JSON.parse(_vm.posts)
+              }
+            })
+          ],
           1
         ),
         _vm._v(" "),
@@ -15642,7 +15670,38 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", [_vm._v("Sources (component)")])
+  return _c(
+    "ul",
+    _vm._l(_vm.categories, function(category) {
+      return _c("li", [
+        _vm._v("\n  ----------------------------"),
+        _c("br"),
+        _vm._v("\n  " + _vm._s(category.description) + "\n  "),
+        _c("br"),
+        _vm._v("----------------------------"),
+        _c("br"),
+        _vm._v(" "),
+        _c(
+          "ul",
+          _vm._l(_vm.sources, function(source) {
+            return _c("li", [
+              source.category_id == category.id
+                ? _c("div", [
+                    _vm._v(
+                      _vm._s(source.description) +
+                        " " +
+                        _vm._s(_vm.unreadBySource(source.id))
+                    )
+                  ])
+                : _vm._e()
+            ])
+          }),
+          0
+        )
+      ])
+    }),
+    0
+  )
 }
 var staticRenderFns = []
 render._withStripped = true

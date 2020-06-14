@@ -27,7 +27,7 @@
 </noscript>
 <body>
     <div id="app" v-cloak>
-        <app last_successful_crawl="{{$last_successful_crawl}}" ></app>
+    <app last_successful_crawl="{{$last_successful_crawl}}" categories="{{$categories}}" posts="{{$posts}}" sources="{{$sources}}"></app>
     </div>
     <script src="{{ mix('/v2/js/app.js') }}"></script>
 </body>

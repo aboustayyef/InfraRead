@@ -11,7 +11,21 @@ use Illuminate\Http\Request;
 // VERSION 2
 Route::get('/vtwo', function () {
     $last_successful_crawl = getLastSuccesfulCrawl();
-    return view('v2.home')->with(compact('last_successful_crawl'));
+
+    $categories = Category::where('id','>',0)->select(['id','description'])->get()->toJson();
+    $sources = Source::where('id','>',0)->select(['id','category_id','description'])->get()->toJson();
+
+    // Get posts;
+    $posts = collect();
+    foreach (Source::all() as $key => $source) {
+        $posts = $posts->merge($source->latestPostsSinceEarliestUnread());
+    }
+    $posts = $posts->toJson();
+    return view('v2.home')
+    ->with(compact('last_successful_crawl'))
+    ->with(compact('categories'))
+    ->with(compact('sources'))
+    ->with(compact('posts'));
 });
 
 
