@@ -1860,6 +1860,12 @@ module.exports = function isBuffer (obj) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(source, true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 //
 //
 //
@@ -1881,9 +1887,21 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ['posts', 'categories', 'sources', 'refreshinterval', 'last_successful_crawl'],
+  props: ['posts_raw', 'categories_raw', 'sources_raw', 'refreshinterval', 'last_successful_crawl'],
   data: function data() {
-    return {};
+    return {
+      sources: JSON.parse(this.sources_raw),
+      categories: JSON.parse(this.categories_raw),
+      posts: JSON.parse(this.posts_raw).sort(function (a, b) {
+        return a.posted_at > b.posted_at ? -1 : b.posted_at > a.posted_at ? 1 : 0;
+      }) // ^ sorting array of objects by property (Newest first). Source: https://stackoverflow.com/questions/1129216/sort-array-of-objects-by-string-property-value
+      .map(function (obj) {
+        return _objectSpread({}, obj, {
+          seconds: Date.parse(obj.posted_at)
+        });
+      }) // ^ adding the "Seconds" property, for seconds since 1970, source: https://stackoverflow.com/questions/38922998/add-property-to-an-array-of-objects
+
+    };
   },
   created: function created() {},
   computed: {},
@@ -1926,12 +1944,46 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['sources', 'categories', 'posts'],
   methods: {
     unreadBySource: function unreadBySource(s_id) {
       return this.posts.filter(function (post) {
         return post.source_id == s_id && post.read == 0;
+      }).length;
+    },
+    allUnread: function allUnread() {
+      return this.posts.filter(function (post) {
+        return post.read == 0;
+      }).length;
+    },
+    unreadToday: function unreadToday() {
+      var todayseconds = new Date().setHours(0, 0, 0, 0);
+      return this.posts.filter(function (post) {
+        return post.seconds > todayseconds && post.read == 0;
       }).length;
     }
   }
@@ -16280,9 +16332,9 @@ var render = function() {
           [
             _c("sources", {
               attrs: {
-                sources: JSON.parse(_vm.sources),
-                categories: JSON.parse(_vm.categories),
-                posts: JSON.parse(_vm.posts)
+                sources: _vm.sources,
+                categories: _vm.categories,
+                posts: _vm.posts
               }
             })
           ],
@@ -16335,52 +16387,115 @@ var render = function() {
   return _c(
     "aside",
     { staticClass: "menu" },
-    _vm._l(_vm.categories, function(category) {
-      return _c("div", [
-        _c("p", { staticClass: "menu-label" }, [
-          _vm._v("\n            " + _vm._s(category.description) + "\n        ")
+    [
+      _vm._m(0),
+      _vm._v(" "),
+      _c("ul", { staticClass: "menu-list" }, [
+        _c("li", [
+          _c("a", { attrs: { href: "#" } }, [
+            _vm._v("All Unread\n                "),
+            _vm.allUnread() > 0
+              ? _c(
+                  "span",
+                  {
+                    staticClass:
+                      "tag is-primary is-rounded is-pulled-right is-small"
+                  },
+                  [_vm._v(_vm._s(_vm.allUnread()) + "\n                ")]
+                )
+              : _vm._e()
+          ])
         ]),
         _vm._v(" "),
-        _c(
-          "ul",
-          { staticClass: "menu-list" },
-          _vm._l(_vm.sources, function(source) {
-            return _c("li", [
-              source.category_id == category.id
-                ? _c("a", { attrs: { href: "#" } }, [
-                    _c("span", { staticClass: "source-name" }, [
-                      _vm._v(_vm._s(source.name))
-                    ]),
-                    _vm._v(" "),
-                    _vm.unreadBySource(source.id) > 0
-                      ? _c(
-                          "span",
-                          {
-                            staticClass:
-                              "tag is-primary is-rounded is-pulled-right is-small"
-                          },
-                          [
-                            _vm._v(
-                              _vm._s(_vm.unreadBySource(source.id)) +
-                                "\n                        "
-                            )
-                          ]
-                        )
-                      : _vm._e()
-                  ])
-                : _vm._e()
-            ])
-          }),
-          0
-        ),
-        _vm._v(" "),
-        _c("hr")
-      ])
-    }),
-    0
+        _c("li", [
+          _c("a", { attrs: { href: "#" } }, [
+            _vm._v("Today \n            "),
+            _vm.unreadToday() > 0
+              ? _c(
+                  "span",
+                  {
+                    staticClass:
+                      "tag is-primary is-rounded is-pulled-right is-small"
+                  },
+                  [_vm._v(_vm._s(_vm.unreadToday()) + "\n            ")]
+                )
+              : _vm._e()
+          ])
+        ])
+      ]),
+      _vm._v(" "),
+      _c("hr"),
+      _vm._v(" "),
+      _vm._l(_vm.categories, function(category) {
+        return _c("div", [
+          _c("p", { staticClass: "menu-label" }, [
+            _vm._m(1, true),
+            _vm._v(
+              "\n            " + _vm._s(category.description) + "\n        "
+            )
+          ]),
+          _vm._v(" "),
+          _c(
+            "ul",
+            { staticClass: "menu-list" },
+            _vm._l(_vm.sources, function(source) {
+              return _c("li", [
+                source.category_id == category.id
+                  ? _c("a", { attrs: { href: "#" } }, [
+                      _c("span", { staticClass: "source-name" }, [
+                        _vm._v(_vm._s(source.name))
+                      ]),
+                      _vm._v(" "),
+                      _vm.unreadBySource(source.id) > 0
+                        ? _c(
+                            "span",
+                            {
+                              staticClass:
+                                "tag is-primary is-rounded is-pulled-right is-small"
+                            },
+                            [
+                              _vm._v(
+                                _vm._s(_vm.unreadBySource(source.id)) +
+                                  "\n                        "
+                              )
+                            ]
+                          )
+                        : _vm._e()
+                    ])
+                  : _vm._e()
+              ])
+            }),
+            0
+          ),
+          _vm._v(" "),
+          _c("hr")
+        ])
+      })
+    ],
+    2
   )
 }
-var staticRenderFns = []
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("p", { staticClass: "menu-label" }, [
+      _c("span", { staticClass: "icon is-small" }, [
+        _c("i", { staticClass: "fa fa-cog" })
+      ]),
+      _vm._v(" Automatic \n    ")
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("span", { staticClass: "icon is-small" }, [
+      _c("i", { staticClass: "fa fa-folder" })
+    ])
+  }
+]
 render._withStripped = true
 
 
