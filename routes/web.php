@@ -13,7 +13,7 @@ Route::get('/columns', function () {
     $last_successful_crawl = getLastSuccesfulCrawl();
 
     $categories = Category::where('id','>',0)->select(['id','description'])->get()->toJson();
-    $sources = Source::where('id','>',0)->select(['id','category_id','description'])->get()->toJson();
+    $sources = Source::where('id','>',0)->select(['id','category_id','name','description'])->get()->toJson();
 
     // Get posts;
     $posts = collect();

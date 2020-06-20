@@ -1,15 +1,15 @@
 <template>
   <section class="section">
-    <div class="container">
+    <div class="container is-fluid">
         <div class="columns">
 
             <!-- Leftmost column: <sources>, Sources.vue -->
-            <div class="column is-one-quarter" style="border:1px solid silver" >
+            <div class="column is-3" style="border:1px solid silver" >
                 <sources :sources="JSON.parse(sources)" :categories="JSON.parse(categories)" :posts="JSON.parse(posts)"></sources>
             </div>
 
             <!-- Middle Column: <post-titles>, PostTitles.vue -->
-            <div class="column is-one-quarter" style="background-color:beige">Posts</div>
+            <div class="column is-4" style="background-color:beige">Posts</div>
             
             <!-- Rightmost Column: <post-content>, PostContent.vue -->
             <div class="column" style="background-color:teal">Post Details</div>

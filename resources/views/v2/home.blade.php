@@ -14,10 +14,10 @@
     {{-- <script>window.page = '{{$page}}'</script>  --}}
     
     <link rel="stylesheet" type="text/css" href="{{mix('/v2/css/app.css')}}">
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.1/css/all.min.css">
     <link rel="manifest" href="/manifest.json">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#da2525">
-
 </head>
 <noscript>
     <h3>

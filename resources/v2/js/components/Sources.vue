@@ -2,21 +2,23 @@
 <aside class="menu">
     <div v-for="category in categories">
         <p class="menu-label">
+            <!-- <span class="icon is-small"><i class="fa fa-folder-o"></i></span> -->
             {{category.description}}
         </p>
         <ul class="menu-list">
             <li v-for="source in sources">
                 <a href="#" 
                     v-if="source.category_id == category.id">
-                        {{source.description}} 
+                        <span class="source-name">{{source.name}}</span> 
                         <span 
-                            v-if="unreadBySource(source.id) > 0"
-                            class="tag is-primary is-rounded is-pulled-right">{{unreadBySource(source.id)}}
+                            v-if="unreadBySource(source.id) > 0 "
+                            class="tag is-primary is-rounded is-pulled-right is-small">{{unreadBySource(source.id)}}
                         </span>
                         
                 </a>
             </li>
         </ul>
+        <hr>
     </div>
 </aside>
 </template>
@@ -36,5 +38,11 @@ export default {
 </script>
 
 <style>
-
+    .source-name {
+    display: inline-block;
+    width: 80%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    }
 </style>
