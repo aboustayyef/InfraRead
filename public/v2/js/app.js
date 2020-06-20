@@ -1873,6 +1873,13 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['posts', 'categories', 'sources', 'refreshinterval', 'last_successful_crawl'],
   data: function data() {
@@ -1894,6 +1901,14 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -15613,7 +15628,7 @@ var render = function() {
           "div",
           {
             staticClass: "column is-one-quarter",
-            staticStyle: { "background-color": "silver" }
+            staticStyle: { border: "1px solid silver" }
           },
           [
             _c("sources", {
@@ -15671,27 +15686,41 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c(
-    "ul",
+    "aside",
+    { staticClass: "menu" },
     _vm._l(_vm.categories, function(category) {
-      return _c("li", [
-        _vm._v("\n  ----------------------------"),
-        _c("br"),
-        _vm._v("\n  " + _vm._s(category.description) + "\n  "),
-        _c("br"),
-        _vm._v("----------------------------"),
-        _c("br"),
+      return _c("div", [
+        _c("p", { staticClass: "menu-label" }, [
+          _vm._v("\n            " + _vm._s(category.description) + "\n        ")
+        ]),
         _vm._v(" "),
         _c(
           "ul",
+          { staticClass: "menu-list" },
           _vm._l(_vm.sources, function(source) {
             return _c("li", [
               source.category_id == category.id
-                ? _c("div", [
+                ? _c("a", { attrs: { href: "#" } }, [
                     _vm._v(
-                      _vm._s(source.description) +
-                        " " +
-                        _vm._s(_vm.unreadBySource(source.id))
-                    )
+                      "\n                        " +
+                        _vm._s(source.description) +
+                        " \n                        "
+                    ),
+                    _vm.unreadBySource(source.id) > 0
+                      ? _c(
+                          "span",
+                          {
+                            staticClass:
+                              "tag is-primary is-rounded is-pulled-right"
+                          },
+                          [
+                            _vm._v(
+                              _vm._s(_vm.unreadBySource(source.id)) +
+                                "\n                        "
+                            )
+                          ]
+                        )
+                      : _vm._e()
                   ])
                 : _vm._e()
             ])

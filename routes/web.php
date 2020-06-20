@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 
 
 // VERSION 2
-Route::get('/vtwo', function () {
+Route::get('/columns', function () {
     $last_successful_crawl = getLastSuccesfulCrawl();
 
     $categories = Category::where('id','>',0)->select(['id','description'])->get()->toJson();

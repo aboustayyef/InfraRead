@@ -1,16 +1,24 @@
 <template>
-  <ul>
-    <li v-for="category in categories">
-    ----------------------------<br>
-    {{category.description}}
-    <br>----------------------------<br>
-    <ul>
-        <li v-for="source in sources">
-            <div v-if="source.category_id == category.id">{{source.description}} {{unreadBySource(source.id)}}</div>    
-        </li>
-    </ul>
-    </li>
-  </ul>
+<aside class="menu">
+    <div v-for="category in categories">
+        <p class="menu-label">
+            {{category.description}}
+        </p>
+        <ul class="menu-list">
+            <li v-for="source in sources">
+                <a href="#" 
+                    v-if="source.category_id == category.id">
+                        {{source.description}} 
+                        <span 
+                            v-if="unreadBySource(source.id) > 0"
+                            class="tag is-primary is-rounded is-pulled-right">{{unreadBySource(source.id)}}
+                        </span>
+                        
+                </a>
+            </li>
+        </ul>
+    </div>
+</aside>
 </template>
 
 <script>
