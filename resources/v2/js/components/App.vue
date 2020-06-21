@@ -14,7 +14,12 @@
             </div>
 
             <!-- Middle Column: <post-titles>, PostTitles.vue -->
-            <div class="column is-4" style="background-color:beige">Posts</div>
+            <div class="column is-4" style="background-color:#f0f0ed">
+                <post-titles
+                    :posts = "posts"
+                    :highlightedSource="highlightedSource"
+                ></post-titles>
+            </div>
             
             <!-- Rightmost Column: <post-content>, PostContent.vue -->
             <div class="column" style="background-color:teal">Post Details</div>

@@ -21,6 +21,7 @@ window.Vue = require('vue');
 
 Vue.component('app', require('./components/App.vue').default);
 Vue.component('sources', require('./components/Sources.vue').default);
+Vue.component('post-titles', require('./components/PostTitles.vue').default);
 
 const app = new Vue({
     el: '#app'

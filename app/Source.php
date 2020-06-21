@@ -122,19 +122,19 @@ class Source extends Model
         
       // If there are no unread posts return the latest posts 
       if ($earliest_unread_post->count() < 1) {
-        return $this->posts()->orderBy('posted_at','desc')->take($minimum_posts)->get();
+        return $this->posts()->with(['source'])->orderBy('posted_at','desc')->take($minimum_posts)->get();
       }
 
       // Otherwise get all posts since the earliest unread post
       $date_of_earliest_uread_post = (string) $earliest_unread_post->first()->posted_at;
       $all_posts_since_earliest_unread = 
-        $this->posts()
+        $this->posts()->with(['source'])
         ->where('posted_at','>=', $date_of_earliest_uread_post)
         ->orderBy('posted_at','desc')->take($maximum_posts)->get();
       
       // if the posts are less than $minimum_posts get latest posts instead
       if ($all_posts_since_earliest_unread->count() < $minimum_posts) {
-        return $this->posts()->orderBy('posted_at','desc')->take($minimum_posts)->get();
+        return $this->posts()->with(['source'])->orderBy('posted_at','desc')->take($minimum_posts)->get();
       }
       // otherwise return all posts since earliest unread post
       return $all_posts_since_earliest_unread;
