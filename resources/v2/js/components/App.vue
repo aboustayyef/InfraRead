@@ -1,10 +1,10 @@
 <template>
   <section class="section">
     <div class="container is-fluid">
-        <div class="columns">
+        <div class="columns fixedHeight">
 
             <!-- Leftmost column: <sources>, Sources.vue -->
-            <div class="column is-3" style="border:1px solid silver" >
+            <div class="column fixedHeight is-3" style="border:1px solid silver" >
                 <sources 
                     :sources="sources" :categories="categories" :posts="posts"
                     :highlightedSource ="highlightedSource"
@@ -14,7 +14,7 @@
             </div>
 
             <!-- Middle Column: <post-titles>, PostTitles.vue -->
-            <div class="column is-4" style="background-color:#f0f0ed">
+            <div class="column fixedHeight is-4" style="background-color:#f0f0ed">
                 <post-titles
                     :posts = "posts"
                     :highlightedSource="highlightedSource"
@@ -57,4 +57,9 @@
         }
     }
 </script>
-<style scoped></style>
+<style scoped>
+    .fixedHeight{
+        height:90vh;
+        overflow:scroll;
+    }
+</style>
