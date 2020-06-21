@@ -6503,8 +6503,8 @@ a.list-item {
 }
 
 .menu-list a.is-active {
-  background-color: #da2525;
-  color: #fff;
+  background-color: #ececec;
+  color: black;
 }
 
 .menu-list li ul {
