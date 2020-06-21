@@ -1886,12 +1886,18 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['posts_raw', 'categories_raw', 'sources_raw', 'refreshinterval', 'last_successful_crawl'],
   data: function data() {
     return {
       sources: JSON.parse(this.sources_raw),
       categories: JSON.parse(this.categories_raw),
+      highlightedSource: 'allUnread',
       posts: JSON.parse(this.posts_raw).sort(function (a, b) {
         return a.posted_at > b.posted_at ? -1 : b.posted_at > a.posted_at ? 1 : 0;
       }) // ^ sorting array of objects by property (Newest first). Source: https://stackoverflow.com/questions/1129216/sort-array-of-objects-by-string-property-value
@@ -1905,7 +1911,13 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   },
   created: function created() {},
   computed: {},
-  methods: {}
+  methods: {
+    selectSource: function selectSource(_ref) {
+      var kind = _ref.kind,
+          value = _ref.value;
+      this.highlightedSource = value;
+    }
+  }
 });
 
 /***/ }),
@@ -1967,8 +1979,16 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ['sources', 'categories', 'posts'],
+  props: ['sources', 'categories', 'posts', 'highlightedSource'],
   methods: {
     unreadBySource: function unreadBySource(s_id) {
       return this.posts.filter(function (post) {
@@ -1985,6 +2005,9 @@ __webpack_require__.r(__webpack_exports__);
       return this.posts.filter(function (post) {
         return post.seconds > todayseconds && post.read == 0;
       }).length;
+    },
+    selectSource: function selectSource(which) {
+      this.$emit('selectSource', which);
     }
   }
 });
@@ -16334,8 +16357,10 @@ var render = function() {
               attrs: {
                 sources: _vm.sources,
                 categories: _vm.categories,
-                posts: _vm.posts
-              }
+                posts: _vm.posts,
+                highlightedSource: _vm.highlightedSource
+              },
+              on: { selectSource: _vm.selectSource }
             })
           ],
           1
@@ -16392,35 +16417,59 @@ var render = function() {
       _vm._v(" "),
       _c("ul", { staticClass: "menu-list" }, [
         _c("li", [
-          _c("a", { attrs: { href: "#" } }, [
-            _vm._v("All Unread\n                "),
-            _vm.allUnread() > 0
-              ? _c(
-                  "span",
-                  {
-                    staticClass:
-                      "tag is-primary is-rounded is-pulled-right is-small"
-                  },
-                  [_vm._v(_vm._s(_vm.allUnread()) + "\n                ")]
-                )
-              : _vm._e()
-          ])
+          _c(
+            "a",
+            {
+              class: { "is-active": _vm.highlightedSource == "allUnread" },
+              on: {
+                click: function($event) {
+                  $event.preventDefault()
+                  return _vm.selectSource({ kind: "auto", value: "allUnread" })
+                }
+              }
+            },
+            [
+              _vm._v("All Unread \n                "),
+              _vm.allUnread() > 0
+                ? _c(
+                    "span",
+                    {
+                      staticClass:
+                        "tag is-primary is-rounded is-pulled-right is-small"
+                    },
+                    [_vm._v(_vm._s(_vm.allUnread()) + "\n                ")]
+                  )
+                : _vm._e()
+            ]
+          )
         ]),
         _vm._v(" "),
         _c("li", [
-          _c("a", { attrs: { href: "#" } }, [
-            _vm._v("Today \n            "),
-            _vm.unreadToday() > 0
-              ? _c(
-                  "span",
-                  {
-                    staticClass:
-                      "tag is-primary is-rounded is-pulled-right is-small"
-                  },
-                  [_vm._v(_vm._s(_vm.unreadToday()) + "\n            ")]
-                )
-              : _vm._e()
-          ])
+          _c(
+            "a",
+            {
+              class: { "is-active": _vm.highlightedSource == "today" },
+              on: {
+                click: function($event) {
+                  $event.preventDefault()
+                  return _vm.selectSource({ kind: "auto", value: "today" })
+                }
+              }
+            },
+            [
+              _vm._v("Today \n            "),
+              _vm.unreadToday() > 0
+                ? _c(
+                    "span",
+                    {
+                      staticClass:
+                        "tag is-primary is-rounded is-pulled-right is-small"
+                    },
+                    [_vm._v(_vm._s(_vm.unreadToday()) + "\n            ")]
+                  )
+                : _vm._e()
+            ]
+          )
         ])
       ]),
       _vm._v(" "),
@@ -16441,27 +16490,44 @@ var render = function() {
             _vm._l(_vm.sources, function(source) {
               return _c("li", [
                 source.category_id == category.id
-                  ? _c("a", { attrs: { href: "#" } }, [
-                      _c("span", { staticClass: "source-name" }, [
-                        _vm._v(_vm._s(source.name))
-                      ]),
-                      _vm._v(" "),
-                      _vm.unreadBySource(source.id) > 0
-                        ? _c(
-                            "span",
-                            {
-                              staticClass:
-                                "tag is-primary is-rounded is-pulled-right is-small"
-                            },
-                            [
-                              _vm._v(
-                                _vm._s(_vm.unreadBySource(source.id)) +
-                                  "\n                        "
-                              )
-                            ]
-                          )
-                        : _vm._e()
-                    ])
+                  ? _c(
+                      "a",
+                      {
+                        class: {
+                          "is-active": _vm.highlightedSource == source.id
+                        },
+                        on: {
+                          click: function($event) {
+                            $event.preventDefault()
+                            return _vm.selectSource({
+                              kind: "source",
+                              value: source.id
+                            })
+                          }
+                        }
+                      },
+                      [
+                        _c("span", { staticClass: "source-name" }, [
+                          _vm._v(_vm._s(source.name))
+                        ]),
+                        _vm._v(" "),
+                        _vm.unreadBySource(source.id) > 0
+                          ? _c(
+                              "span",
+                              {
+                                staticClass:
+                                  "tag is-primary is-rounded is-pulled-right is-small"
+                              },
+                              [
+                                _vm._v(
+                                  _vm._s(_vm.unreadBySource(source.id)) +
+                                    "\n                        "
+                                )
+                              ]
+                            )
+                          : _vm._e()
+                      ]
+                    )
                   : _vm._e()
               ])
             }),

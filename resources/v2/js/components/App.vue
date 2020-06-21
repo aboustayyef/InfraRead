@@ -5,7 +5,12 @@
 
             <!-- Leftmost column: <sources>, Sources.vue -->
             <div class="column is-3" style="border:1px solid silver" >
-                <sources :sources="sources" :categories="categories" :posts="posts"></sources>
+                <sources 
+                    :sources="sources" :categories="categories" :posts="posts"
+                    :highlightedSource ="highlightedSource"
+                    v-on:selectSource = "selectSource"
+                >
+                </sources>
             </div>
 
             <!-- Middle Column: <post-titles>, PostTitles.vue -->
@@ -27,10 +32,11 @@
             return {
                 sources: JSON.parse(this.sources_raw),
                 categories: JSON.parse(this.categories_raw),
+                highlightedSource: 'allUnread',
                 posts:JSON.parse(this.posts_raw)
                 .sort((a,b) => (a.posted_at > b.posted_at) ? -1 : ((b.posted_at > a.posted_at) ? 1 : 0))
                 // ^ sorting array of objects by property (Newest first). Source: https://stackoverflow.com/questions/1129216/sort-array-of-objects-by-string-property-value
-                .map(obj=> ({ ...obj, seconds: Date.parse(obj.posted_at) })) 
+                .map(obj=> ({ ...obj, seconds: Date.parse(obj.posted_at) }))
                 // ^ adding the "Seconds" property, for seconds since 1970, source: https://stackoverflow.com/questions/38922998/add-property-to-an-array-of-objects
             };
         },
@@ -40,6 +46,9 @@
         computed: {
         },
         methods: {
+            selectSource({kind,value}){
+                this.highlightedSource = value;
+            }
         }
     }
 </script>

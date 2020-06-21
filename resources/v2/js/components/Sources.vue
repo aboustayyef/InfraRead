@@ -5,7 +5,10 @@
     </p>
     <ul class="menu-list">
         <li>
-            <a href="#">All Unread
+
+            <a @click.prevent="selectSource({kind:'auto', value:'allUnread'})"
+                :class="{'is-active': highlightedSource == 'allUnread'}"
+            >All Unread 
                 <span 
                     v-if="allUnread() > 0 "
                     class="tag is-primary is-rounded is-pulled-right is-small">{{allUnread()}}
@@ -13,7 +16,9 @@
             </a>
         </li> 
         <li>
-            <a href="#">Today 
+            <a @click.prevent="selectSource({kind:'auto', value:'today'})"
+               :class="{'is-active': highlightedSource == 'today'}"
+            >Today 
             <span 
                 v-if="unreadToday() > 0 "
                 class="tag is-primary is-rounded is-pulled-right is-small">{{unreadToday()}}
@@ -30,8 +35,11 @@
         </p>
         <ul class="menu-list">
             <li v-for="source in sources">
-                <a href="#" 
-                    v-if="source.category_id == category.id">
+                <a @click.prevent="selectSource({kind:'source', value:source.id})" 
+                    v-if="source.category_id == category.id"
+                    :class="{'is-active': highlightedSource == source.id}"
+
+                    >
                         <span class="source-name">{{source.name}}</span> 
                         <span 
                             v-if="unreadBySource(source.id) > 0 "
@@ -48,7 +56,7 @@
 
 <script>
 export default {
-    props:['sources','categories','posts'],
+    props:['sources','categories','posts','highlightedSource'],
     methods: {
         unreadBySource(s_id){
             return this.posts.filter(function(post){
@@ -65,6 +73,9 @@ export default {
             return this.posts.filter(function(post){
                 return (post.seconds > todayseconds && post.read == 0)
             }).length;
+        },
+        selectSource(which){
+            this.$emit('selectSource',which);
         }
    }
 
