@@ -18,6 +18,7 @@
                 <post-titles
                     :posts = "posts"
                     :highlightedSource="highlightedSource"
+                    v-on:toggleRead = "toggleRead"
                 ></post-titles>
             </div>
             
@@ -53,6 +54,33 @@
         methods: {
             selectSource({kind,value}){
                 this.highlightedSource = value;
+            },
+            toggleRead(post){
+                var targetPost = this.posts[this.getPostIndexByID(post.id)];
+                var oldReadStatus = targetPost.read;
+                var newReadStatus = Math.abs(targetPost.read - 1 ); 
+                // First Toggle in the UI
+                targetPost.read = newReadStatus;
+                // Perform ajax request
+                axios.patch('/api/posts/'+post.id, {read: newReadStatus})
+                .then((res) => {
+                    //nothing
+                }).catch((res) => {
+                    console.log('there was a problem with updating post status');
+                    //undo from UI
+                    targetPost.read = oldReadStatus;
+                });
+            },
+
+            // Utility functions
+            // ===================
+            getPostIndexByID(id){ // Get the array index of post from post id
+                for (let index = 0; index < this.posts.length; index++) {
+                    if (this.posts[index].id == id ) {
+                        return index;
+                    }
+                }
+                return false;
             }
         }
     }

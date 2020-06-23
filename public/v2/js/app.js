@@ -1896,6 +1896,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['posts_raw', 'categories_raw', 'sources_raw', 'refreshinterval', 'last_successful_crawl'],
   data: function data() {
@@ -1921,6 +1922,34 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       var kind = _ref.kind,
           value = _ref.value;
       this.highlightedSource = value;
+    },
+    toggleRead: function toggleRead(post) {
+      var targetPost = this.posts[this.getPostIndexByID(post.id)];
+      var oldReadStatus = targetPost.read;
+      var newReadStatus = Math.abs(targetPost.read - 1); // First Toggle in the UI
+
+      targetPost.read = newReadStatus; // Perform ajax request
+
+      axios.patch('/api/posts/' + post.id, {
+        read: newReadStatus
+      }).then(function (res) {//nothing
+      })["catch"](function (res) {
+        console.log('there was a problem with updating post status'); //undo from UI
+
+        targetPost.read = oldReadStatus;
+      });
+    },
+    // Utility functions
+    // ===================
+    getPostIndexByID: function getPostIndexByID(id) {
+      // Get the array index of post from post id
+      for (var index = 0; index < this.posts.length; index++) {
+        if (this.posts[index].id == id) {
+          return index;
+        }
+      }
+
+      return false;
     }
   }
 });
@@ -1936,6 +1965,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+//
+//
 //
 //
 //
@@ -4705,7 +4736,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 
 // module
-exports.push([module.i, "\narticle{\n    background:white;\n    padding:0.5em 0.2em;\n    margin:0.2em 0;\n    display:flex;\n}\n.dot {\n    height: 12px;\n    width: 12px;\n    background-color: #da2525;\n    border-radius: 50%;\n    display: inline-block;\n    margin:0 0.7em;\n}\n.dot.read{\n    background-color:transparent;\n    border:2px solid #e6c9c9;\n}\n.centered{\n    display:flex;\n    align-items: center;\n    justify-content: center;\n}\n", ""]);
+exports.push([module.i, "\narticle {\n    background:white;\n    padding:0.6em 0.9em 0.5em 0.2em;\n    margin:0.2em 0;\n    display:flex;\n    cursor: pointer;\n}\narticle:hover{\n    background-color:rgb(248, 248, 248);\n}\n.dot {\n    height: 12px;\n    width: 12px;\n    background-color: #da2525;\n    border-radius: 50%;\n    display: inline-block;\n    margin:0 0.7em;\n}\n.dot.read{\n    background-color:transparent;\n    border:2px solid #e6c9c9;\n}\n.dot:hover{\n    background-color:#f0b0b0;\n}\n.centered{\n    display:flex;\n    align-items: center;\n    justify-content: center;\n}\n", ""]);
 
 // exports
 
@@ -16544,7 +16575,8 @@ var render = function() {
               attrs: {
                 posts: _vm.posts,
                 highlightedSource: _vm.highlightedSource
-              }
+              },
+              on: { toggleRead: _vm.toggleRead }
             })
           ],
           1
@@ -16592,10 +16624,17 @@ var render = function() {
         : _vm._l(_vm.filteredPosts, function(post) {
             return _c("article", [
               _c("div", { staticClass: "centered" }, [
-                _c("span", { class: { dot: true, read: post.read == 1 } })
+                _c("span", {
+                  class: { dot: true, read: post.read == 1 },
+                  on: {
+                    click: function($event) {
+                      return _vm.$emit("toggleRead", post)
+                    }
+                  }
+                })
               ]),
               _vm._v(" "),
-              _c("div", [
+              _c("div", { staticClass: "content" }, [
                 _c("h1", { staticClass: "title is-size-6" }, [
                   _vm._v(" " + _vm._s(post.title))
                 ]),
@@ -16609,7 +16648,9 @@ var render = function() {
                           "\n                    "
                       )
                     ])
-                  : _vm._e()
+                  : _vm._e(),
+                _vm._v(" "),
+                _c("p", [_vm._v(_vm._s(post.excerpt))])
               ])
             ])
           })

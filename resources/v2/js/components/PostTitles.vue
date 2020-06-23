@@ -5,14 +5,16 @@
                 <div class="centered">
                     <span 
                         :class="{'dot':true,'read':post.read == 1}"
+                        @click="$emit('toggleRead',post)"
                     >
                     </span>
                 </div>
-                <div>
+                <div class="content">
                     <h1 class="title is-size-6"> {{post.title}}</h1>
                     <h2 class="subtitle is-size-7" v-if="highlightedSource=='allUnread' || highlightedSource == 'today'">
                         {{post.source.name}}
                     </h2>
+                    <p>{{post.excerpt}}</p>
                 </div>
         </article>
 </div>
@@ -54,11 +56,16 @@ export default {
 </script>
 
 <style>
-    article{
+
+    article {
         background:white;
-        padding:0.5em 0.2em;
+        padding:0.6em 0.9em 0.5em 0.2em;
         margin:0.2em 0;
         display:flex;
+        cursor: pointer;
+    }
+    article:hover{
+        background-color:rgb(248, 248, 248);
     }
     .dot {
         height: 12px;
@@ -71,6 +78,9 @@ export default {
     .dot.read{
         background-color:transparent;
         border:2px solid #e6c9c9;
+    }
+    .dot:hover{
+        background-color:#f0b0b0;
     }
     .centered{
         display:flex;
