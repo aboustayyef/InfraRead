@@ -1,6 +1,6 @@
 <template>
 <div>
-    <div class="container">
+    <div class="container" v-if="post">
       <div class="content is-marginless">
           <a :href="post.url"><h1 class="has-text-grey-dark title is-4 has-text-weight-bold">{{ post.title }}</h1></a>
           <h2 class="has-text-primary subtitle is-5 is-uppercase has-text-weight-semibold">{{ post.source.name }}</h2>
@@ -16,6 +16,7 @@
           <div v-html="sanitized_content"></div>
        </div> 
     </div>
+    <div class="empty" v-else>Select a post please</div>
 </div>
 </template>
 
@@ -38,4 +39,14 @@ export default {
 }
 </script>
 
-<style></style>
+<style>
+.empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 85vh;
+  border: 5px dashed silver;
+  color: silver;
+  text-transform: uppercase;
+}
+</style>

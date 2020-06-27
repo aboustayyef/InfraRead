@@ -47,7 +47,7 @@
                 categories: JSON.parse(this.categories_raw),
                 highlightedSource: 'allUnread', // Which source is highlighted on the first column
                 selectedPostIndex:0, // index of post highlighted in middle column
-                post:{},
+                post: null,
                 posts:JSON.parse(this.posts_raw)
                 .sort((a,b) => (a.posted_at > b.posted_at) ? -1 : ((b.posted_at > a.posted_at) ? 1 : 0))
                 // ^ sorting array of objects by property (Newest first). Source: https://stackoverflow.com/questions/1129216/sort-array-of-objects-by-string-property-value
