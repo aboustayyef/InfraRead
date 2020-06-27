@@ -1,11 +1,14 @@
 <template>
 <div>
     <div v-if="filteredPosts.length == 0">No Posts To See</div>
-        <article v-else v-for="post in filteredPosts">
+        <article v-else v-for="(post,n) in filteredPosts" v-bind:key="post.id" 
+                @click="$emit('clickedOnPostTitle',n, post)"
+                
+                >
                 <div class="centered">
                     <span 
                         :class="{'dot':true,'read':post.read == 1}"
-                        @click="$emit('toggleRead',post)"
+                        @click.stop="$emit('clickedOnCircle',post)"
                     >
                     </span>
                 </div>
@@ -25,21 +28,27 @@ export default {
     props:['posts', 'highlightedSource'],
     data() {
         return {
+            unreadPosts: [],
             test: "This is the value of test"
         }
     },
     computed: {
         filteredPosts() {
+            
+            //  For the "allUnread" smart filter, we use a singleton 
+            //  to prevent posts disappearing when marked read
+            
             if (this.highlightedSource == "allUnread") {
-                return this.posts.filter((post) =>
-                post.read == 0
-            );
+                if (this.unreadPosts.length == 0) {
+                    this.unreadPosts = this.posts.filter((post) => post.read == 0);
+                }
+                return this.unreadPosts;
             }
             
             if (this.highlightedSource == "today") {
                 let todayseconds = (new Date).setHours(0,0,0,0);
                 return this.posts.filter((post) =>
-                post.seconds > todayseconds && post.read == 0
+                post.seconds > todayseconds
             );
             }
 
@@ -78,6 +87,9 @@ export default {
     .dot.read{
         background-color:transparent;
         border:2px solid #e6c9c9;
+    }
+    .dot:active{
+     background-color:#5a1212; 
     }
     .dot:hover{
         background-color:#f0b0b0;

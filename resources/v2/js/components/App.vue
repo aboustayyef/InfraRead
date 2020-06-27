@@ -3,8 +3,9 @@
     <div class="container is-fluid">
         <div class="columns fixedHeight">
 
+
             <!-- Leftmost column: <sources>, Sources.vue -->
-            <div class="column fixedHeight is-3" style="border:1px solid silver" >
+            <div class="column fixedHeight is-3" style="border:1px solid silver;background-color:whitesmoke" >
                 <sources 
                     :sources="sources" :categories="categories" :posts="posts"
                     :highlightedSource ="highlightedSource"
@@ -13,17 +14,23 @@
                 </sources>
             </div>
 
+
             <!-- Middle Column: <post-titles>, PostTitles.vue -->
-            <div class="column fixedHeight is-4" style="background-color:#f0f0ed">
+            <div class="column is-paddingless fixedHeight is-4" style="background-color:#f0f0ed">
                 <post-titles
                     :posts = "posts"
                     :highlightedSource="highlightedSource"
-                    v-on:toggleRead = "toggleRead"
+                    v-on:clickedOnCircle = "togglePostReadStatus"
+                    v-on:clickedOnPostTitle = "selectPost" 
                 ></post-titles>
             </div>
-            
+
+
             <!-- Rightmost Column: <post-content>, PostContent.vue -->
-            <div class="column" style="background-color:teal">Post Details</div>
+            <div class="column fixedHeight" >
+                <post :post="post"></post>
+            </div>
+
 
         </div> <!-- /columns -->
     </div> <!-- /container -->
@@ -38,7 +45,9 @@
             return {
                 sources: JSON.parse(this.sources_raw),
                 categories: JSON.parse(this.categories_raw),
-                highlightedSource: 'allUnread',
+                highlightedSource: 'allUnread', // Which source is highlighted on the first column
+                selectedPostIndex:0, // index of post highlighted in middle column
+                post:{},
                 posts:JSON.parse(this.posts_raw)
                 .sort((a,b) => (a.posted_at > b.posted_at) ? -1 : ((b.posted_at > a.posted_at) ? 1 : 0))
                 // ^ sorting array of objects by property (Newest first). Source: https://stackoverflow.com/questions/1129216/sort-array-of-objects-by-string-property-value
@@ -54,9 +63,11 @@
         methods: {
             selectSource({kind,value}){
                 this.highlightedSource = value;
+                this.selectedPostIndex = 0;
             },
-            toggleRead(post){
-                var targetPost = this.posts[this.getPostIndexByID(post.id)];
+            togglePostReadStatus(post){
+
+                var targetPost = this.posts[this.getPostIndexByID(post.id)]; // We're using this because we're mutating original, unfiltered list of posts 
                 var oldReadStatus = targetPost.read;
                 var newReadStatus = Math.abs(targetPost.read - 1 ); 
                 // First Toggle in the UI
@@ -70,6 +81,33 @@
                     //undo from UI
                     targetPost.read = oldReadStatus;
                 });
+            },
+            markPostRead(post){
+                // bounce back if post already read
+                if (post.read == 1) {
+                    console.log('post already read');
+                    return;
+                }
+                // otherwise
+                var targetPost = this.posts[this.getPostIndexByID(post.id)]; // We're using this because we're mutating original, unfiltered list of posts 
+                // First Toggle in the UI
+                targetPost.read = 1;
+                // Perform ajax request
+                axios.patch('/api/posts/'+post.id, {read: 1})
+                .then((res) => {
+                    //nothing
+                }).catch((res) => {
+                    console.log('there was a problem with updating post status');
+                    targetPost.read = 0;
+                });
+
+            },
+            selectPost(n,p){
+
+                this.selectedPostIndex = n;
+                this.post = p;
+                this.markPostRead(p);
+                console.log(n);
             },
 
             // Utility functions

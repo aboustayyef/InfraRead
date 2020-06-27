@@ -28,19 +28,19 @@ class PluginMakeTextLegible implements PluginInterface
         // All plugin's logic should be inside the try() function
         try {
             $max_length_of_paragraph = 120 ; // number of words allowed in first paragraph.
-
+            
             // Isolate content from comments and sharing button fluff;
             $parts = explode('<p></p>', $this->post->content);
             $content = $parts[0];
-
+            
             //-- remove line breaks
             $content = str_replace("\n", "", $content);
             $content = str_replace("\r", "", $content);
-
+            
             // Divide into short sentences        
             $phrases = $this->breakLongText($content, 130, $max_length_of_paragraph);
-            $content = '<p>' . implode($phrases,'</p><p>').'</p>';
-
+            $content = '<p>' . implode('</p><p>',$phrases).'</p>';
+            
             // then re-attach it
             $parts[0] = $content;
             $cleaned_content = implode($parts);
