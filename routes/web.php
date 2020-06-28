@@ -7,6 +7,32 @@ use App\Source;
 use App\Utilities\OpmlImporter;
 use Illuminate\Http\Request;
 
+
+// VERSION 2
+Route::get('/columns', function () {
+    $last_successful_crawl = getLastSuccesfulCrawl();
+
+    $categories = Category::where('id','>',0)->select(['id','description'])->get()->toJson();
+    $sources = Source::where('id','>',0)->select(['id','category_id','name','description'])->get()->toJson();
+
+    // Get posts;
+    $posts = collect();
+    foreach (Source::all() as $key => $source) {
+        $posts = $posts->merge($source->latestPostsSinceEarliestUnread());
+    }
+    $posts = $posts->toJson();
+    return view('v2.home')
+    ->with(compact('last_successful_crawl'))
+    ->with(compact('categories'))
+    ->with(compact('sources'))
+    ->with(compact('posts'));
+});
+
+
+
+
+
+
 Route::get('/', function(){
     // If a user exists, but not RSS feeds is set up
     if (\App\Source::count() == 0) {
