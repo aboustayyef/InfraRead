@@ -16,9 +16,10 @@
 
 
             <!-- Middle Column: <post-titles>, PostTitles.vue -->
-            <div class="column is-paddingless fixedHeight is-4" style="background-color:#f0f0ed">
+            <div class="column is-paddingless fixedHeight is-4" style="border:1px solid silver">
                 <post-titles
-                    :posts = "posts"
+                    :posts = "posts" 
+                    :selectedPost = "post"
                     :highlightedSource="highlightedSource"
                     v-on:clickedOnCircle = "togglePostReadStatus"
                     v-on:clickedOnPostTitle = "selectPost" 
@@ -27,7 +28,7 @@
 
 
             <!-- Rightmost Column: <post-content>, PostContent.vue -->
-            <div class="column fixedHeight" >
+            <div class="column fixedHeight" style="padding:2.5rem; border:1px solid silver" >
                 <post :post="post"></post>
             </div>
 

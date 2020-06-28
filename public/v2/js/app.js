@@ -1904,6 +1904,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['posts_raw', 'categories_raw', 'sources_raw', 'refreshinterval', 'last_successful_crawl'],
   data: function data() {
@@ -2078,12 +2079,17 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ['posts', 'highlightedSource'],
+  props: ['selectedPost', 'posts', 'highlightedSource'],
   data: function data() {
     return {
       unreadPosts: [],
       test: "This is the value of test"
     };
+  },
+  filters: {
+    trimText: function trimText(s) {
+      return s.substring(0, 100) + " ...";
+    }
   },
   computed: {
     filteredPosts: function filteredPosts() {
@@ -4852,7 +4858,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 
 // module
-exports.push([module.i, "\narticle {\n    background:white;\n    padding:0.6em 0.9em 0.5em 0.2em;\n    margin:0.2em 0;\n    display:flex;\n    cursor: pointer;\n}\narticle:hover{\n    background-color:rgb(248, 248, 248);\n}\n.dot {\n    height: 12px;\n    width: 12px;\n    background-color: #da2525;\n    border-radius: 50%;\n    display: inline-block;\n    margin:0 0.7em;\n}\n.dot.read{\n    background-color:transparent;\n    border:2px solid #e6c9c9;\n}\n.dot:active{\n background-color:#5a1212;\n}\n.dot:hover{\n    background-color:#f0b0b0;\n}\n.centered{\n    display:flex;\n    align-items: center;\n    justify-content: center;\n}\n", ""]);
+exports.push([module.i, "\narticle {\n    background:white;\n    padding: 1.2em 1em 1.2em 0.5em;\n    display:flex;\n    cursor: pointer;\n    border-bottom:1px solid silver;\n}\narticle:hover{\n    background-color:rgb(248, 248, 248);\n}\narticle.selected{\n    background-color: #f9e4e4;\n}\n.title + .subtitle{\n    /* margin-bottom:0.5rem; */\n}\narticle p{\n    margin-top:-1rem;\n}\n.dot {\n    height: 12px;\n    width: 12px;\n    background-color: #da2525;\n    border-radius: 50%;\n    display: inline-block;\n    margin:0 0.7em;\n}\n.dot.read{\n    background-color:transparent;\n    border:2px solid #e6c9c9;\n}\n.dot:active{\n background-color:#5a1212;\n}\n.dot:hover{\n    background-color:#f0b0b0;\n}\n.centered{\n    display:flex;\n    align-items: center;\n    justify-content: center;\n}\n", ""]);
 
 // exports
 
@@ -16717,12 +16723,13 @@ var render = function() {
           "div",
           {
             staticClass: "column is-paddingless fixedHeight is-4",
-            staticStyle: { "background-color": "#f0f0ed" }
+            staticStyle: { border: "1px solid silver" }
           },
           [
             _c("post-titles", {
               attrs: {
                 posts: _vm.posts,
+                selectedPost: _vm.post,
                 highlightedSource: _vm.highlightedSource
               },
               on: {
@@ -16736,7 +16743,10 @@ var render = function() {
         _vm._v(" "),
         _c(
           "div",
-          { staticClass: "column fixedHeight" },
+          {
+            staticClass: "column fixedHeight",
+            staticStyle: { padding: "2.5rem", border: "1px solid silver" }
+          },
           [_c("post", { attrs: { post: _vm.post } })],
           1
         )
@@ -16849,6 +16859,9 @@ var render = function() {
               "article",
               {
                 key: post.id,
+                class: {
+                  selected: _vm.selectedPost && _vm.selectedPost.id == post.id
+                },
                 on: {
                   click: function($event) {
                     return _vm.$emit("clickedOnPostTitle", n, post)
@@ -16884,7 +16897,9 @@ var render = function() {
                       ])
                     : _vm._e(),
                   _vm._v(" "),
-                  _c("p", [_vm._v(_vm._s(post.excerpt))])
+                  _c("p", { attrs: { title: post.excerpt } }, [
+                    _vm._v(_vm._s(_vm._f("trimText")(post.excerpt)))
+                  ])
                 ])
               ]
             )

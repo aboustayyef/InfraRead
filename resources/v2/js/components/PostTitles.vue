@@ -3,7 +3,7 @@
     <div v-if="filteredPosts.length == 0">No Posts To See</div>
         <article v-else v-for="(post,n) in filteredPosts" v-bind:key="post.id" 
                 @click="$emit('clickedOnPostTitle',n, post)"
-                
+                :class="{'selected': selectedPost && selectedPost.id == post.id }" 
                 >
                 <div class="centered">
                     <span 
@@ -17,7 +17,7 @@
                     <h2 class="subtitle is-size-7" v-if="highlightedSource=='allUnread' || highlightedSource == 'today'">
                         {{post.source.name}}
                     </h2>
-                    <p>{{post.excerpt}}</p>
+                    <p :title="post.excerpt">{{post.excerpt | trimText}}</p>
                 </div>
         </article>
 </div>
@@ -25,11 +25,16 @@
 
 <script>
 export default {
-    props:['posts', 'highlightedSource'],
+    props:['selectedPost','posts', 'highlightedSource'],
     data() {
         return {
             unreadPosts: [],
             test: "This is the value of test"
+        }
+    },
+    filters: {
+        trimText: function(s){
+            return s.substring(0, 100) + " ...";
         }
     },
     computed: {
@@ -68,13 +73,22 @@ export default {
 
     article {
         background:white;
-        padding:0.6em 0.9em 0.5em 0.2em;
-        margin:0.2em 0;
+        padding: 1.2em 1em 1.2em 0.5em;
         display:flex;
         cursor: pointer;
+        border-bottom:1px solid silver;
     }
     article:hover{
         background-color:rgb(248, 248, 248);
+    }
+    article.selected{
+        background-color: #f9e4e4;
+    }
+    .title + .subtitle{
+        /* margin-bottom:0.5rem; */
+    }
+    article p{
+        margin-top:-1rem;
     }
     .dot {
         height: 12px;
