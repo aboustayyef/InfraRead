@@ -1,11 +1,11 @@
 <template>
-  <section class="section">
-    <div class="container is-fluid">
+  <section class="section" style="padding:1em">
+    <div class="container is-fluid is-marginless">
         <div class="columns fixedHeight">
 
 
             <!-- Leftmost column: <sources>, Sources.vue -->
-            <div class="column fixedHeight is-3" style="border:1px solid silver;background-color:whitesmoke" >
+            <div class="column fixedHeight" style="max-width:380px;border:1px solid silver;background-color:whitesmoke" >
                 <sources 
                     :sources="sources" :categories="categories" :posts="posts"
                     :highlightedSource ="highlightedSource"
@@ -16,7 +16,7 @@
 
 
             <!-- Middle Column: <post-titles>, PostTitles.vue -->
-            <div class="column is-paddingless fixedHeight is-4" style="border:1px solid silver">
+            <div class="column is-paddingless fixedHeight is-4" style="max-width:380px;border:1px solid silver">
                 <post-titles
                     :posts = "posts" 
                     :selectedPost = "post"
@@ -126,7 +126,7 @@
 </script>
 <style scoped>
     .fixedHeight{
-        height:90vh;
+        height:calc(100vh - 0.5em)    ;
         overflow:scroll;
     }
 </style>
