@@ -8,8 +8,39 @@ use App\Utilities\OpmlImporter;
 use Illuminate\Http\Request;
 
 
-// VERSION 2
-Route::get('/columns', function () {
+// API for external Clients Requests
+
+Route::group(['prefix' => 'client'], function () {
+
+    // Get the initial data
+    Route::get('/initialData', function(Request $request){
+
+        // Make sure Request contains username and password
+        if (! Auth::attempt($request->only(['email','password']))){
+            return response(collect(['response' => 401])->toArray(), 401);
+        };
+
+        // Get categories, sources, and posts;
+        $categories = Category::where('id','>',0)->select(['id','description'])->get();
+        $sources = Source::where('id','>',0)->select(['id','category_id','name','description'])->get();
+        $posts = collect();
+        foreach (Source::all() as $key => $source) {
+            $posts = $posts->merge($source->latestPostsSinceEarliestUnread());
+        }
+
+        // consolidate all in a response object and return as json
+        $res = collect(['response' => 200 , 'data'=>['categories'=>$categories, 'sources' => $sources, 'posts' => $posts]]);
+        return $res->toArray();
+    });
+
+    // mark post read
+    // toggle post read status
+    // mark post unread
+
+});
+
+// Columns View
+Route::get('/columns', function (Request $request) {
     $last_successful_crawl = getLastSuccesfulCrawl();
 
     $categories = Category::where('id','>',0)->select(['id','description'])->get()->toJson();
