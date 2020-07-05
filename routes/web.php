@@ -40,6 +40,7 @@ Route::group(['prefix' => 'client'], function () {
         try {
             $post = Post::findOrFail($request->post);
             $post->read = abs(1 - $post->read);
+            $post->save();
             return response(collect(['response' => 200])->toArray(), 200);            //code...
         } catch (\Throwable $th) {
             return response(collect(['response' => 500])->toArray(), 500);
