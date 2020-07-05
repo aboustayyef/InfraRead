@@ -37,7 +37,7 @@ Route::group(['prefix' => 'client'], function () {
     // toggle post read status
     // mark post unread
 
-});
+})->middleware('cors');
 
 // Columns View
 Route::get('/columns', function (Request $request) {
