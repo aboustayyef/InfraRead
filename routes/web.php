@@ -31,13 +31,13 @@ Route::group(['prefix' => 'client'], function () {
         // consolidate all in a response object and return as json
         $res = collect(['response' => 200 , 'data'=>['categories'=>$categories, 'sources' => $sources, 'posts' => $posts]]);
         return $res->toArray();
-    });
+    })->middleware('cors');
 
     // mark post read
     // toggle post read status
     // mark post unread
 
-})->middleware('cors');
+});
 
 // Columns View
 Route::get('/columns', function (Request $request) {
