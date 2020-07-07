@@ -1,25 +1,29 @@
 <template>
 <div>
+    <div id="unreadonly">
+        <input v-model="unreadonly" type="checkbox" name="unreadonly" id="">
+        &nbsp; Only Show Unread Posts
+    </div>
     <div v-if="filteredPosts.length == 0">No Posts To See</div>
-        <article v-else v-for="(post,n) in filteredPosts" v-bind:key="post.id" 
-                @click="$emit('clickedOnPostTitle',n, post)"
-                :class="{'selected': selectedPost && selectedPost.id == post.id }" 
-                >
-                <div class="centered">
-                    <span 
-                        :class="{'dot':true,'read':post.read == 1}"
-                        @click.stop="$emit('clickedOnCircle',post)"
-                    >
-                    </span>
-                </div>
-                <div class="content">
-                    <h1 class="title is-size-6"> {{post.title}}</h1>
-                    <h2 class="subtitle is-size-7" v-if="highlightedSource=='allUnread' || highlightedSource == 'today'">
-                        {{post.source.name}}
-                    </h2>
-                    <p :title="post.excerpt">{{post.excerpt | trimText}}</p>
-                </div>
-        </article>
+    <article v-for="(post,n) in filteredPosts" v-bind:key="post.id" 
+        @click="$emit('clickedOnPostTitle',n, post)"
+        :class="{'selected': selectedPost && selectedPost.id == post.id }" 
+        >
+        <div class="centered">
+            <span 
+                :class="{'dot':true,'read':post.read == 1}"
+                @click.stop="$emit('clickedOnCircle',post)"
+            >
+            </span>
+        </div>
+        <div class="content">
+            <h1 class="title is-size-6"> {{post.title}}</h1>
+            <h2 class="subtitle is-size-7" v-if="highlightedSource=='allUnread' || highlightedSource == 'today'">
+                {{post.source.name}}
+            </h2>
+            <p :title="post.excerpt">{{post.excerpt | trimText}}</p>
+        </div>
+    </article>
 </div>
 </template>
 
@@ -29,7 +33,7 @@ export default {
     data() {
         return {
             unreadPosts: [],
-            test: "This is the value of test"
+            unreadonly: false
         }
     },
     filters: {
@@ -38,7 +42,7 @@ export default {
         }
     },
     computed: {
-        filteredPosts() {
+        initialFilter() {
             
             //  For the "allUnread" smart filter, we use a singleton 
             //  to prevent posts disappearing when marked read
@@ -61,7 +65,15 @@ export default {
             return this.posts.filter((post) => 
               post.source_id == this.highlightedSource
             );
-
+        },
+        // second filter based on read and unread
+        filteredPosts(){
+            if (this.unreadonly) {
+                return this.initialFilter.filter((post) => 
+                    post.read == 0
+                );
+            }
+            return this.initialFilter;
         }
     },
     methods: {
@@ -112,5 +124,9 @@ export default {
         display:flex;
         align-items: center;
         justify-content: center;
+    }
+    #unreadonly{
+        padding:0.5em 1.2em;
+        background-color:beige;
     }
 </style>
