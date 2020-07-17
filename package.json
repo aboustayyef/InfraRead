@@ -16,7 +16,7 @@
         "false": "^0.0.4",
         "jquery": "^3.4.1",
         "laravel-mix": "^4.1.2",
-        "lodash": "^4.17.15",
+        "lodash": "^4.17.19",
         "resolve-url-loader": "3.1.0",
         "sass": "^1.22.9",
         "sass-loader": "7.*",
