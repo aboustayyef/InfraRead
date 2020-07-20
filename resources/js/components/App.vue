@@ -27,8 +27,10 @@
         <!-- UI Element to show Close Button for Article (to return to list view) -->
         <bottom-nav
             v-on:closeWindow="closeDetailsView()"
+            v-on:clickSaveLater="saveforlater(active_post.url)"
             v-on:keyup.esc="closeDetailsView()"
             :page="page"
+            :saving_later_status="saving_later_status"            
         ></bottom-nav>
         
         <!-- UI Collection of Toggle Settings Elements at the Top -->
