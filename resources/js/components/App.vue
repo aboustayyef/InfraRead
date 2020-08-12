@@ -352,6 +352,7 @@ import { setTimeout } from 'timers';
     }
 </script>
 <style scoped>
+    
     .prevent-scrolling{
         height:100vh;
         overflow-y:hidden;
