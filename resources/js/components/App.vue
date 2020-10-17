@@ -103,6 +103,7 @@ import { setTimeout } from 'timers';
                 keyboard_navigation_active:false,
                 keyboard_navigation_index:0,
                 saving_later_status: 'nothing', // options: 'nothing', 'saving' , 'success' , 'failure'
+                last_post_marked_as_read:{}
             };
         },
         created() {
@@ -226,11 +227,23 @@ import { setTimeout } from 'timers';
                 }
                 // R or E (Mark Post as read)
                 if ((e.code == 'KeyR' || e.code == 'KeyE') && this.keyboard_navigation_active) {
+                    this.last_post_marked_as_read = this.filtered_posts[this.keyboard_navigation_index];
                     this.togglePostRead(this.filtered_posts[this.keyboard_navigation_index]);
                     if (this.page == "post details") {
                        this.closeDetailsView(); 
                     }
                 }
+                // U (undo mark post as read)
+                if ((e.code == 'KeyU') && this.keyboard_navigation_active) {
+                    // If last post marked as read is empty, do nothing
+                    if (Object.entries(this.last_post_marked_as_read).length === 0) {
+                        // do nothing
+                    } else {
+                        this.togglePostRead(this.last_post_marked_as_read);
+                        this.last_post_marked_as_read = {};
+                    }
+                }
+
                 if (e.code == 'KeyS'){
                     if (this.page == "post list" && this.keyboard_navigation_active) {
                         this.saveforlater(this.filtered_posts[this.keyboard_navigation_index].url);
