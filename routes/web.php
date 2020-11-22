@@ -9,6 +9,13 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 
+// OPML of feeds
+Route::get('/feeds.opml', function () {
+    $categories = Category::with('sources')->get();
+
+    return response()->view('opml', compact('categories'))->header('Content-Disposition', 'attachment')->header('Content-Type', 'text/xml');
+});
+
 // API for external Clients Requests
 Route::group(['prefix' => 'client'], function () {
     // Get the initial data
