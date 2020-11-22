@@ -23,6 +23,7 @@
                 <th><a @click="sort" data-sort="name" href="#">Name</a></th>
                 <th><a @click="sort" data-sort="description" href="#">Description</a></th>
                 <th><a @click="sort" data-sort="author" href="#">author</a></th>
+                <th><a @click="sort" data-sort="category.description" href="#">category</a></th>
                 <th></th>
             </tr>
         </thead>
@@ -32,6 +33,7 @@
                 <td>@{{source.name}}</td>
                 <td>@{{source.description}}</td>
                 <td>@{{source.author}}</td>
+                <td>@{{source.category?source.category.description:"No Category"}}</td>
                 <td><a :href=`/admin/source/${source.id}/edit`>edit</a></td>
             </tr>
         </tbody>
@@ -58,7 +60,10 @@
                 // a computed getter
                 filtered_sources: function () {
                     return this.all_sources.filter((source) =>
-                        (source.name.toLowerCase().includes(this.filter_key.toLowerCase()) || source.name.toLowerCase().includes(this.filter_key.toLowerCase()) || source.description.toLowerCase().includes(this.filter_key.toLowerCase()) || source.author.toLowerCase().includes(this.filter_key.toLowerCase()))
+                        (
+                            source.name.toLowerCase().includes(this.filter_key.toLowerCase()) || 
+                            source.description.toLowerCase().includes(this.filter_key.toLowerCase()) 
+                        )
                     );
                 }
               },
@@ -82,8 +87,17 @@
                     // sort by name
                     var sorting_key = e.target.dataset.sort;
                     this.all_sources.sort(function(a, b) {
-                      var valueA = a[sorting_key].toUpperCase(); // ignore upper and lowercase
-                      var valueB = b[sorting_key].toUpperCase(); // ignore upper and lowercase
+                    let comp1 = a[sorting_key];
+                    let comp2 = b[sorting_key];
+                      if (! comp1) {
+                         comp1 = "z"; 
+                      }
+                      if (! comp2) {
+                          comp2 = "z";
+                      }
+                      console.log (comp1 + "    " + comp2);
+                      var valueA = comp1.toUpperCase(); // ignore upper and lowercase
+                      var valueB = comp2.toUpperCase(); // ignore upper and lowercase
                       if (valueA < valueB) {
                         return -1;
                       }
