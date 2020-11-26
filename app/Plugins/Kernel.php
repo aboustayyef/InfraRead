@@ -1,19 +1,21 @@
 <?php
-namespace App\Plugins;
-/**
- *  Plugins are classes that Modify Post objects depending on Source
- */
 
+namespace App\Plugins;
+
+/**
+ *  Plugins are classes that Modify Post objects depending on Source.
+ */
 class Kernel
 {
-
     public function get()
     {
         // Remember, the order of the plugins matters. Start from left to right.
-        return 
+        return
         [
-            'httpsslashdotorg'  =>  ['MakeTextLegible','ReplaceArticleLink'],
+            'httpsslashdotorg' => ['MakeTextLegible', 'ReplaceArticleLink'],
+            'httpswwwmacstoriesnet' => ['MarkPostAsRead'],
+            'httpswwwcaseylisscom' => ['MarkPostAsRead'],
+            'httpswwwslowboringcom' => ['MarkPostAsRead'],
         ];
-    }    
-
+    }
 }
