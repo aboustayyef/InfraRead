@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Source;
+use App\Models\Source;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Storage;
@@ -40,25 +40,25 @@ class PostsUpdater extends Command
      */
     public function handle()
     {
-
         // If a source is specified
 
         if ($this->argument('source')) {
-                $source = Source::find($this->argument('source'));
+            $source = Source::find($this->argument('source'));
             if ($source) {
-                $this->info('Getting Latest Posts of Source: ' . $source->name );
+                $this->info('Getting Latest Posts of Source: '.$source->name);
                 $source->updatePosts();
                 $this->info('done');
+
                 return;
             }
-            throw new \Exception("Source [" . $this->argument('source') . "] not found", 1);
+            throw new \Exception('Source ['.$this->argument('source').'] not found', 1);
         }
-        
+
         // If No source is specified
         $sources = Source::where('active', 1)->get();
         $start_time = time();
         foreach ($sources as $source) {
-            $this->comment('updating source ' . $source->name );
+            $this->comment('updating source '.$source->name);
             try {
                 $status = $source->updatePosts();
                 $this->info($status);
@@ -68,7 +68,7 @@ class PostsUpdater extends Command
         }
         $end_time = time();
         $diff = $end_time - $start_time;
-        $this->info('process took ' . $diff . ' seconds');
-        Storage::disk('local')->put('LastSuccessfulCrawl.txt', new Carbon);
+        $this->info('process took '.$diff.' seconds');
+        Storage::disk('local')->put('LastSuccessfulCrawl.txt', new Carbon());
     }
 }

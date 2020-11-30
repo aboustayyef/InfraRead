@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Category;
-use App\Source;
+use App\Models\Category;
+use App\Models\Source;
 use Illuminate\Http\Request;
 
 class AdminSourceController extends Controller
@@ -25,75 +25,76 @@ class AdminSourceController extends Controller
      */
     public function create()
     {
-        $source = new Source;
+        $source = new Source();
         $categories = Category::all();
+
         return view('admin.source.create')->with(compact('source'))->with(compact('categories'));
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
-       $request->validate(Source::validationRules());
-       
-       Source::Create($request->except(['_token']));
-       return redirect('/admin/source')->with('message', 'Source has been successfully created');
+        $request->validate(Source::validationRules());
+
+        Source::Create($request->except(['_token']));
+
+        return redirect('/admin/source')->with('message', 'Source has been successfully created');
     }
 
     /**
      * Display the specfied resource.
      *
-     * @param  int  $id
+     * @param int $id
+     *
      * @return \Illuminate\Http\Response
      */
     public function show($id)
     {
-        //
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function edit(Source $source)
     {
-       if ($source) {
+        if ($source) {
             $categories = Category::all();
-           return view('admin.source.edit')->with(compact('source'))->with(compact('categories')); 
-       }
-       return response('Record Not Found', 404);
+
+            return view('admin.source.edit')->with(compact('source'))->with(compact('categories'));
+        }
+
+        return response('Record Not Found', 404);
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, Source $source)
     {
-       $request->validate(Source::validationRules(false));
+        $request->validate(Source::validationRules(false));
 
-       $source->update($request->except(['_token']));
-       return redirect('/admin/source')->with('message', 'Source has been successfully updated');
+        $source->update($request->except(['_token']));
+
+        return redirect('/admin/source')->with('message', 'Source has been successfully updated');
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function destroy(Source $source)
     {
         $source->delete();
-        return redirect(route('admin.source.index'))->with('message', 'Source Succesfully Deleted'); 
+
+        return redirect(route('admin.source.index'))->with('message', 'Source Succesfully Deleted');
     }
 }

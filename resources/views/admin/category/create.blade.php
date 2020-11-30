@@ -1,4 +1,4 @@
-@extends('layouts.administration');
+@extends('admin.layout');
 @section('content')
     <div class="container">
         <h1>Create new Category</h1>

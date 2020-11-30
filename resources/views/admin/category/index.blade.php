@@ -1,4 +1,4 @@
-@extends('layouts.administration')
+@extends('admin.layout')
 
 @section('content')
 <div class="container">
@@ -18,7 +18,7 @@
             @foreach($categories as $category)
                 <tr>
                     <td>{{$category->description}}</td>
-                    <td><a href="{{route('admin.category.edit', ['id' => $category->id])}}">edit</a></td>
+                    <td><a href="/admin/category/{{($category->id)}}/edit">edit</a></td>
                 </tr>
             @endforeach
         </tbody>

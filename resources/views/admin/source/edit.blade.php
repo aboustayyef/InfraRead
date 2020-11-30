@@ -1,4 +1,4 @@
-@extends('layouts.administration')
+@extends('admin.layout');
 
 @section('content')
 <div class="container">
@@ -27,7 +27,7 @@
             <p>Deleting this source will remove all their data</p>
           </div>
           <div class="modal-footer">
-            <form method="POST" action="{{route('admin.source.destroy', ['id'=>$source->id])}}">
+          <form method="POST" action="/admin/source/{{$source->id}}">
                 {{csrf_field()}}
                 <input name="_method" type="hidden" value="DELETE">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>

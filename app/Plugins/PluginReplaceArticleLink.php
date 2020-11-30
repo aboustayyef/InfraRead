@@ -1,10 +1,10 @@
 <?php
 
 namespace App\Plugins;
-use \App\Post;
+
+use App\Models\Post;
 use GuzzleHttp\Client;
 use Symfony\Component\DomCrawler\Crawler;
-
 
 /**********************************************************************************
  * All plugins take a App/Post object, transform it and return true if succesful
@@ -12,10 +12,10 @@ use Symfony\Component\DomCrawler\Crawler;
  *
  * About This Plugin
  * -------------------
- * This plugin replaces the link of the article with that of the 
+ * This plugin replaces the link of the article with that of the
  * first link in the body text. Useful for sites like slashdot that
  * curate content and linked to them
- * 
+ *
  * Modified Properties:
  * --------------------
  * Post->content;
@@ -25,12 +25,14 @@ use Symfony\Component\DomCrawler\Crawler;
 class PluginReplaceArticleLink implements PluginInterface
 {
     private $post;
-    function __construct(Post $post)
+
+    public function __construct(Post $post)
     {
         $this->post = $post;
     }
 
-    function handle(){
+    public function handle()
+    {
         try {
             $client = new Client();
             $response = $client->request('GET', $this->post->url);
@@ -45,11 +47,10 @@ class PluginReplaceArticleLink implements PluginInterface
                     break;
                 }
             }
-            return true;        
+
+            return true;
         } catch (\Exception $e) {
             return false;
         }
-
     }
-
 }

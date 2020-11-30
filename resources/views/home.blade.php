@@ -12,7 +12,7 @@
     <script>window.posts_description = '{{$posts_description}}'</script> 
     <script>window.page = '{{$page}}'</script> 
     
-    <link rel="stylesheet" type="text/css" href="{{mix('/css/app.css')}}">
+    <link rel="stylesheet" type="text/css" href="{{mix('/css/app_bulma.css')}}">
     <link rel="manifest" href="/manifest.json">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#da2525">

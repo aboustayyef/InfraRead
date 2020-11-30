@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Post;
+use App\Models\Post;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 
@@ -40,8 +40,8 @@ class OldPostsPurger extends Command
     public function handle()
     {
         $oneMonthAgo = (new Carbon())->subMonth();
-        $posts = Post::where('posted_at','<', $oneMonthAgo);
-        $posts->each(function($post){
+        $posts = Post::where('posted_at', '<', $oneMonthAgo);
+        $posts->each(function ($post) {
             $post->read = 1;
             $post->save();
             $this->error($post->id);

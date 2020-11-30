@@ -1,8 +1,8 @@
-@extends('layouts.administration');
+@extends('admin.layout');
 @section('content')
     <div class="container">
         <h1>Edit Category</h1>
-        <form method="POST" action="{{route('admin.category.update',['id'=>$category->id])}}" >
+        <form method="POST" action="/admin/category/{{$category->id}}" >
             <input name="_method" type="hidden" value="PUT">
             @include('admin.category._form')
         <input type="submit" class="btn btn-primary"></input>
@@ -24,7 +24,7 @@
 	            <p>Deleting a category cannot be undone</p>
 	          </div>
 	          <div class="modal-footer">
-	            <form method="POST" action="{{route('admin.category.destroy', ['id'=>$category->id])}}">
+	            <form method="POST" action="/admin/category/{{$category->id}}">
 	                {{csrf_field()}}
 	                <input name="_method" type="hidden" value="DELETE">
 	                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>

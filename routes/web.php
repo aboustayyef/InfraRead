@@ -1,105 +1,49 @@
 <?php
 
-use App\Category;
-use App\Post;
-use App\Source;
+use App\Http\Controllers\AdminCategoryController;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AdminSourceController;
+use App\Http\Controllers\PocketSetupController;
+use App\Http\Controllers\PostController;
+use App\Http\Controllers\PostsByCategoryController;
+use App\Http\Controllers\PostsBySourceController;
+use App\Http\Controllers\ReadlaterController;
+use App\Http\Controllers\RefreshPostsController;
+use App\Http\Controllers\UrlAnalysisController;
+use App\Models\Category;
+use App\Models\Source;
 use App\Utilities\OpmlImporter;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 
-// OPML of feeds
-Route::get('/feeds.opml', function () {
-    $categories = Category::with('sources')->get();
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register web routes for your application. These
+| routes are loaded by the RouteServiceProvider within a group which
+| contains the "web" middleware group. Now create something great!
+|
+*/
 
-    return response()->view('opml', compact('categories'))->header('Content-Disposition', 'attachment')->header('Content-Type', 'text/xml');
-});
+// Authorisation Routes
+// Using the package Laravel Breeze
+require __DIR__.'/auth.php';
 
-// API for external Clients Requests
-Route::group(['prefix' => 'client'], function () {
-    // Get the initial data
-
-    Route::get('/initialData', function (Request $request) {
-        // Make sure Request contains username and password
-        if (!Auth::attempt($request->only(['email', 'password']))) {
-            return response(collect(['response' => 401])->toArray(), 401);
-        }
-
-        // Get categories, sources, and posts;
-        $categories = Category::where('id', '>', 0)->select(['id', 'description'])->get();
-        $sources = Source::where('id', '>', 0)->select(['id', 'category_id', 'name', 'description'])->get();
-        $posts = collect();
-        foreach (Source::all() as $key => $source) {
-            $posts = $posts->merge($source->latestPostsSinceEarliestUnread());
-        }
-
-        // consolidate all in a response object and return as json
-        $res = collect([
-            'response' => 200,
-            'data' => [
-                'categories' => $categories,
-                'sources' => $sources,
-                'posts' => $posts, ],
-                ]);
-
-        return $res->toArray();
-    })->middleware('cors');
-
-    Route::get('/toggleReadStatus', function (Request $request) {
-        // Make sure Request contains username and password
-        if (!Auth::attempt($request->only(['email', 'password']))) {
-            return response(collect(['response' => 401])->toArray(), 401);
-        }
-        try {
-            $post = Post::findOrFail($request->post);
-            $post->read = abs(1 - $post->read);
-            $post->save();
-
-            return response(collect(['response' => 200])->toArray(), 200);            //code...
-        } catch (\Throwable $th) {
-            return response(collect(['response' => 500])->toArray(), 500);
-        }
-    })->middleware('cors');
-
-    // mark post read
-    // toggle post read status
-    // mark post unread
-});
-
-// Columns View
-Route::get('/columns', function (Request $request) {
-    $last_successful_crawl = getLastSuccesfulCrawl();
-
-    $categories = Category::where('id', '>', 0)->select(['id', 'description'])->get()->toJson();
-    $sources = Source::where('id', '>', 0)->select(['id', 'category_id', 'name', 'description'])->get()->toJson();
-
-    // Get posts;
-    $posts = collect();
-    foreach (Source::all() as $key => $source) {
-        $posts = $posts->merge($source->latestPostsSinceEarliestUnread());
-    }
-    $posts = $posts->toJson();
-
-    return view('v2.home')
-    ->with(compact('last_successful_crawl'))
-    ->with(compact('categories'))
-    ->with(compact('sources'))
-    ->with(compact('posts'));
-});
+// Routes for external client apps that require access (example: column view netlify)
+// I haven't tested it with this new version yet
+require __DIR__.'/clients.php';
 
 Route::get('/', function () {
     // If a user exists, but not RSS feeds is set up
-    if (\App\Source::count() == 0) {
+    if (Source::count() == 0) {
         return redirect('/setup');
     }
 
     return redirect('/app');
 });
-
-Route::get('/setup', function () {
-    return view('setup');
-})->middleware('auth');
 
 Route::get('/app', function () {
     $posts_source = '/api/posts';
@@ -128,6 +72,13 @@ Route::get('/app/source/{id}', function ($id) {
         ->with(compact('last_successful_crawl'));
 })->middleware('auth');
 
+Route::get('/app/sources', function () {
+    $sources = Source::all();
+    $categories = Category::all();
+
+    return view('sources')->with(compact('sources'))->with(compact('categories'));
+})->middleware('auth');
+
 Route::get('/app/category/{id}', function ($id) {
     $category = Category::findOrFail($id);
     $posts_source = '/api/postsByCategory/'.$id;
@@ -142,22 +93,9 @@ Route::get('/app/category/{id}', function ($id) {
         ->with(compact('last_successful_crawl'));
 })->middleware('auth');
 
-Route::get('/app/sources', function () {
-    $sources = App\Source::all();
-    $categories = App\Category::all();
-
-    return view('sources')->with(compact('sources'))->with(compact('categories'));
-})->middleware('auth');
-
-// Authentication Routes...
-$this->get('login', 'Auth\LoginController@showLoginForm')->name('login');
-$this->post('login', 'Auth\LoginController@login');
-$this->post('logout', 'Auth\LoginController@logout')->name('logout');
-
-// Saving for later
-$this->get('/app/readlater', '\App\Http\Controllers\ReadlaterController@index')->middleware('auth');
-$this->get('/app/setuppocket/authorise', '\App\Http\Controllers\PocketSetupController@authorise')->middleware('auth');
-$this->get('/app/setuppocket', '\App\Http\Controllers\PocketSetupController@index')->middleware('auth');
+Route::get('/setup', function () {
+    return view('setup');
+})->middleware(['auth']);
 
 Route::post('/uploadOpml', function (Request $request) {
     $request->file('opml')->storeAs('uploaded', 'feeds.opml');
@@ -166,48 +104,40 @@ Route::post('/uploadOpml', function (Request $request) {
     return redirect('/admin/source');
 })->middleware('auth');
 
-Route::get('/markallread', function () {
-    Post::all()->each(function ($post) {
-        $post->read = 1;
-        $post->save();
-    });
-
-    return redirect('/app');
-});
-
 // Administration
 Route::prefix('admin')->middleware('auth')->group(function () {
-    Route::resource('source', 'AdminSourceController', ['as' => 'admin'])->except('show');
-    Route::resource('category', 'AdminCategoryController', ['as' => 'admin'])->except('show');
-    Route::get('/', 'AdminController@index');
+    Route::resource('source', AdminSourceController::class, ['as' => 'admin'])->except('show');
+    Route::resource('category', AdminCategoryController::class, ['as' => 'admin'])->except('show');
+    Route::get('/', [AdminController::class, 'index']);
 });
 
 // Ajax
 Route::prefix('api')->middleware('auth')->group(function () {
-    Route::get('/postContentById/{post}', 'PostController@getContentById');
-    Route::resource('/posts', 'PostController')->only(['index', 'update']);
+    Route::get('/postContentById/{post}', [PostController::class, 'getContentById']);
+    Route::resource('/posts', PostController::class)->only(['index', 'update']);
 
     // crawl for new posts /per source
-    Route::get('/refresh/{source}', 'RefreshPostsController@handle');
+    Route::get('/refresh/{source}', [RefreshPostsController::class, 'handle']);
 
     // Get a List of posts of a particular source
-    Route::get('/postsBySource/{source}', 'PostsBySourceController@index');
+    Route::get('/postsBySource/{source}', [PostsBySourceController::class, 'index']);
 
     // Get a List of posts of a particular category
-    Route::get('/postsByCategory/{category}', 'PostsByCategoryController@index');
+    Route::get('/postsByCategory/{category}', [PostsByCategoryController::class, 'index']);
 
     // Get a list of sources. Used for administering sources
     Route::get('source', function () {
-        return App\Source::with('Category')->get();
+        return Source::with('Category')->get();
     });
 
     // Get a list of categories. Used for administering categories
     Route::get('category', function () {
-        return App\Category::all();
+        return Category::all();
     });
 
     // analyze URL for quick add
-    Route::get('urlanalyze', 'UrlAnalysisController@index');
+
+    Route::get('urlanalyze', [UrlAnalysisController::class, 'index']);
 
     function getLastSuccesfulCrawl()
     {
@@ -223,4 +153,47 @@ Route::prefix('api')->middleware('auth')->group(function () {
             return 'problem';
         }
     }
+});
+
+// Saving for later
+Route::get('/app/readlater', [ReadlaterController::class, 'index'])->middleware('auth');
+Route::get('/app/setuppocket/authorise', [PocketSetupController::class, 'authorise'])->middleware('auth');
+Route::get('/app/setuppocket', [PocketSetupController::class, 'index'])->middleware('auth');
+
+// export OPML of feeds
+Route::get('/feeds.opml', function () {
+    $categories = Category::with('sources')->get();
+
+    return response()->view('opml', compact('categories'))->header('Content-Disposition', 'attachment')->header('Content-Type', 'text/xml');
+});
+
+// Columns View
+Route::get('/columns', function (Request $request) {
+    $last_successful_crawl = getLastSuccesfulCrawl();
+
+    $categories = Category::where('id', '>', 0)->select(['id', 'description'])->get()->toJson();
+    $sources = Source::where('id', '>', 0)->select(['id', 'category_id', 'name', 'description'])->get()->toJson();
+
+    // Get posts;
+    $posts = collect();
+    foreach (Source::all() as $key => $source) {
+        $posts = $posts->merge($source->latestPostsSinceEarliestUnread());
+    }
+    $posts = $posts->toJson();
+
+    return view('v2.home')
+    ->with(compact('last_successful_crawl'))
+    ->with(compact('categories'))
+    ->with(compact('sources'))
+    ->with(compact('posts'));
+});
+
+// Mark all as read (not tested for this v yet)
+Route::get('/markallread', function () {
+    Post::all()->each(function ($post) {
+        $post->read = 1;
+        $post->save();
+    });
+
+    return redirect('/app');
 });

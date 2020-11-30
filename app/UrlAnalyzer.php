@@ -1,21 +1,21 @@
-<?php 
-namespace App;
-use Embed\Embed;
-use Guzzle\Http\Client;
-use Illuminate\Support\MessageBag;
-use Symfony\Component\DomCrawler\Crawler ;
-use \Exception;
-use \Illuminate\Support\Collection;
+<?php
 
-/**
-*           
-*/
+namespace App;
+
+use Embed\Embed;
+
 class UrlAnalyzer
 {
-    public $status, $error_messages, $result; 
-    private $url, $html, $embed;
+    public $status;
+    public $error_messages;
+    public $result;
+    private $url;
 
-    function __construct($url)
+    private $html;
+
+    private $embed;
+
+    public function __construct($url)
     {
         $this->url = $url;
         $this->status = 'ok';
@@ -23,29 +23,30 @@ class UrlAnalyzer
         $this->result = [];
 
         // Check url is valid
-        if (filter_var($url, FILTER_VALIDATE_URL) === FALSE) {
+        if (filter_var($url, FILTER_VALIDATE_URL) === false) {
             return $this->abort('URL is not valid. Make Sure it starts with http:// or https://');
         }
 
-
         // Check url is accessible
-        try {       
-            $this->embed = Embed::create($this->url);
+        try {
+            $embed = new Embed();
+            $this->embed = $embed->get($this->url);
         } catch (\Embed\Exceptions\InvalidUrlException $e) {
             return $this->abort('Cannot Access URL');
         }
+
         $this->result['title'] = $this->embed->title;
         $this->result['description'] = $this->embed->description;
         $this->result['author'] = $this->embed->authorName;
-        $this->result['rss'] = $this->embed->feeds[0];
-        $this->result['canonical_url'] = $this->embed->url;
+        $this->result['rss'] = (string) $this->embed->feeds[0];
+        $this->result['canonical_url'] = (string) $this->embed->url;
     }
 
     private function abort($message)
     {
         $this->status = 'error';
         $this->error_messages[] = $message;
+
         return;
     }
 }
-?>

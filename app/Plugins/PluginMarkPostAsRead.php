@@ -2,7 +2,7 @@
 
 namespace App\Plugins;
 
-use App\Post;
+use App\Models\Post;
 
 /**********************************************************************************
  * All plugins take a App/Post object, transform it and return true if succesful

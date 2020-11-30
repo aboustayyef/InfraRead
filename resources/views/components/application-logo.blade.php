@@ -1,0 +1,1 @@
+ <img class="w-20 h-20" src="{{asset('img/infraread144.png')}}" />

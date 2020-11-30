@@ -2,8 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Source;
-use Illuminate\Http\Request;
+use App\Models\Source;
 
 class PostsBySourceController extends Controller
 {
@@ -14,8 +13,6 @@ class PostsBySourceController extends Controller
      */
     public function index(Source $source)
     {
-        //
         return $source->getLatestPosts(40);
     }
-
 }
