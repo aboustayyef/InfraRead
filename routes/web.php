@@ -11,6 +11,7 @@ use App\Http\Controllers\ReadlaterController;
 use App\Http\Controllers\RefreshPostsController;
 use App\Http\Controllers\UrlAnalysisController;
 use App\Models\Category;
+use App\Models\Post;
 use App\Models\Source;
 use App\Utilities\OpmlImporter;
 use Illuminate\Http\Request;
