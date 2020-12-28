@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\AdminCategoryController;
-use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AdminSourceController;
 use App\Http\Controllers\PocketSetupController;
 use App\Http\Controllers\PostController;
@@ -107,9 +106,11 @@ Route::post('/uploadOpml', function (Request $request) {
 
 // Administration
 Route::prefix('admin')->middleware('auth')->group(function () {
+    Route::get('/', function () {
+        return redirect('/admin/source');
+    });
     Route::resource('source', AdminSourceController::class, ['as' => 'admin'])->except('show');
     Route::resource('category', AdminCategoryController::class, ['as' => 'admin'])->except('show');
-    Route::get('/', [AdminController::class, 'index']);
 });
 
 // Ajax
