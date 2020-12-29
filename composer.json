@@ -17,6 +17,7 @@
         "laminas/laminas-diactoros": "^2.5",
         "laravel/framework": "^8.12",
         "laravel/tinker": "^2.5",
+        "livewire/livewire": "^2.3",
         "nesbot/carbon": "^2.42",
         "symfony/css-selector": "^5.1",
         "symfony/dom-crawler": "^5.1",

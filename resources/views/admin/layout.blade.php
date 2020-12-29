@@ -13,13 +13,13 @@
     <!-- Styles -->
     <link href="https://fonts.googleapis.com/css?family=Bebas+Neue|Catamaran:400,600&display=swap" rel="stylesheet"> 
     <link href="{{ mix('css/app.css') }}" rel="stylesheet">
+    @livewireStyles
 </head>
 <body>
+    <style>
+        [v-cloak] {display: none}
+    </style>
     <div id="app">
-        {{-- @include('admin.partials.navigation')
-        @include('admin.partials.navtabs')
-        {{--  Message --}}
-        {{-- 
         @if(session()->has('message'))
             <br>
             <div class="container">
@@ -27,18 +27,21 @@
                     {{session()->get('message')}}
                 </div>
             </div>
-        @endif --}}
+        @endif 
         <div class="flex">
             {{-- Sidebar --}}
-            <div class="bg-gray-100 w-1/8 w-64 min-h-screen">
+            <div id="sidebar-info" class="bg-gray-100 w-1/8 w-64 min-h-screen">
                 {{--sidebar info--}}
                 <div class="py-20 pl-10 pr-20 flex flex-col justify-between h-full">
                     {{-- sidebar top --}}
-                    <div class="flex flex-col h-40 justify-between">
+                    <div id="sidebar-top" class="flex flex-col h-48 justify-between">
                         {{-- logo --}}
                         <img src="/img/infraread144.png" class="w-12" alt="">
                         <ul>
-                            <li class="@if(strstr(request()->path(), 'admin/source')) font-bold @else font-light text-gray-400 @endif"><a href="/admin/source">Sources</a></li>
+                            <li class="flex @if(strstr(request()->path(), 'admin/source')) font-bold @else font-light text-gray-400 @endif">
+                                <a href="/admin/source">Sources</a>
+                                <a href="{{route('admin.source.create')}}" class="block bg-gray-200 px-3 ml-2 text-gray-400 hover:text-white hover:bg-red-700 rounded-md">+</a>
+                            </li>
                             <li class="mt-4 @if(strstr(request()->path(), 'admin/category')) font-bold @else font-light text-gray-400 @endif"><a href="/admin/category">Categories</a></li>    
                         </ul>
                     </div>
@@ -50,15 +53,18 @@
                 </div>
             </div>
 
-            <div class="flex-grow"></div>
+            <div class="flex-grow mr-40 ml-40 mt-20">
+                @yield('content')
+            </div>
         </div>
 
-        @yield('content')
+        
     </div>
 
     <!-- Scripts -->
     <script src="{{ mix('js/admin.js') }}"></script>
     <!-- Extra Scripts -->
     @yield('extra_scripts')
+    @livewireScripts
 </body>
 </html>
