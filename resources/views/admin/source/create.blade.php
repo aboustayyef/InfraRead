@@ -1,44 +1,33 @@
 @extends('admin.layout') @section('content')
-<div class="container">
 
-  <hr>
+<div class="flex w-full">
+  <h2 class="text-4xl font-bold text-gray-600">Create New Source</h2>
+</div>
+<hr class="my-12">
   <div id="quickfill" v-cloak>
-  <div v-if="error_message" class="alert alert-warning alert-dismissible" role="alert">
-    <button type="button" class="close" @click="error_message=false" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+  <div v-if="error_message" class="flex justify-between items-center text-red-700 mb-4 bg-red-100 shadow-md border border-red-200 px-2 rounded-lg" role="alert">
     @{{error_message}}
+    <div class="p-2 cursor-pointer" @click="error_message=false">&times;</div>
   </div>
-  <div v-if="success_message" class="alert alert-success alert-dismissible" role="alert">
-    <button type="button" class="close" @click="success_message=false" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+  <div v-if="success_message" class="flex justify-between items-center text-green-700 mb-4 bg-green-100 shadow-md border border-green-200 px-2 rounded-lg" role="alert">
     @{{success_message}}
+    <div class="p-2 cursor-pointer" @click="success_message=false">&times;</div>
   </div>
   <div v-if = "quickstatus === 'closed'">
-  	<button class="btn btn-default btn-lg" @click="quickstatus='open'">Quick Add +</button>
+  	<button class="ir_button" @click="quickstatus='open'">Quick Add +</button>
   </div>
   <div v-else>
-  	<div class="well" style="overflow:auto">
-  	  <div class="col-md-8">
-  	    <form class="form-horizontal">
-  	      <div class="form-group">
-  	        <label for="url" class="col-sm-2 control-label">URL:</label>
-  	        <div class="col-sm-10">
-  	          <input v-model="url" type="text" class="form-control" id="url" placeholder="http://sourcehomepage.com">
-  	        </div>
-  	      </div>
-  	      <div class="form-group">
-  	        <div class="col-sm-offset-2 col-sm-10">
-  	          <button @click.prevent="submit()" class="btn btn-default" v-text="button_status" :disabled="button_status=='Getting Info'"></button>
-  	        </div>
-  	      </div>
-  	    </form>
-  	  </div>
-  		</div>
+    <form class="flex">
+        <input v-model="url" type="text" class="ir_input attached" id="url" placeholder="http://sourcehomepage.com">
+        <button @click.prevent="submit()" class="ir_button attached" v-text="button_status" :disabled="button_status=='Getting Info'"></button>
+    </form>
+  	  
+  		
   </div>
 
-
-    <h2>Create new source</h2>
     <form method="POST" action="{{route('admin.source.store')}}">
       @include('admin.source._form')
-      <input type="submit" class="btn btn-primary"></input>
+      <input type="submit" class="ir_button"></input>
     </form>
   </div>
   
@@ -75,7 +64,12 @@
               this.error_message = res.data.error_messages[0];
   	        	this.button_status = 'Try Again';
             }
-	        });
+	        }).catch((res)=>{
+            this.error_message = 'there was a problem with the url. Please double check then try again';
+            this.url = '';
+            this.button_status = 'Get Info';
+            this.quickstatus= 'closed';
+          });
         },
       }
     });

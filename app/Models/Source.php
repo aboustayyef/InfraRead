@@ -96,6 +96,7 @@ class Source extends Model
             'name' => 'required',
             'url' => 'required|url',
             'description' => 'max:140',
+            'category_id' => 'required',
             'fetcher_source' => 'required|url',
             'fetcher_kind' => 'in:'.implode(',', $available_fetcher_kinds),
        ];

@@ -40,20 +40,23 @@
                         <ul>
                             <li class="flex @if(strstr(request()->path(), 'admin/source')) font-bold @else font-light text-gray-400 @endif">
                                 <a href="/admin/source">Sources</a>
-                                <a href="{{route('admin.source.create')}}" class="block bg-gray-200 px-3 ml-2 text-gray-400 hover:text-white hover:bg-red-700 rounded-md">+</a>
+                                <a href="{{route('admin.source.create')}}" class="block bg-gray-200 px-3 ml-2 text-gray-400 hover:text-white hover:bg-primary rounded-md">+</a>
                             </li>
-                            <li class="mt-4 @if(strstr(request()->path(), 'admin/category')) font-bold @else font-light text-gray-400 @endif"><a href="/admin/category">Categories</a></li>    
+                            <li class="mt-4 flex @if(strstr(request()->path(), 'admin/category')) font-bold @else font-light text-gray-400 @endif">
+                                <a href="/admin/category">Categories</a>   
+                                <a href="{{route('admin.category.create')}}" class="block bg-gray-200 px-3 ml-2 text-gray-400 hover:text-white hover:bg-primary rounded-md">+</a>
+                            </li> 
                         </ul>
                     </div>
                     {{-- User --}}
                     <div class="flex items-center">
                         {{ Auth::user()->name }} 
-                        <a href="/logout" class=" text-xs uppercase ml-2 px-3 py-1 rounded-lg bg-gray-300 hover:bg-red-500 hover:text-white">logout</a>
+                        <a href="/logout" class=" text-xs uppercase ml-2 px-3 py-1 rounded-lg bg-gray-300 hover:bg-primary hover:text-white">logout</a>
                     </div>
                 </div>
             </div>
 
-            <div class="flex-grow mr-40 ml-40 mt-20">
+            <div id="content" class="mx-28 mt-20 w-full max-w-3xl">
                 @yield('content')
             </div>
         </div>
