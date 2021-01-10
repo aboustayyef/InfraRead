@@ -31680,6 +31680,51 @@ select {
   color: rgba(255, 255, 255, var(--tw-text-opacity));
 }
 
+.content {
+  line-height: 1.625;
+  margin-left: auto;
+  margin-right: auto;
+  letter-spacing: 0.025em;
+}
+
+.content blockquote {
+  --tw-bg-opacity: 1;
+  background-color: rgba(243, 244, 246, var(--tw-bg-opacity));
+  --tw-border-opacity: 1;
+  border-color: rgba(156, 163, 175, var(--tw-border-opacity));
+  border-bottom-width: 4px;
+  margin-bottom: 1rem;
+  padding: 1rem;
+}
+
+.content a {
+  --tw-text-opacity: 1;
+  color: rgba(185, 12, 17, var(--tw-text-opacity));
+}
+
+.content p {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.content.has-columns{
+  -moz-column-width: 22em;
+       column-width: 22em;
+  -moz-column-count:2;
+       column-count:2;
+  -moz-column-rule: 1px dotted #ddd;
+       column-rule: 1px dotted #ddd;
+}
+
+/* @layer utilities {
+    @variants responsive {
+        .columns{
+            max-width: 150ch;
+            column-width: 65ch;
+        }
+    }
+  } */
+
 @media (min-width: 640px) {
   .sm\:container {
     width: 100%;

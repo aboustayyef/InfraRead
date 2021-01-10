@@ -9,14 +9,15 @@ class AppPost extends Component
 {
     public $post;
 
-    protected $listeners = ['postSelected', 'markAsRead'];
+    protected $listeners = ['postSelected', 'exitPost'];
 
     public function postSelected(Post $post)
     {
         $this->post = $post;
+        $this->emit('markAsRead', $post->id);
     }
 
-    public function markAsRead(Post $post)
+    public function exitPost()
     {
         $this->post = null;
     }

@@ -8,7 +8,7 @@ use Livewire\Component;
 class AppPostList extends Component
 {
     public $posts;
-    private $numberOfPosts = 20;
+    // private $numberOfPosts = 20;
 
     protected $listeners = ['markAsRead'];
 
@@ -26,7 +26,7 @@ class AppPostList extends Component
 
     public function getPosts()
     {
-        $this->posts = Post::with(['source', 'category'])->where('read', 0)->take($this->numberOfPosts)->get();
+        $this->posts = Post::with(['source', 'category'])->where('read', 0)->get();
     }
 
     public function render()

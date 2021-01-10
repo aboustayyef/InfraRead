@@ -21,3 +21,33 @@
 .ir_button.attached{
     @apply border border-gray-200 text-gray-800 hover:text-white font-semibold rounded-md rounded-l-none px-4 py-2 hover:bg-primary border-l-0; 
 }
+
+.content {
+    @apply mx-auto leading-relaxed tracking-wide;
+}
+
+.content blockquote {
+    @apply p-4 bg-gray-100 border-b-4 border-gray-400 mb-4;
+}
+
+.content a {
+    @apply text-primary;
+}
+
+.content p {
+    @apply my-2;
+}
+.content.has-columns{
+    column-width: 22em;
+    column-count:2;
+    column-rule: 1px dotted #ddd;
+  }
+
+/* @layer utilities {
+    @variants responsive {
+        .columns{
+            max-width: 150ch;
+            column-width: 65ch;
+        }
+    }
+  } */
