@@ -19,8 +19,3 @@ mix.js('resources/js/app.js', 'public/js').postCss('resources/css/app.css', 'pub
 mix.sass('resources/sass/app_bulma.scss', 'public/css').version();
 mix.sass('resources/sass/administration/admin_bootstrap.scss', 'public/css').version();
 mix.js('resources/js/admin.js', 'public/js').version();
-
-// V2 (columns view)
-
-mix.js('resources/v2/js/app.js', 'public/v2/js').version();
-mix.sass('resources/v2/css/app.scss', 'public/v2/css').version();

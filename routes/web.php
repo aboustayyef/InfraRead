@@ -36,6 +36,9 @@ require __DIR__.'/auth.php';
 // I haven't tested it with this new version yet
 require __DIR__.'/clients.php';
 
+//  Routes for new version of app that relies on livewire
+require __DIR__.'/v2.php';
+
 Route::get('/', function () {
     // If a user exists, but not RSS feeds is set up
     if (Source::count() == 0) {
