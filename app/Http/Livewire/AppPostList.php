@@ -26,7 +26,7 @@ class AppPostList extends Component
 
     public function getPosts()
     {
-        $this->posts = Post::with(['source', 'category'])->where('read', 0)->get();
+        $this->posts = Post::with(['source', 'category'])->where('read', 0)->orderBy('posted_at', 'desc')->get();
     }
 
     public function render()
