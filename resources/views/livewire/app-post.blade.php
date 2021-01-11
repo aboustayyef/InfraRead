@@ -13,7 +13,7 @@
                 <h2 class="uppercase text-primary font-semibold text-xl mt-2">{{$post->source->name}}</h2>
                 <h3 class="text-gray-300 mt-6">{{$post->posted_at->diffForHumans()}}</h3>
             </div>
-            <div class="content has-columns text-lg text-gray-700">
+            <div class="content has-columns text-lg text-gray-500 leading-relaxed">
                 {!!$post->content!!}
             </div>
         </div>
@@ -31,4 +31,5 @@
         window.Livewire.emit('exitPost')
       }  
     })
+    
 </script>
