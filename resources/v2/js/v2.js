@@ -1,3 +1,5 @@
+// Posts Class
+// This class is used to handle the position of the highlighting in keyboard shortcuts
 class Posts {
   constructor(number, index) {
     this.number = number;
@@ -16,6 +18,9 @@ class Posts {
   GetIndex(){
       return this.index;
   }
+  ResetIndex(){
+      this.index = 0;
+  }
   GetNumber(){
       return this.number;
   }
@@ -27,14 +32,19 @@ class Posts {
 window.addEventListener('DOMContentLoaded', (event) => {
     
     IR_posts = new Posts(numberOfPosts,0);
+    let keyboard_navigation = false;
     
     // When a post is marked as read. Reduce the count of the posts.
     Livewire.on('markAsRead', function(){
         IR_posts.markPostAsRead();       
-        console.log(IR_posts.GetNumber() + ' posts still unread');
     });
 
-    function updateHighlight() {
+    // Function to update the position of the highlight
+    function updateHighlightPosition() {
+        if (keyboard_navigation == false) {
+            IR_posts.ResetIndex();
+            keyboard_navigation = true; 
+        }
         Livewire.emit('postHighlighted', IR_posts.GetIndex());
         document.querySelector('#post-'+IR_posts.GetIndex()).scrollIntoViewIfNeeded();
         
@@ -53,11 +63,11 @@ window.addEventListener('DOMContentLoaded', (event) => {
         
         if (e.key == 'j' || e.key == 'J') {
             IR_posts.NextPost();
-            updateHighlight();
+            updateHighlightPosition();
         }
         if (e.key == 'k' || e.key == 'K') {
             IR_posts.PreviousPost();
-            updateHighlight();
+            updateHighlightPosition();
         }
         
     })

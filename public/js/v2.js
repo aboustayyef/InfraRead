@@ -99,6 +99,8 @@ function _defineProperties(target, props) { for (var i = 0; i < props.length; i+
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
+// Posts Class
+// This class is used to handle the position of the highlighting in keyboard shortcuts
 var Posts = /*#__PURE__*/function () {
   function Posts(number, index) {
     _classCallCheck(this, Posts);
@@ -127,6 +129,11 @@ var Posts = /*#__PURE__*/function () {
       return this.index;
     }
   }, {
+    key: "ResetIndex",
+    value: function ResetIndex() {
+      this.index = 0;
+    }
+  }, {
     key: "GetNumber",
     value: function GetNumber() {
       return this.number;
@@ -142,14 +149,19 @@ var Posts = /*#__PURE__*/function () {
 }();
 
 window.addEventListener('DOMContentLoaded', function (event) {
-  IR_posts = new Posts(numberOfPosts, 0); // When a post is marked as read. Reduce the count of the posts.
+  IR_posts = new Posts(numberOfPosts, 0);
+  var keyboard_navigation = false; // When a post is marked as read. Reduce the count of the posts.
 
   Livewire.on('markAsRead', function () {
     IR_posts.markPostAsRead();
-    console.log(IR_posts.GetNumber() + ' posts still unread');
-  });
+  }); // Function to update the position of the highlight
 
-  function updateHighlight() {
+  function updateHighlightPosition() {
+    if (keyboard_navigation == false) {
+      IR_posts.ResetIndex();
+      keyboard_navigation = true;
+    }
+
     Livewire.emit('postHighlighted', IR_posts.GetIndex());
     document.querySelector('#post-' + IR_posts.GetIndex()).scrollIntoViewIfNeeded(); // if we're at the first, nudge the view to the top
 
@@ -166,12 +178,12 @@ window.addEventListener('DOMContentLoaded', function (event) {
 
     if (e.key == 'j' || e.key == 'J') {
       IR_posts.NextPost();
-      updateHighlight();
+      updateHighlightPosition();
     }
 
     if (e.key == 'k' || e.key == 'K') {
       IR_posts.PreviousPost();
-      updateHighlight();
+      updateHighlightPosition();
     }
   });
 });

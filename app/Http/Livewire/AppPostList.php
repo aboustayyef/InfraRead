@@ -9,6 +9,7 @@ class AppPostList extends Component
 {
     public $posts;
     public $highlighted_post_index;
+    public $keyboard_navigation_on;
     // private $numberOfPosts = 20;
 
     protected $listeners = ['markAsRead', 'postHighlighted'];
@@ -16,6 +17,7 @@ class AppPostList extends Component
     public function mount()
     {
         $this->getPosts();
+        $this->keyboard_navigation_on = false;
         $this->highlighted_post_index = 0;
     }
 
@@ -28,7 +30,12 @@ class AppPostList extends Component
 
     public function postHighlighted($index)
     {
-        $this->highlighted_post_index = $index;
+        if ($this->keyboard_navigation_on == false) {
+            $this->highlighted_post_index = 0;
+            $this->keyboard_navigation_on = true;
+        } else {
+            $this->highlighted_post_index = $index;
+        }
     }
 
     public function getPosts()
