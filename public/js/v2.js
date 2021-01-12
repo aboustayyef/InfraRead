@@ -86,14 +86,106 @@
 /************************************************************************/
 /******/ ({
 
+/***/ "./resources/v2/js/v2.js":
+/*!*******************************!*\
+  !*** ./resources/v2/js/v2.js ***!
+  \*******************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var Posts = /*#__PURE__*/function () {
+  function Posts(number, index) {
+    _classCallCheck(this, Posts);
+
+    this.number = number;
+    this.index = index;
+  }
+
+  _createClass(Posts, [{
+    key: "NextPost",
+    value: function NextPost() {
+      if (this.index < this.number - 1) {
+        this.index++;
+      }
+    }
+  }, {
+    key: "PreviousPost",
+    value: function PreviousPost() {
+      if (this.index > 0) {
+        this.index--;
+      }
+    }
+  }, {
+    key: "GetIndex",
+    value: function GetIndex() {
+      return this.index;
+    }
+  }, {
+    key: "GetNumber",
+    value: function GetNumber() {
+      return this.number;
+    }
+  }, {
+    key: "markPostAsRead",
+    value: function markPostAsRead() {
+      this.number = this.number - 1;
+    }
+  }]);
+
+  return Posts;
+}();
+
+window.addEventListener('DOMContentLoaded', function (event) {
+  IR_posts = new Posts(numberOfPosts, 0); // When a post is marked as read. Reduce the count of the posts.
+
+  Livewire.on('markAsRead', function () {
+    IR_posts.markPostAsRead();
+    console.log(IR_posts.GetNumber() + ' posts still unread');
+  });
+
+  function updateHighlight() {
+    Livewire.emit('postHighlighted', IR_posts.GetIndex());
+    document.querySelector('#post-' + IR_posts.GetIndex()).scrollIntoViewIfNeeded(); // if we're at the first, nudge the view to the top
+
+    if (IR_posts.GetIndex() == 0) {
+      document.querySelector('#ReadCount').scrollIntoView();
+    }
+  } // Keyboard shortcuts
+
+
+  window.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') {
+      Livewire.emit('exitPost');
+    }
+
+    if (e.key == 'j' || e.key == 'J') {
+      IR_posts.NextPost();
+      updateHighlight();
+    }
+
+    if (e.key == 'k' || e.key == 'K') {
+      IR_posts.PreviousPost();
+      updateHighlight();
+    }
+  });
+});
+
+/***/ }),
+
 /***/ 2:
-/*!**************************************!*\
-  !*** multi ./resources/v2/js/app.js ***!
-  \**************************************/
+/*!*************************************!*\
+  !*** multi ./resources/v2/js/v2.js ***!
+  \*************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-!(function webpackMissingModule() { var e = new Error("Cannot find module '/Users/mustaphahamoui/sites/infraread/resources/v2/js/app.js'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
+module.exports = __webpack_require__(/*! /Users/mustaphahamoui/sites/infraread/resources/v2/js/v2.js */"./resources/v2/js/v2.js");
 
 
 /***/ })
