@@ -24,12 +24,3 @@
     </div>
     @endif 
 </div>
-<script>
-    // Keyboard shortcuts
-    window.addEventListener('keydown', (e) => {
-      if(e.key === 'Escape'){
-        window.Livewire.emit('exitPost')
-      }  
-    })
-    
-</script>

@@ -8,13 +8,15 @@ use Livewire\Component;
 class AppPostList extends Component
 {
     public $posts;
+    public $highlighted_post_index;
     // private $numberOfPosts = 20;
 
-    protected $listeners = ['markAsRead'];
+    protected $listeners = ['markAsRead', 'postHighlighted'];
 
     public function mount()
     {
         $this->getPosts();
+        $this->highlighted_post_index = 0;
     }
 
     public function markAsRead(Post $post)
@@ -22,6 +24,11 @@ class AppPostList extends Component
         $post->read = 1;
         $post->save();
         $this->getPosts();
+    }
+
+    public function postHighlighted($index)
+    {
+        $this->highlighted_post_index = $index;
     }
 
     public function getPosts()
