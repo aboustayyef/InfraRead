@@ -163,11 +163,11 @@ window.addEventListener('DOMContentLoaded', function (event) {
     }
 
     Livewire.emit('postHighlighted', IR_posts.GetIndex());
-    document.querySelector('#post-' + IR_posts.GetIndex()).scrollIntoViewIfNeeded(); // if we're at the first, nudge the view to the top
-
-    if (IR_posts.GetIndex() == 0) {
-      document.querySelector('#ReadCount').scrollIntoView();
-    }
+    document.querySelector('#post-' + IR_posts.GetIndex()).scrollIntoView({
+      behavior: "smooth",
+      block: "center",
+      inline: "nearest"
+    });
   } // Keyboard shortcuts
 
 
@@ -185,6 +185,8 @@ window.addEventListener('DOMContentLoaded', function (event) {
       IR_posts.PreviousPost();
       updateHighlightPosition();
     }
+
+    console.log(e.key);
   });
 });
 
