@@ -34,10 +34,23 @@ window.addEventListener('DOMContentLoaded', (event) => {
     IR_posts = new Posts(numberOfPosts,0);
     let keyboard_navigation = false;
     let highlighted_post = null;
+    let view_mode = 'list';
 
     // When a post is marked as read. Reduce the count of the posts.
     Livewire.on('markAsRead', function(){
         IR_posts.markPostAsRead();       
+    });
+
+    // When a post is viewed, change view_mode to 'post'
+    Livewire.on('postSelected', function(){
+        view_mode = 'post';
+        console.log('switched viewing mode to Post');
+    });
+    
+    // When a post is exited, change view_mode to 'list'
+    Livewire.on('exitPost', function(){
+        view_mode = 'list';
+        console.log('switched viewing mode to list');
     });
 
     // Function to update the position of the highlight
@@ -59,20 +72,34 @@ window.addEventListener('DOMContentLoaded', (event) => {
         }
         
         if (e.key == 'j' || e.key == 'J') {
-            IR_posts.NextPost();
-            updateHighlightPosition();
+            if (view_mode == 'list') {
+                IR_posts.NextPost();
+                updateHighlightPosition();
+            } else {
+                document.querySelector('#post-view').scrollBy(0, 200);
+            }
         }
         if (e.key == 'k' || e.key == 'K') {
-            IR_posts.PreviousPost();
-            updateHighlightPosition();
+            if (view_mode == 'list') {
+                IR_posts.PreviousPost();
+                updateHighlightPosition();
+            } else {
+                document.querySelector('#post-view').scrollBy(0, -200);
+            }
+
         }
 
         if (e.key == 'Enter') {
             if (highlighted_post) {
-                console.log('there is a highlighted post');
                 Livewire.emit('postSelected', highlighted_post.dataset.postid)
             } else {
                 console.log('no posts have been highlighted yet');
+            }
+        }
+
+        if (e.key == 'e' || e.key == 'E'){
+            if (highlighted_post) {
+                Livewire.emit('markAsRead', highlighted_post.dataset.postid)
             }
         }
 

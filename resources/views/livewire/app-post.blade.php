@@ -2,7 +2,7 @@
     @if (empty($post))
     {{-- Nothing --}}
     @else
-    <div    class="w-full absolute bg-white top-0 right-0 h-screen
+    <div id="post-view" class="w-full absolute bg-white top-0 right-0 h-screen
                  overflow-y-auto           
                 transition duration-200 ease-out transform-gpu @if(empty($post)) translate-x-full @else translate-x-0 @endif">
         <div class="p-12 w-full max-w-7xl mx-auto">

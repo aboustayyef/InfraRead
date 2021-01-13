@@ -4,12 +4,13 @@
     <div class="max-w-7xl mx-auto cursor-pointer mb-6">
     <div id="ReadCount" class="bg-primary px-4 py-1 rounded-b-md text-white absolute top-0">
         <div class="max-w-7xl mx-auto">
-            Unread: {{$posts->count()}} Index: {{$highlighted_post_index}}
+            Unread: {{$posts->count()}}
         </div>
     </div>
 </div>
     @foreach($posts as $key => $post)
-        <div id="post-{{$key}}" data-postid="{{$post->id}}" class="@if($keyboard_navigation_on && $key == $highlighted_post_index) bg-yellow-50 @endif max-w-7xl mx-auto cursor-pointer p-2 border-b border-gray-200">
+        <div id="post-{{$key}}" data-postid="{{$post->id}}" class="@if($keyboard_navigation_on && 
+        $key == $highlighted_post_index) bg-yellow-50 @endif max-w-7xl mx-auto cursor-pointer p-2 border-b border-gray-200">
             <div wire:click="$emit('postSelected',{{$post->id}})" class="flex">
                 <div class="mr-12 w-1/2">
                     <h2 class="text-2xl font-semibold text-gray-700 pt-6">{{$post->title}}</h2>
