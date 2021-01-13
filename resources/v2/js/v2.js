@@ -33,7 +33,8 @@ window.addEventListener('DOMContentLoaded', (event) => {
     
     IR_posts = new Posts(numberOfPosts,0);
     let keyboard_navigation = false;
-    
+    let highlighted_post = null;
+
     // When a post is marked as read. Reduce the count of the posts.
     Livewire.on('markAsRead', function(){
         IR_posts.markPostAsRead();       
@@ -46,7 +47,8 @@ window.addEventListener('DOMContentLoaded', (event) => {
             keyboard_navigation = true; 
         }
         Livewire.emit('postHighlighted', IR_posts.GetIndex());
-        document.querySelector('#post-'+IR_posts.GetIndex()).scrollIntoView({behavior: "smooth", block: "center", inline: "nearest"});
+        highlighted_post = document.querySelector('#post-'+IR_posts.GetIndex());
+        highlighted_post.scrollIntoView({behavior: "smooth", block: "center", inline: "nearest"});
     }
     
     // Keyboard shortcuts
@@ -63,6 +65,15 @@ window.addEventListener('DOMContentLoaded', (event) => {
         if (e.key == 'k' || e.key == 'K') {
             IR_posts.PreviousPost();
             updateHighlightPosition();
+        }
+
+        if (e.key == 'Enter') {
+            if (highlighted_post) {
+                console.log('there is a highlighted post');
+                Livewire.emit('postSelected', highlighted_post.dataset.postid)
+            } else {
+                console.log('no posts have been highlighted yet');
+            }
         }
 
         console.log(e.key);
