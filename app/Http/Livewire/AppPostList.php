@@ -12,7 +12,7 @@ class AppPostList extends Component
     public $keyboard_navigation_on;
     // private $numberOfPosts = 20;
 
-    protected $listeners = ['markAsRead', 'postHighlighted'];
+    protected $listeners = ['markPostAsRead', 'highlightPost'];
 
     public function mount()
     {
@@ -21,14 +21,14 @@ class AppPostList extends Component
         $this->highlighted_post_index = 0;
     }
 
-    public function markAsRead(Post $post)
+    public function markPostAsRead(Post $post)
     {
         $post->read = 1;
         $post->save();
         $this->getPosts();
     }
 
-    public function postHighlighted($index)
+    public function highlightPost($index)
     {
         if ($this->keyboard_navigation_on == false) {
             $this->highlighted_post_index = 0;

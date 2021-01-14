@@ -11,7 +11,7 @@
     @foreach($posts as $key => $post)
         <div id="post-{{$key}}" data-postid="{{$post->id}}" class="@if($keyboard_navigation_on && 
         $key == $highlighted_post_index) bg-yellow-50 @endif max-w-7xl mx-auto cursor-pointer p-2 border-b border-gray-200">
-            <div wire:click="$emit('postSelected',{{$post->id}})" class="flex">
+            <div wire:click="$emit('viewPost',{{$post->id}})" class="flex">
                 <div class="mr-12 w-1/2">
                     <h2 class="text-2xl font-semibold text-gray-700 pt-6">{{$post->title}}</h2>
                     <h3 class="mt-2 font-semibold text-xl uppercase text-primary">{{$post->source->name}}</h3>
@@ -22,7 +22,7 @@
                 </div>
             </div>
             <div class="w-1/2 mb-6">
-                <button wire:click.prevent="$emit('markAsRead',{{$post->id}})" class="border border-gray-300 rounded-md px-4 py-2 mt-4 hover:bg-primary hover:text-white">Mark Read</button>
+                <button wire:click.prevent="$emit('markPostAsRead',{{$post->id}})" class="border border-gray-300 rounded-md px-4 py-2 mt-4 hover:bg-primary hover:text-white">Mark Read</button>
             </div>
         </div>
     @endforeach

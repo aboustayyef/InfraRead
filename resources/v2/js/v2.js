@@ -35,21 +35,24 @@ window.addEventListener('DOMContentLoaded', (event) => {
     let keyboard_navigation = false;
     let highlighted_post = null;
     let view_mode = 'list';
+    let post_being_viewed = 0;
 
     // When a post is marked as read. Reduce the count of the posts.
-    Livewire.on('markAsRead', function(){
+    Livewire.on('markPostAsRead', function(){
         IR_posts.markPostAsRead();       
     });
 
     // When a post is viewed, change view_mode to 'post'
-    Livewire.on('postSelected', function(){
+    Livewire.on('viewPost', function(p){
         view_mode = 'post';
-        console.log('switched viewing mode to Post');
+        post_being_viewed = p;
+        console.log('switched viewing mode to Post ' + ' - Post: ' + post_being_viewed);
     });
     
     // When a post is exited, change view_mode to 'list'
     Livewire.on('exitPost', function(){
         view_mode = 'list';
+        post_being_viewed = 0;
         console.log('switched viewing mode to list');
     });
 
@@ -59,7 +62,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
             IR_posts.ResetIndex();
             keyboard_navigation = true; 
         }
-        Livewire.emit('postHighlighted', IR_posts.GetIndex());
+        Livewire.emit('highlightPost', IR_posts.GetIndex());
         highlighted_post = document.querySelector('#post-'+IR_posts.GetIndex());
         highlighted_post.scrollIntoView({behavior: "smooth", block: "center", inline: "nearest"});
     }
@@ -89,17 +92,24 @@ window.addEventListener('DOMContentLoaded', (event) => {
 
         }
 
-        if (e.key == 'Enter') {
-            if (highlighted_post) {
-                Livewire.emit('postSelected', highlighted_post.dataset.postid)
+        if (e.key == 'Enter' || e.key == 'o' || e.key == 'O') {
+            if (view_mode == 'list') {
+                if (highlighted_post) {
+                    Livewire.emit('viewPost', highlighted_post.dataset.postid)
+                } else {
+                    console.log('no posts have been highlighted yet');
+                }
             } else {
-                console.log('no posts have been highlighted yet');
+                window.open(
+                document.querySelector('#post-view').dataset.url,
+                "_blank"
+                );
             }
         }
 
         if (e.key == 'e' || e.key == 'E'){
             if (highlighted_post) {
-                Livewire.emit('markAsRead', highlighted_post.dataset.postid)
+                Livewire.emit('markPostAsRead', highlighted_post.dataset.postid)
             }
         }
 
