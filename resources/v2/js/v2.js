@@ -71,12 +71,20 @@ window.addEventListener('DOMContentLoaded', (event) => {
     window.addEventListener('keydown', (e) => {
         
         if(e.key === 'Escape'){
-            Livewire.emit('exitPost')
+            if (view_mode == 'list') {
+                IR_posts.ResetIndex();
+                highlighted_post = null;
+                Livewire.emit('disableHighlight');                 
+            } else {
+                Livewire.emit('exitPost');
+            }
         }
         
         if (e.key == 'j' || e.key == 'J') {
             if (view_mode == 'list') {
-                IR_posts.NextPost();
+                if (highlighted_post) {
+                    IR_posts.NextPost();
+                }
                 updateHighlightPosition();
             } else {
                 document.querySelector('#post-view').scrollBy(0, 200);
@@ -110,6 +118,12 @@ window.addEventListener('DOMContentLoaded', (event) => {
         if (e.key == 'e' || e.key == 'E'){
             if (highlighted_post) {
                 Livewire.emit('markPostAsRead', highlighted_post.dataset.postid)
+            }
+        }
+        if (e.key == 's' || e.key == 'S'){
+            if (view_mode == 'post') {
+                console.log('saving for later');
+                Livewire.emit('savePostForReadLater', document.querySelector('#post-view').dataset.url);
             }
         }
 
