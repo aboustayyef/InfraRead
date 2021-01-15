@@ -5,7 +5,7 @@
     <div id="post-view" data-url="{{$post->url}}" class="w-full absolute bg-white top-0 right-0 h-screen
                  overflow-y-auto           
                 transition duration-200 ease-out transform-gpu @if(empty($post)) translate-x-full @else translate-x-0 @endif">
-        <div class="p-12 w-full max-w-7xl mx-auto">
+        <div class="mt-12 p-12 w-full max-w-7xl mx-auto">
             <div class="mb-6 pb-4 border-b border-gray-200">
                 <a href="{{$post->url}}">
                     <h1 class="text-gray-700 text-3xl max-w-prose font-semibold">

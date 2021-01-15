@@ -30,13 +30,13 @@
         @endif 
         <div class="flex">
             {{-- Sidebar --}}
-            <div id="sidebar-info" class="bg-gray-100 w-1/8 w-64 min-h-screen">
+            <div id="sidebar-info" class="bg-gray-100 w-1/8 w-64 min-h-screen fixed">
                 {{--sidebar info--}}
                 <div class="py-20 pl-10 pr-20 flex flex-col justify-between h-full">
                     {{-- sidebar top --}}
                     <div id="sidebar-top" class="flex flex-col h-48 justify-between">
                         {{-- logo --}}
-                        <img src="/img/infraread144.png" class="w-12" alt="">
+                        <a href="/app/v2"><img src="/img/infraread144.png" class="w-12" alt=""></a>
                         <ul>
                             <li class="flex @if(strstr(request()->path(), 'admin/source')) font-bold @else font-light text-gray-400 @endif">
                                 <a href="/admin/source">Sources</a>
@@ -49,14 +49,14 @@
                         </ul>
                     </div>
                     {{-- User --}}
-                    <div class="flex items-center">
+                    <div class="absolute bottom-8 flex items-center">
                         {{ Auth::user()->name }} 
                         <a href="/logout" class=" text-xs uppercase ml-2 px-3 py-1 rounded-lg bg-gray-300 hover:bg-primary hover:text-white">logout</a>
                     </div>
                 </div>
             </div>
 
-            <div id="content" class="mx-28 mt-20 w-full max-w-3xl">
+            <div id="content" class="mx-auto mt-20 w-full max-w-7xl pb-24">
                 @yield('content')
             </div>
         </div>
