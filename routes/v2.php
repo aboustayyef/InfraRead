@@ -13,5 +13,5 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('/app/v2')->group(function () {
     Route::get('/', function () {
         return view('v2.app');
-    });
+    })->middleware('auth');
 });

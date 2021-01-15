@@ -49,17 +49,21 @@ Route::get('/', function () {
 });
 
 Route::get('/app', function () {
-    $posts_source = '/api/posts';
-    $posts_description = 'All Posts';
-    $page = 'post list';
-    $last_successful_crawl = getLastSuccesfulCrawl();
+    return redirect('/app/v2');
+});
 
-    return view('home')
-        ->with(compact('posts_source'))
-        ->with(compact('page'))
-        ->with(compact('posts_description'))
-        ->with(compact('last_successful_crawl'));
-})->middleware('auth');
+// Route::get('/app', function () {
+//     $posts_source = '/api/posts';
+//     $posts_description = 'All Posts';
+//     $page = 'post list';
+//     $last_successful_crawl = getLastSuccesfulCrawl();
+
+//     return view('home')
+//         ->with(compact('posts_source'))
+//         ->with(compact('page'))
+//         ->with(compact('posts_description'))
+//         ->with(compact('last_successful_crawl'));
+// })->middleware('auth');
 
 Route::get('/app/source/{id}', function ($id) {
     $source = Source::findOrFail($id);
