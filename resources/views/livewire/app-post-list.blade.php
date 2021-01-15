@@ -9,7 +9,12 @@
     </div>
 </div>
     @if ($source !== 'all')
-        <div class="max-w-7xl p-2 container mx-auto py-4">Posts by {{$source_name}} <button wire:click="$emit('updateSource','all')" class="px-2 rounded-full bg-gray-200 hover:bg-primary hover:text-white">&times;</button></div>
+        <div class="bg-gray-50 shadow-md rounded-md mb-4 flex justify-between max-w-7xl p-2 container mx-auto py-4 items-center">
+            <div class="text-gray-600 uppercase text-sm font-semibold">Posts by {{$source_name}}</div>
+            <button wire:click="$emit('updateSource','all')" class="text-lg text-gray-400  w-8 h-8 rounded-full bg-gray-100 hover:bg-primary hover:text-white">
+                &times;
+            </button>
+        </div>
     @endif
     @foreach($posts as $key => $post)
         <div id="post-{{$key}}" data-postid="{{$post->id}}" class="@if($keyboard_navigation_on && 

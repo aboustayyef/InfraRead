@@ -36,6 +36,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
     let highlighted_post = null;
     let view_mode = 'list';
     let post_being_viewed = 0;
+    let source = 'all';
 
     // When a post is marked as read. Reduce the count of the posts.
     Livewire.on('markPostAsRead', function(){
@@ -56,6 +57,11 @@ window.addEventListener('DOMContentLoaded', (event) => {
         console.log('switched viewing mode to list');
     });
 
+    // When a source is updated, change here
+    Livewire.on('updateSource', function(s){
+        source = s;
+    });
+
     // Function to update the position of the highlight
     function updateHighlightPosition() {
         if (keyboard_navigation == false) {
@@ -72,10 +78,24 @@ window.addEventListener('DOMContentLoaded', (event) => {
         
         if(e.key === 'Escape'){
             if (view_mode == 'list') {
-                IR_posts.ResetIndex();
-                highlighted_post = null;
-                Livewire.emit('disableHighlight');                 
+
+                // In List View
+
+                // Exit Single Source View if nothing is highlighted 
+                if (highlighted_post == null) {
+                    if (source !== 'all') {
+                       Livewire.emit('updateSource','all'); 
+                    }
+                // remove highlight if existing
+                } else {
+                    IR_posts.ResetIndex();
+                    highlighted_post = null;
+                    Livewire.emit('disableHighlight');                 
+                }
             } else {
+
+                // In Post View
+                
                 Livewire.emit('exitPost');
             }
         }

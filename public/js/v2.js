@@ -153,7 +153,8 @@ window.addEventListener('DOMContentLoaded', function (event) {
   var keyboard_navigation = false;
   var highlighted_post = null;
   var view_mode = 'list';
-  var post_being_viewed = 0; // When a post is marked as read. Reduce the count of the posts.
+  var post_being_viewed = 0;
+  var source = 'all'; // When a post is marked as read. Reduce the count of the posts.
 
   Livewire.on('markPostAsRead', function () {
     IR_posts.markPostAsRead();
@@ -169,6 +170,10 @@ window.addEventListener('DOMContentLoaded', function (event) {
     view_mode = 'list';
     post_being_viewed = 0;
     console.log('switched viewing mode to list');
+  }); // When a source is updated, change here
+
+  Livewire.on('updateSource', function (s) {
+    source = s;
   }); // Function to update the position of the highlight
 
   function updateHighlightPosition() {
@@ -190,10 +195,20 @@ window.addEventListener('DOMContentLoaded', function (event) {
   window.addEventListener('keydown', function (e) {
     if (e.key === 'Escape') {
       if (view_mode == 'list') {
-        IR_posts.ResetIndex();
-        highlighted_post = null;
-        Livewire.emit('disableHighlight');
+        // In List View
+        // Exit Single Source View if nothing is highlighted 
+        if (highlighted_post == null) {
+          if (source !== 'all') {
+            Livewire.emit('updateSource', 'all');
+          } // remove highlight if existing
+
+        } else {
+          IR_posts.ResetIndex();
+          highlighted_post = null;
+          Livewire.emit('disableHighlight');
+        }
       } else {
+        // In Post View
         Livewire.emit('exitPost');
       }
     }
