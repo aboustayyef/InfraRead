@@ -16,7 +16,9 @@ mix.js('resources/js/app.js', 'public/js').postCss('resources/css/app.css', 'pub
     require('tailwindcss'),
     require('autoprefixer'),
 ]);
-mix.sass('resources/sass/app_bulma.scss', 'public/css').version();
-mix.sass('resources/sass/administration/admin_bootstrap.scss', 'public/css').version();
+// mix.sass('resources/sass/app_bulma.scss', 'public/css').version();
+// mix.sass('resources/sass/administration/admin_bootstrap.scss', 'public/css').version();
 mix.js('resources/js/admin.js', 'public/js').version();
 mix.js('resources/v2/js/v2.js', 'public/js').version();
+
+mix.js('resources/js/vue_app.js','public/js');

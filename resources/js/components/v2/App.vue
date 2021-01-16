@@ -1,0 +1,98 @@
+<template>
+  <div  class="pt-12 relative text-left w-full h-screen overflow-y-auto p-12">
+    <div class="max-w-7xl mx-auto flex mb-6 justify-between">
+        <div id="ReadCount" class="bg-primary px-4 py-1 rounded-md text-white">
+            <div class="max-w-7xl mx-auto">
+                Unread: {{number_of_unread_posts}} 
+            </div>
+        </div>
+        <a href="/admin" class="block">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 text-gray-300 hover:text-primary cursor-pointer" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+        </a>
+    </div>
+    <!-- @if ($source !== 'all')
+        <div class="bg-gray-50 shadow-md rounded-md mb-4 flex justify-between max-w-7xl p-2 container mx-auto py-4 items-center">
+            <div class="text-gray-600 uppercase text-sm font-semibold">Posts by {{$source_name}}</div>
+            <button wire:click="$emit('updateSource','all')" class="text-lg text-gray-400  w-8 h-8 rounded-full bg-gray-100 hover:bg-primary hover:text-white">
+                &times;
+            </button>
+        </div>
+    @endif -->
+        <div v-for="post in unread_posts" :key="post.id" class="border-b border-gray-200 max-w-7xl mx-auto cursor-pointer p-2">
+                <div class="flex">
+                    <div class="mr-12 w-1/2">
+                        <h2 v-on:click="display_post(post)" class="cursor-pointer text-2xl font-semibold text-gray-700 pt-6">{{post.title}}</h2>
+                        <h3 class="mt-2 font-semibold text-xl uppercase text-primary">{{post.source.name}}</h3>
+                        <h4 class="mt-4 text-gray-500 text-lg">{{post.time_ago}}</h4>
+                    </div>
+                    <div v-on:click="display_post(post)" class="cursor-pointer w-1/2 font-light leading-relaxed text-gray-400 text-xl">
+                        <p>{{post.excerpt}}</p>
+                    </div>
+                </div>
+                <div class="w-1/2 mb-6">
+                    <button v-on:click="mark_post_as_read(post)" class="border border-gray-300 rounded-md px-4 py-2 mt-4 hover:bg-primary hover:text-white">Mark Read</button>
+                </div>
+        </div>
+        
+
+
+        <post 
+            :post="displayed_post"
+            v-on:exit-post="exit_post"
+        >
+        </post>  
+</div>
+
+</template>
+<script>
+export default {
+  props: ['refreshInterval'],
+  data() {
+    return {
+      posts: {},
+      displayed_post:{}
+    };
+  },
+  created() {
+    axios.get('/simpleapi').then((res) => {
+        this.posts = res.data;
+      })
+  },
+  computed: {
+      unread_posts: function(){
+          if (Object.keys(this.posts).length > 0) {
+              return this.posts.filter((post) => !post.read == 1 );
+          }
+      },
+      number_of_unread_posts: function(){
+          if (Object.keys(this.posts).length > 0) {
+              return Object.keys(this.unread_posts).length
+      }}
+  },
+  methods: {
+    display_post: function(p) {
+      this.displayed_post = p;
+      this.mark_post_as_read(p);
+    },
+    mark_post_as_read: function(p){
+        p.read = 1;
+        axios.patch("/api/posts/" + p.id, { read: 1 })
+        // If patch works, don't report anything
+        .then((res) => { })
+        // If there's a problem, undo mark as read
+        .catch((res) => {
+          p.read = 0;
+        })
+    },
+    exit_post: function(){
+        this.displayed_post = {};
+    }
+  },
+};
+</script>
+
+<style scoped>
+</style>

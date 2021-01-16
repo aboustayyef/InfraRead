@@ -48,9 +48,24 @@ Route::get('/', function () {
     return redirect('/app');
 });
 
-// Route::get('/app', function () {
-//     return redirect('/app/v2');
-// });
+// ///////////////////////////////////////
+// ///////////////////////////////////////
+//
+Route::get('/refactoringvue', function () {
+    $posts = Post::where('read', 0)->orderBy('posted_at', 'asc')->get();
+
+    $last_successful_crawl = getLastSuccesfulCrawl();
+
+    return view('vuehome')->with('last_successful_crawl', $last_successful_crawl);
+});
+Route::get('/simpleapi', function () {
+    return Post::With('Source')->with('Category')->where('read', 0)->orderBy('posted_at', 'asc')->get();
+});
+//
+// todo: middleware auth
+
+// ///////////////////////////////////////
+// ///////////////////////////////////////
 
 Route::get('/app', function () {
     $posts_source = '/api/posts';

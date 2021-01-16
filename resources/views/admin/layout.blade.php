@@ -38,11 +38,11 @@
                         {{-- logo --}}
                         <a href="/app/v2"><img src="/img/infraread144.png" class="w-12" alt=""></a>
                         <ul>
-                            <li class="flex @if(strstr(request()->path(), 'admin/source')) font-bold @else font-light text-gray-400 @endif">
+                            <li class="flex">
                                 <a href="/admin/source">Sources</a>
                                 <a href="{{route('admin.source.create')}}" class="block bg-gray-200 px-3 ml-2 text-gray-400 hover:text-white hover:bg-primary rounded-md">+</a>
                             </li>
-                            <li class="mt-4 flex @if(strstr(request()->path(), 'admin/category')) font-bold @else font-light text-gray-400 @endif">
+                            <li class="mt-4 flex">
                                 <a href="/admin/category">Categories</a>   
                                 <a href="{{route('admin.category.create')}}" class="block bg-gray-200 px-3 ml-2 text-gray-400 hover:text-white hover:bg-primary rounded-md">+</a>
                             </li> 
