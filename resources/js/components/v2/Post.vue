@@ -1,7 +1,7 @@
 <template>
             <div
                   id="post-view" 
-                  class="w-full absolute bg-white top-0 right-0 h-screen overflow-y-auto transition duration-200 ease-out transform-gpu"
+                  class="w-full fixed bg-white top-0 right-0 h-screen overflow-y-auto transition duration-200 ease-out transform-gpu"
                   :class="{'translate-x-full' : !shown ,  'translate-x-0': shown }" 
             >
             <div v-if="shown" class="mt-12 p-12 w-full max-w-7xl mx-auto">

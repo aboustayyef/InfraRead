@@ -85,6 +85,9 @@ export default {
               return 'post'
           }
           return 'list'
+      },
+      highlighted_post: function(){
+          return this.unread_posts[this.highlighter_position];
       }
   },
   methods: {
@@ -135,6 +138,7 @@ export default {
         document.querySelector('#post-'+this.highlighter_position).scrollIntoView({behavior: "smooth", block: "center", inline: "nearest"});
     },
     handle_keyboard_shortcut(key){
+        console.log(key);
         switch (key) {
             case 'Escape':
                 if (this.view == 'post') {
@@ -165,6 +169,21 @@ export default {
                         this.highlighter_position--;
                         this.show_highlighted_post();
                     }
+                }
+                break;
+            case 'Enter': 
+                if (this.view == 'list' && this.highlighter_on == true) {
+                    this.display_post(this.highlighted_post);
+                } 
+                break;
+            
+            case ('o' || 'O'):
+                if (this.view == 'list' && this.highlighter_on == true) {
+                   this.display_post(this.highlighted_post); 
+                   return;
+                }
+                if (this.view == 'post') {
+                   window.open(this.displayed_post.url,'_blank');
                 }
 
             default:

@@ -3918,6 +3918,9 @@ __webpack_require__.r(__webpack_exports__);
       }
 
       return 'list';
+    },
+    highlighted_post: function highlighted_post() {
+      return this.unread_posts[this.highlighter_position];
     }
   },
   methods: {
@@ -3980,6 +3983,8 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     handle_keyboard_shortcut: function handle_keyboard_shortcut(key) {
+      console.log(key);
+
       switch (key) {
         case 'Escape':
           if (this.view == 'post') {
@@ -4015,6 +4020,25 @@ __webpack_require__.r(__webpack_exports__);
               this.highlighter_position--;
               this.show_highlighted_post();
             }
+          }
+
+          break;
+
+        case 'Enter':
+          if (this.view == 'list' && this.highlighter_on == true) {
+            this.display_post(this.highlighted_post);
+          }
+
+          break;
+
+        case 'o' || false:
+          if (this.view == 'list' && this.highlighter_on == true) {
+            this.display_post(this.highlighted_post);
+            return;
+          }
+
+          if (this.view == 'post') {
+            window.open(this.displayed_post.url, '_blank');
           }
 
         default:
@@ -21943,7 +21967,7 @@ var render = function() {
     "div",
     {
       staticClass:
-        "w-full absolute bg-white top-0 right-0 h-screen overflow-y-auto transition duration-200 ease-out transform-gpu",
+        "w-full fixed bg-white top-0 right-0 h-screen overflow-y-auto transition duration-200 ease-out transform-gpu",
       class: { "translate-x-full": !_vm.shown, "translate-x-0": _vm.shown },
       attrs: { id: "post-view" }
     },
