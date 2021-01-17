@@ -23,9 +23,9 @@
             </div>
         </div>
         
-        <div v-for="post in unread_posts" :key="post.id" class="border-b border-gray-200 max-w-7xl mx-auto cursor-pointer p-2">
-                <div class="flex">
-                    <div class="mr-12 w-1/2">
+        <div v-for="(post , index) in unread_posts" :key="post.id" class="border-b border-gray-200 max-w-7xl mx-auto cursor-pointer p-2" :class="{'bg-yellow-50': highlighter_on && index==highlighter_position }">
+                <div :id="'post-' + index" class="flex">
+                <div class="mr-12 w-1/2">
                         <h2 v-on:click="display_post(post)" class="cursor-pointer text-2xl font-semibold text-gray-700 pt-6">{{post.title}}</h2>
                         <h3 v-on:click="switch_source('source', post.source.id, post.source.name)" class="mt-2 font-semibold text-xl uppercase text-primary">{{post.source.name}}</h3>
                         <h4 class="mt-4 text-gray-500 text-lg">{{post.time_ago}}</h4>
@@ -58,11 +58,16 @@ export default {
       displayed_post:{},
       which_posts:'all',
       which_source: 'all',
-      source_name:''
+      source_name:'',
+      highlighter_on: false,
+      highlighter_position: 0
     };
   },
   created() {
-      this.fetch_posts_from_server()
+      this.fetch_posts_from_server();
+      window.addEventListener('keydown', (e) => {
+          this.handle_keyboard_shortcut(e.key);
+      })
   },
   computed: {
       unread_posts: function(){
@@ -74,6 +79,13 @@ export default {
           if (Object.keys(this.posts).length > 0) {
               return Object.keys(this.unread_posts).length
       }},
+    //   view mode: post or list
+      view: function(){
+          if (Object.keys(this.displayed_post).length > 0) {
+              return 'post'
+          }
+          return 'list'
+      }
   },
   methods: {
     fetch_posts_from_server: function(){
@@ -98,8 +110,11 @@ export default {
         this.fetch_posts_from_server()
     },
     display_post: function(p) {
-      this.displayed_post = p;
-      this.mark_post_as_read(p);
+        this.displayed_post = p;
+        // Timeout the animation then set as read
+        setTimeout(() => {
+            this.mark_post_as_read(p);
+        }, 200)
     },
     mark_post_as_read: function(p){
         // update locally
@@ -115,6 +130,46 @@ export default {
     },
     exit_post: function(){
         this.displayed_post = {};
+    },
+    show_highlighted_post(){
+        document.querySelector('#post-'+this.highlighter_position).scrollIntoView({behavior: "smooth", block: "center", inline: "nearest"});
+    },
+    handle_keyboard_shortcut(key){
+        switch (key) {
+            case 'Escape':
+                if (this.view == 'post') {
+                   this.exit_post(); 
+                }
+                if (this.view == 'list' && this.highlighter_on){
+                   this.highlighter_on = false;
+                   this.highlighter_position = 0; 
+                }
+                break;
+            case ('j' || 'J'): 
+                if (this.highlighter_on == false) {
+                    this.highlighter_on = true;
+                    this.show_highlighted_post();
+                } else {
+                    if (this.highlighter_position < this.number_of_unread_posts - 1) {
+                        this.highlighter_position++;
+                        this.show_highlighted_post();
+                    }
+                }
+                break;
+            case ('k' || 'K'): 
+                if (this.highlighter_on == false) {
+                    this.highlighter_on = true;
+                    this.show_highlighted_post();
+                } else {
+                    if (this.highlighter_position > 0) {
+                        this.highlighter_position--;
+                        this.show_highlighted_post();
+                    }
+                }
+
+            default:
+                break;
+        }
     }
   },
 };

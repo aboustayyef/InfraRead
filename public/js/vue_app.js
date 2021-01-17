@@ -3885,11 +3885,18 @@ __webpack_require__.r(__webpack_exports__);
       displayed_post: {},
       which_posts: 'all',
       which_source: 'all',
-      source_name: ''
+      source_name: '',
+      highlighter_on: false,
+      highlighter_position: 0
     };
   },
   created: function created() {
+    var _this = this;
+
     this.fetch_posts_from_server();
+    window.addEventListener('keydown', function (e) {
+      _this.handle_keyboard_shortcut(e.key);
+    });
   },
   computed: {
     unread_posts: function unread_posts() {
@@ -3903,14 +3910,22 @@ __webpack_require__.r(__webpack_exports__);
       if (Object.keys(this.posts).length > 0) {
         return Object.keys(this.unread_posts).length;
       }
+    },
+    //   view mode: post or list
+    view: function view() {
+      if (Object.keys(this.displayed_post).length > 0) {
+        return 'post';
+      }
+
+      return 'list';
     }
   },
   methods: {
     fetch_posts_from_server: function fetch_posts_from_server() {
-      var _this = this;
+      var _this2 = this;
 
       axios.get('/simpleapi/' + this.which_posts).then(function (res) {
-        _this.posts = res.data;
+        _this2.posts = res.data;
       });
     },
     reset_to_all: function reset_to_all() {
@@ -3934,8 +3949,13 @@ __webpack_require__.r(__webpack_exports__);
       this.fetch_posts_from_server();
     },
     display_post: function display_post(p) {
-      this.displayed_post = p;
-      this.mark_post_as_read(p);
+      var _this3 = this;
+
+      this.displayed_post = p; // Timeout the animation then set as read
+
+      setTimeout(function () {
+        _this3.mark_post_as_read(p);
+      }, 200);
     },
     mark_post_as_read: function mark_post_as_read(p) {
       // update locally
@@ -3951,6 +3971,55 @@ __webpack_require__.r(__webpack_exports__);
     },
     exit_post: function exit_post() {
       this.displayed_post = {};
+    },
+    show_highlighted_post: function show_highlighted_post() {
+      document.querySelector('#post-' + this.highlighter_position).scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+        inline: "nearest"
+      });
+    },
+    handle_keyboard_shortcut: function handle_keyboard_shortcut(key) {
+      switch (key) {
+        case 'Escape':
+          if (this.view == 'post') {
+            this.exit_post();
+          }
+
+          if (this.view == 'list' && this.highlighter_on) {
+            this.highlighter_on = false;
+            this.highlighter_position = 0;
+          }
+
+          break;
+
+        case 'j' || false:
+          if (this.highlighter_on == false) {
+            this.highlighter_on = true;
+            this.show_highlighted_post();
+          } else {
+            if (this.highlighter_position < this.number_of_unread_posts - 1) {
+              this.highlighter_position++;
+              this.show_highlighted_post();
+            }
+          }
+
+          break;
+
+        case 'k' || false:
+          if (this.highlighter_on == false) {
+            this.highlighter_on = true;
+            this.show_highlighted_post();
+          } else {
+            if (this.highlighter_position > 0) {
+              this.highlighter_position--;
+              this.show_highlighted_post();
+            }
+          }
+
+        default:
+          break;
+      }
     }
   }
 });
@@ -21754,16 +21823,20 @@ var render = function() {
           ])
         : _vm._e(),
       _vm._v(" "),
-      _vm._l(_vm.unread_posts, function(post) {
+      _vm._l(_vm.unread_posts, function(post, index) {
         return _c(
           "div",
           {
             key: post.id,
             staticClass:
-              "border-b border-gray-200 max-w-7xl mx-auto cursor-pointer p-2"
+              "border-b border-gray-200 max-w-7xl mx-auto cursor-pointer p-2",
+            class: {
+              "bg-yellow-50":
+                _vm.highlighter_on && index == _vm.highlighter_position
+            }
           },
           [
-            _c("div", { staticClass: "flex" }, [
+            _c("div", { staticClass: "flex", attrs: { id: "post-" + index } }, [
               _c("div", { staticClass: "mr-12 w-1/2" }, [
                 _c(
                   "h2",
