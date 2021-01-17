@@ -3952,13 +3952,9 @@ __webpack_require__.r(__webpack_exports__);
       this.fetch_posts_from_server();
     },
     display_post: function display_post(p) {
-      var _this3 = this;
-
       this.displayed_post = p; // Timeout the animation then set as read
 
-      setTimeout(function () {
-        _this3.mark_post_as_read(p);
-      }, 200);
+      this.mark_post_as_read(p);
     },
     mark_post_as_read: function mark_post_as_read(p) {
       // update locally
@@ -21967,7 +21963,7 @@ var render = function() {
     "div",
     {
       staticClass:
-        "w-full fixed bg-white top-0 right-0 h-screen overflow-y-auto transition duration-200 ease-out transform-gpu",
+        "w-full fixed bg-white top-0 right-0 h-screen overflow-y-auto transition duration-75 ease-out transform",
       class: { "translate-x-full": !_vm.shown, "translate-x-0": _vm.shown },
       attrs: { id: "post-view" }
     },

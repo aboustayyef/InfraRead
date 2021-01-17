@@ -115,9 +115,7 @@ export default {
     display_post: function(p) {
         this.displayed_post = p;
         // Timeout the animation then set as read
-        setTimeout(() => {
             this.mark_post_as_read(p);
-        }, 200)
     },
     mark_post_as_read: function(p){
         // update locally
