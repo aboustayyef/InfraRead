@@ -3877,6 +3877,12 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['refreshInterval'],
   data: function data() {
@@ -3887,7 +3893,10 @@ __webpack_require__.r(__webpack_exports__);
       which_source: 'all',
       source_name: '',
       highlighter_on: false,
-      highlighter_position: 0
+      highlighter_position: 0,
+      message_kind: 'warning',
+      message_content: 'this is the message',
+      show_message: false
     };
   },
   created: function created() {
@@ -3957,6 +3966,8 @@ __webpack_require__.r(__webpack_exports__);
       this.mark_post_as_read(p);
     },
     mark_post_as_read: function mark_post_as_read(p) {
+      var _this3 = this;
+
       // update locally
       p.read = 1; // update on the server
 
@@ -3966,7 +3977,19 @@ __webpack_require__.r(__webpack_exports__);
       .then(function (res) {}) // If there's a problem, undo mark as read
       ["catch"](function (res) {
         p.read = 0;
+
+        _this3.display_message('warning', 'Cannot contact server', 2000);
       });
+    },
+    display_message: function display_message(kind, content, time) {
+      var _this4 = this;
+
+      this.message_kind = kind;
+      this.message_content = content;
+      this.show_message = true;
+      setTimeout(function () {
+        _this4.show_message = false;
+      }, time);
     },
     exit_post: function exit_post() {
       this.displayed_post = {};
@@ -21932,7 +21955,22 @@ var render = function() {
       _c("post", {
         attrs: { post: _vm.displayed_post },
         on: { "exit-post": _vm.exit_post }
-      })
+      }),
+      _vm._v(" "),
+      _c(
+        "div",
+        {
+          staticClass:
+            "fixed shadow-md border border-gray-600 translate-x-72 inline-block top-8 px-8 py-2 right-8 transition duration-75 ease-out transform",
+          class: {
+            "-translate-x-72": _vm.show_message == true,
+            "bg-yellow-100": _vm.message_kind == "warning",
+            "bg-blue-100": _vm.message_kind == "info",
+            "bg-green-100": _vm.message_kind == "success"
+          }
+        },
+        [_vm._v("\n    " + _vm._s(_vm.message_content) + " \n    ")]
+      )
     ],
     2
   )

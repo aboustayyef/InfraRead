@@ -39,13 +39,19 @@
                 </div>
         </div>
         
-
-
         <post 
             :post="displayed_post"
             v-on:exit-post="exit_post"
         >
         </post>  
+
+    <!-- Messages -->
+    <div class="fixed shadow-md border border-gray-600 translate-x-72 inline-block top-8 px-8 py-2 right-8 transition duration-75 ease-out transform"
+                  :class="{'-translate-x-72' : show_message == true , 'bg-yellow-100': message_kind == 'warning', 'bg-blue-100': message_kind == 'info', 'bg-green-100': message_kind == 'success'}" 
+    >
+    {{message_content}} 
+    </div>
+
 </div>
 
 </template>
@@ -60,7 +66,10 @@ export default {
       which_source: 'all',
       source_name:'',
       highlighter_on: false,
-      highlighter_position: 0
+      highlighter_position: 0,
+      message_kind:'warning',
+      message_content: 'this is the message',
+      show_message: false
     };
   },
   created() {
@@ -127,7 +136,16 @@ export default {
         // If there's a problem, undo mark as read
         .catch((res) => {
           p.read = 0;
+          this.display_message('warning','Cannot contact server',2000);
         })
+    },
+    display_message(kind,content,time){
+        this.message_kind = kind;
+        this.message_content = content;
+        this.show_message = true;
+        setTimeout(()=> {
+            this.show_message = false;
+        }, time);
     },
     exit_post: function(){
         this.displayed_post = {};
