@@ -3875,20 +3875,21 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['refreshInterval'],
   data: function data() {
     return {
       posts: {},
-      displayed_post: {}
+      displayed_post: {},
+      which_posts: 'all',
+      which_source: 'all',
+      source_name: ''
     };
   },
   created: function created() {
-    var _this = this;
-
-    axios.get('/simpleapi').then(function (res) {
-      _this.posts = res.data;
-    });
+    this.fetch_posts_from_server();
   },
   computed: {
     unread_posts: function unread_posts() {
@@ -3905,15 +3906,44 @@ __webpack_require__.r(__webpack_exports__);
     }
   },
   methods: {
+    fetch_posts_from_server: function fetch_posts_from_server() {
+      var _this = this;
+
+      axios.get('/simpleapi/' + this.which_posts).then(function (res) {
+        _this.posts = res.data;
+      });
+    },
+    reset_to_all: function reset_to_all() {
+      this.which_posts = 'all';
+      this.which_source = 'all';
+      this.source_name = '';
+      this.fetch_posts_from_server();
+    },
+    switch_source: function switch_source(which) {
+      var details = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+      var name = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+
+      if (which == 'all') {
+        this.reset_to_all();
+      } else {
+        this.which_posts = which + '/' + details;
+        this.which_source = details;
+        this.source_name = name;
+      }
+
+      this.fetch_posts_from_server();
+    },
     display_post: function display_post(p) {
       this.displayed_post = p;
       this.mark_post_as_read(p);
     },
     mark_post_as_read: function mark_post_as_read(p) {
-      p.read = 1;
+      // update locally
+      p.read = 1; // update on the server
+
       axios.patch("/api/posts/" + p.id, {
         read: 1
-      }) // If patch works, don't report anything
+      }) // If server update works, don't report anything
       .then(function (res) {}) // If there's a problem, undo mark as read
       ["catch"](function (res) {
         p.read = 0;
@@ -21689,6 +21719,41 @@ var render = function() {
         ]
       ),
       _vm._v(" "),
+      _vm.which_source !== "all"
+        ? _c("div", [
+            _c(
+              "div",
+              {
+                staticClass:
+                  "bg-gray-50 shadow-md rounded-md mb-4 flex justify-between max-w-7xl p-2 container mx-auto py-4 items-center"
+              },
+              [
+                _c(
+                  "div",
+                  {
+                    staticClass: "text-gray-600 uppercase text-sm font-semibold"
+                  },
+                  [_vm._v("Posts by " + _vm._s(_vm.source_name))]
+                ),
+                _vm._v(" "),
+                _c(
+                  "button",
+                  {
+                    staticClass:
+                      "text-lg text-gray-400  w-8 h-8 rounded-full bg-gray-100 hover:bg-primary hover:text-white",
+                    on: {
+                      click: function($event) {
+                        return _vm.reset_to_all()
+                      }
+                    }
+                  },
+                  [_vm._v("\n                    ×\n                ")]
+                )
+              ]
+            )
+          ])
+        : _vm._e(),
+      _vm._v(" "),
       _vm._l(_vm.unread_posts, function(post) {
         return _c(
           "div",
@@ -21718,7 +21783,16 @@ var render = function() {
                   "h3",
                   {
                     staticClass:
-                      "mt-2 font-semibold text-xl uppercase text-primary"
+                      "mt-2 font-semibold text-xl uppercase text-primary",
+                    on: {
+                      click: function($event) {
+                        return _vm.switch_source(
+                          "source",
+                          post.source.id,
+                          post.source.name
+                        )
+                      }
+                    }
                   },
                   [_vm._v(_vm._s(post.source.name))]
                 ),

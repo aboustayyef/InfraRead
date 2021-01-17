@@ -58,8 +58,21 @@ Route::get('/refactoringvue', function () {
 
     return view('vuehome')->with('last_successful_crawl', $last_successful_crawl);
 });
-Route::get('/simpleapi', function () {
-    return Post::With('Source')->with('Category')->where('read', 0)->orderBy('posted_at', 'asc')->get();
+Route::get('/simpleapi/{which}/{details?}', function ($which, $details = null) {
+    // Options are: /all
+    //              /source/source_id
+    //              /category/category_id
+
+    $common_query = Post::With('Source')->with('Category')->where('read', 0);
+    switch ($which) {
+        case 'all':
+            return  $common_query->orderBy('posted_at', 'asc')->get();
+            break;
+        case 'source':
+            return $common_query->where('source_id', $details)->orderBy('posted_at', 'asc')->get();
+        // case 'category'
+        }
+    abort(404);
 });
 //
 // todo: middleware auth

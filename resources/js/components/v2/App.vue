@@ -13,19 +13,21 @@
             </svg>
         </a>
     </div>
-    <!-- @if ($source !== 'all')
-        <div class="bg-gray-50 shadow-md rounded-md mb-4 flex justify-between max-w-7xl p-2 container mx-auto py-4 items-center">
-            <div class="text-gray-600 uppercase text-sm font-semibold">Posts by {{$source_name}}</div>
-            <button wire:click="$emit('updateSource','all')" class="text-lg text-gray-400  w-8 h-8 rounded-full bg-gray-100 hover:bg-primary hover:text-white">
-                &times;
-            </button>
+        
+        <div v-if="which_source !== 'all'"> 
+            <div class="bg-gray-50 shadow-md rounded-md mb-4 flex justify-between max-w-7xl p-2 container mx-auto py-4 items-center">
+                <div class="text-gray-600 uppercase text-sm font-semibold">Posts by {{source_name}}</div>
+                <button @click="reset_to_all()" class="text-lg text-gray-400  w-8 h-8 rounded-full bg-gray-100 hover:bg-primary hover:text-white">
+                    &times;
+                </button>
+            </div>
         </div>
-    @endif -->
+        
         <div v-for="post in unread_posts" :key="post.id" class="border-b border-gray-200 max-w-7xl mx-auto cursor-pointer p-2">
                 <div class="flex">
                     <div class="mr-12 w-1/2">
                         <h2 v-on:click="display_post(post)" class="cursor-pointer text-2xl font-semibold text-gray-700 pt-6">{{post.title}}</h2>
-                        <h3 class="mt-2 font-semibold text-xl uppercase text-primary">{{post.source.name}}</h3>
+                        <h3 v-on:click="switch_source('source', post.source.id, post.source.name)" class="mt-2 font-semibold text-xl uppercase text-primary">{{post.source.name}}</h3>
                         <h4 class="mt-4 text-gray-500 text-lg">{{post.time_ago}}</h4>
                     </div>
                     <div v-on:click="display_post(post)" class="cursor-pointer w-1/2 font-light leading-relaxed text-gray-400 text-xl">
@@ -53,13 +55,14 @@ export default {
   data() {
     return {
       posts: {},
-      displayed_post:{}
+      displayed_post:{},
+      which_posts:'all',
+      which_source: 'all',
+      source_name:''
     };
   },
   created() {
-    axios.get('/simpleapi').then((res) => {
-        this.posts = res.data;
-      })
+      this.fetch_posts_from_server()
   },
   computed: {
       unread_posts: function(){
@@ -70,17 +73,40 @@ export default {
       number_of_unread_posts: function(){
           if (Object.keys(this.posts).length > 0) {
               return Object.keys(this.unread_posts).length
-      }}
+      }},
   },
   methods: {
+    fetch_posts_from_server: function(){
+        axios.get('/simpleapi/' + this.which_posts).then((res) => {
+        this.posts = res.data;
+      })
+    },
+    reset_to_all: function(){
+            this.which_posts = 'all';
+            this.which_source = 'all';
+            this.source_name = '';
+            this.fetch_posts_from_server()
+    },
+    switch_source: function(which, details = null, name=null){
+        if (which == 'all') {
+            this.reset_to_all()
+        } else {
+            this.which_posts = which + '/' + details;
+            this.which_source = details;
+            this.source_name = name
+        }
+        this.fetch_posts_from_server()
+    },
     display_post: function(p) {
       this.displayed_post = p;
       this.mark_post_as_read(p);
     },
     mark_post_as_read: function(p){
+        // update locally
         p.read = 1;
+        // update on the server
         axios.patch("/api/posts/" + p.id, { read: 1 })
-        // If patch works, don't report anything
+        // If server update works, don't report anything
         .then((res) => { })
         // If there's a problem, undo mark as read
         .catch((res) => {
