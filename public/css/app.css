@@ -31692,9 +31692,11 @@ select {
   background-color: rgba(243, 244, 246, var(--tw-bg-opacity));
   --tw-border-opacity: 1;
   border-color: rgba(156, 163, 175, var(--tw-border-opacity));
-  border-bottom-width: 4px;
+  border-bottom-width: 8px;
   margin-bottom: 1rem;
   padding: 1rem;
+  --tw-text-opacity: 1;
+  color: rgba(107, 114, 128, var(--tw-text-opacity));
 }
 
 .content a {

@@ -4018,26 +4018,34 @@ __webpack_require__.r(__webpack_exports__);
           break;
 
         case 'j' || false:
-          if (this.highlighter_on == false) {
-            this.highlighter_on = true;
-            this.show_highlighted_post();
+          if (this.view == 'post') {
+            document.querySelector('#post-view').scrollBy(0, 200);
           } else {
-            if (this.highlighter_position < this.number_of_unread_posts - 1) {
-              this.highlighter_position++;
+            if (this.highlighter_on == false) {
+              this.highlighter_on = true;
               this.show_highlighted_post();
+            } else {
+              if (this.highlighter_position < this.number_of_unread_posts - 1) {
+                this.highlighter_position++;
+                this.show_highlighted_post();
+              }
             }
           }
 
           break;
 
         case 'k' || false:
-          if (this.highlighter_on == false) {
-            this.highlighter_on = true;
-            this.show_highlighted_post();
+          if (this.view == 'post') {
+            document.querySelector('#post-view').scrollBy(0, -200);
           } else {
-            if (this.highlighter_position > 0) {
-              this.highlighter_position--;
+            if (this.highlighter_on == false) {
+              this.highlighter_on = true;
               this.show_highlighted_post();
+            } else {
+              if (this.highlighter_position > 0) {
+                this.highlighter_position--;
+                this.show_highlighted_post();
+              }
             }
           }
 
@@ -4078,7 +4086,6 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-//
 //
 //
 //
@@ -21997,81 +22004,87 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c(
-    "div",
-    {
-      staticClass:
-        "w-full fixed bg-white top-0 right-0 h-screen overflow-y-auto transition duration-75 ease-out transform",
-      class: { "translate-x-full": !_vm.shown, "translate-x-0": _vm.shown },
-      attrs: { id: "post-view" }
-    },
-    [
-      _vm.shown
-        ? _c("div", { staticClass: "mt-12 p-12 w-full max-w-7xl mx-auto" }, [
-            _c("div", { staticClass: "mb-6 pb-4 border-b border-gray-200" }, [
-              _c("a", { attrs: { href: _vm.post.url } }, [
+  return _c("div", { staticClass: "realtive" }, [
+    _c(
+      "div",
+      {
+        staticClass:
+          "w-full fixed bg-white top-0 right-0 h-screen overflow-y-auto transition duration-75 ease-out transform",
+        class: { "translate-x-full": !_vm.shown, "translate-x-0": _vm.shown },
+        attrs: { id: "post-view" }
+      },
+      [
+        _vm.shown
+          ? _c("div", { staticClass: "mt-12 p-12 w-full max-w-7xl mx-auto" }, [
+              _c("div", { staticClass: "mb-6 pb-4 border-b border-gray-200" }, [
+                _c("a", { attrs: { href: _vm.post.url } }, [
+                  _c(
+                    "h1",
+                    {
+                      staticClass:
+                        "text-gray-700 text-3xl max-w-prose font-semibold"
+                    },
+                    [
+                      _vm._v(
+                        "\n                        " +
+                          _vm._s(_vm.post.title) +
+                          "\n                    "
+                      )
+                    ]
+                  )
+                ]),
+                _vm._v(" "),
                 _c(
-                  "h1",
+                  "h2",
                   {
                     staticClass:
-                      "text-gray-700 text-3xl max-w-prose font-semibold"
+                      "uppercase text-primary font-semibold text-xl mt-2"
                   },
-                  [
-                    _vm._v(
-                      "\n                " +
-                        _vm._s(_vm.post.title) +
-                        "\n            "
-                    )
-                  ]
-                )
+                  [_vm._v(_vm._s(_vm.post.source.name))]
+                ),
+                _vm._v(" "),
+                _c("h3", { staticClass: "text-gray-300 mt-6" }, [
+                  _vm._v(_vm._s(_vm.post.time_ago))
+                ])
               ]),
               _vm._v(" "),
-              _c(
-                "h2",
-                {
-                  staticClass:
-                    "uppercase text-primary font-semibold text-xl mt-2"
-                },
-                [_vm._v(_vm._s(_vm.post.source.name))]
-              ),
-              _vm._v(" "),
-              _c("h3", { staticClass: "text-gray-300 mt-6" }, [
-                _vm._v(_vm._s(_vm.post.time_ago))
-              ])
-            ]),
-            _vm._v(" "),
-            _c("div", {
-              staticClass:
-                "content has-columns text-lg text-gray-500 leading-relaxed",
-              domProps: { innerHTML: _vm._s(_vm.post.content) }
-            })
-          ])
-        : _vm._e(),
-      _vm._v(" "),
-      _c(
-        "button",
-        {
-          staticClass:
-            "h-16 w-16 text-2xl font-bold absolute bottom-8 left-8 text-white bg-gray-800 rounded-full flex justify-center items-center",
-          on: {
-            click: function($event) {
-              return _vm.$emit("exit-post")
+              _c("div", {
+                staticClass:
+                  "content has-columns text-xl font-light text-gray-700 leading-relaxed",
+                domProps: { innerHTML: _vm._s(_vm.post.content) }
+              })
+            ])
+          : _vm._e()
+      ]
+    ),
+    _vm._v(" "),
+    _vm.shown
+      ? _c(
+          "button",
+          {
+            staticClass:
+              "h-16 w-16 text-2xl font-bold absolute bottom-8 left-8 text-white bg-gray-800 rounded-full flex justify-center items-center",
+            on: {
+              click: function($event) {
+                return _vm.$emit("exit-post")
+              }
             }
-          }
-        },
-        [_vm._v("×")]
-      ),
-      _vm._v(" "),
-      _c(
-        "button",
-        {
-          staticClass:
-            "h-16 w-16 absolute bottom-8 left-28 border border-yellow-700 bg-yellow-50 text-gray-800 rounded-full flex justify-center items-center"
-        },
-        [_vm._v("\n    save \n")]
-      )
-    ]
-  )
+          },
+          [_vm._v("×")]
+        )
+      : _vm._e(),
+    _vm._v(" "),
+    _vm.shown
+      ? _c(
+          "button",
+          {
+            staticClass:
+              "h-16 w-16 absolute bottom-8 left-28 border border-yellow-700 bg-yellow-50 text-gray-800 rounded-full flex justify-center items-center"
+          },
+          [_vm._v(" save ")]
+        )
+      : _vm._e()
+  ])
 }
 var staticRenderFns = []
 render._withStripped = true

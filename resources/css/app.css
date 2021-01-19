@@ -27,7 +27,7 @@
 }
 
 .content blockquote {
-    @apply p-4 bg-gray-100 border-b-4 border-gray-400 mb-4;
+    @apply p-4 bg-gray-100 border-b-8 border-gray-400 text-gray-500 mb-4;
 }
 
 .content a {

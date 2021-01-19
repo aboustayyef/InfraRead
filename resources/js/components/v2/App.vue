@@ -166,24 +166,32 @@ export default {
                 }
                 break;
             case ('j' || 'J'): 
-                if (this.highlighter_on == false) {
-                    this.highlighter_on = true;
-                    this.show_highlighted_post();
+                if (this.view == 'post') {
+                   document.querySelector('#post-view').scrollBy(0, 200) 
                 } else {
-                    if (this.highlighter_position < this.number_of_unread_posts - 1) {
-                        this.highlighter_position++;
+                    if (this.highlighter_on == false) {
+                        this.highlighter_on = true;
                         this.show_highlighted_post();
+                    } else {
+                        if (this.highlighter_position < this.number_of_unread_posts - 1) {
+                            this.highlighter_position++;
+                            this.show_highlighted_post();
+                        }
                     }
                 }
                 break;
             case ('k' || 'K'): 
-                if (this.highlighter_on == false) {
-                    this.highlighter_on = true;
-                    this.show_highlighted_post();
+                if (this.view == 'post') {
+                   document.querySelector('#post-view').scrollBy(0, -200) 
                 } else {
-                    if (this.highlighter_position > 0) {
-                        this.highlighter_position--;
+                    if (this.highlighter_on == false) {
+                        this.highlighter_on = true;
                         this.show_highlighted_post();
+                    } else {
+                        if (this.highlighter_position > 0) {
+                            this.highlighter_position--;
+                            this.show_highlighted_post();
+                        }
                     }
                 }
                 break;
