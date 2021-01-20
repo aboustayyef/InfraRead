@@ -58,6 +58,17 @@ Route::get('/refactoringvue', function () {
 
     return view('vuehome')->with('last_successful_crawl', $last_successful_crawl);
 });
+Route::get('/simpleapi/readlaterservice', function () {
+    switch (env('PREFERRED_READLATER_SERVICE')) {
+        case 'pocket':
+            return 'pocket';
+            break;
+        case 'instapaper':
+            return 'instapaper';
+    }
+
+    return 'none';
+});
 Route::get('/simpleapi/{which}/{details?}', function ($which, $details = null) {
     // Options are: /all
     //              /source/source_id

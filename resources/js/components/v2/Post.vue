@@ -20,8 +20,12 @@
             
             
                 </div>
-                    <button v-if="shown" @click="$emit('exit-post')" class="h-16 w-16 text-2xl font-bold absolute bottom-8 left-8 text-white bg-gray-800 rounded-full flex justify-center items-center">&times;</button>
-                    <button v-if="shown" class="h-16 w-16 absolute bottom-8 left-28 border border-yellow-700 bg-yellow-50 text-gray-800 rounded-full flex justify-center items-center"> save </button>
+                    <button v-if="shown" @click="$emit('exit-post')" class="group h-16 w-16 absolute bottom-8 left-8 shadow-md bg-gray-800 hover:bg-gray-600 rounded-full flex justify-center items-center">
+                        <svg class="h-10 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                    <save-later-button :shown="shown" :url="post.url"></save-later-button>
             </div>
 
 </template>
