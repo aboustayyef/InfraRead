@@ -1,6 +1,6 @@
 <div>
-    <div class="flex w-full">
-        <h2 class="text-4xl font-bold text-gray-600 mr-12">Sources</h2>
+    <div class="flex flex-wrap w-full max-w-2xl">
+        <h2 class="mb-4 mr-4 text-4xl font-bold text-gray-600 lg:mr-12">Sources</h2>
         <input type="text" placeholder="Filter Sources" wire:model="searchString" class="ir_input">
     </div>
     <hr class="mt-12">

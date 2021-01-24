@@ -3,11 +3,11 @@
 @import "tailwindcss/utilities";
 
 .ir_input {
-    @apply flex-1 border-gray-200 w-full p-3 bg-gray-50 rounded-md;
+    @apply flex-1 w-full p-3 border-gray-200 rounded-md bg-gray-50;
 }
 
 .ir_button {
-    @apply bg-white cursor-pointer border border-gray-200 text-gray-800 hover:text-white font-semibold rounded-md px-4 py-2 hover:bg-primary;
+    @apply px-4 py-2 font-semibold text-gray-800 bg-white border border-gray-200 rounded-md cursor-pointer hover:text-white hover:bg-primary;
 }
 
 .ir_input.attached{
@@ -19,7 +19,7 @@
 
 
 .ir_button.attached{
-    @apply border border-gray-200 text-gray-800 hover:text-white font-semibold rounded-md rounded-l-none px-4 py-2 hover:bg-primary border-l-0; 
+    @apply px-4 py-2 font-semibold text-gray-800 border border-l-0 border-gray-200 rounded-md rounded-l-none hover:text-white hover:bg-primary; 
 }
 
 .content {
@@ -27,7 +27,7 @@
 }
 
 .content blockquote {
-    @apply p-4 bg-gray-100 border-b-8 border-gray-400 text-gray-500 mb-4;
+    @apply p-4 mb-4 text-gray-500 bg-gray-100 border-b-8 border-gray-400;
 }
 
 .content a {

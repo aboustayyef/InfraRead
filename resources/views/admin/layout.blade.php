@@ -28,35 +28,35 @@
                 </div>
             </div>
         @endif 
-        <div class="flex">
+        <div class="p-4 lg:p-0 lg:flex">
             {{-- Sidebar --}}
-            <div id="sidebar-info" class="bg-gray-100 w-1/8 w-64 min-h-screen fixed">
+            <div id="sidebar-info" class="w-full bg-gray-100 lg:w-64 lg:min-h-screen lg:fixed">
                 {{--sidebar info--}}
-                <div class="py-20 pl-10 pr-20 flex flex-col justify-between h-full">
+                <div class="py-20 pl-10 pr-20 lg:justify-between lg:h-full lg:flex lg:flex-col">
                     {{-- sidebar top --}}
-                    <div id="sidebar-top" class="flex flex-col h-48 justify-between">
+                    <div id="sidebar-top" class="flex flex-col h-48 lg:justify-between">
                         {{-- logo --}}
-                        <a href="/app/v2"><img src="/img/infraread144.png" class="w-12" alt=""></a>
-                        <ul>
+                        <a href="/app"><img src="/img/infraread144.png" class="w-12" alt=""></a>
+                        <ul class="mt-4 lg:mt-0">
                             <li class="flex">
                                 <a href="/admin/source">Sources</a>
-                                <a href="{{route('admin.source.create')}}" class="block bg-gray-200 px-3 ml-2 text-gray-400 hover:text-white hover:bg-primary rounded-md">+</a>
+                                <a href="{{route('admin.source.create')}}" class="block px-3 ml-2 text-gray-400 bg-gray-200 rounded-md hover:text-white hover:bg-primary">+</a>
                             </li>
-                            <li class="mt-4 flex">
+                            <li class="flex mt-4">
                                 <a href="/admin/category">Categories</a>   
-                                <a href="{{route('admin.category.create')}}" class="block bg-gray-200 px-3 ml-2 text-gray-400 hover:text-white hover:bg-primary rounded-md">+</a>
+                                <a href="{{route('admin.category.create')}}" class="block px-3 ml-2 text-gray-400 bg-gray-200 rounded-md hover:text-white hover:bg-primary">+</a>
                             </li> 
                         </ul>
                     </div>
                     {{-- User --}}
-                    <div class="absolute bottom-8 flex items-center">
+                    <div class="flex items-center lg:absolute bottom-8">
                         {{ Auth::user()->name }} 
-                        <a href="/logout" class=" text-xs uppercase ml-2 px-3 py-1 rounded-lg bg-gray-300 hover:bg-primary hover:text-white">logout</a>
+                        <a href="/logout" class="px-3 py-1 ml-2 text-xs uppercase bg-gray-300 rounded-lg hover:bg-primary hover:text-white">logout</a>
                     </div>
                 </div>
             </div>
 
-            <div id="content" class="mx-auto mt-20 w-full max-w-7xl pb-24">
+            <div id="content" class="w-full max-w-4xl pb-24 mt-20 lg:pl-72">
                 @yield('content')
             </div>
         </div>
