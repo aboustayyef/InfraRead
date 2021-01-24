@@ -54,7 +54,7 @@ Route::get('/app', function () {
     $last_successful_crawl = getLastSuccesfulCrawl();
 
     return view('home')->with('last_successful_crawl', $last_successful_crawl);
-});
+})->middleware('auth');
 Route::get('/simpleapi/readlaterservice', function () {
     switch (env('PREFERRED_READLATER_SERVICE')) {
         case 'pocket':
@@ -65,7 +65,7 @@ Route::get('/simpleapi/readlaterservice', function () {
     }
 
     return 'none';
-});
+})->middleware('auth');
 Route::get('/simpleapi/{which}/{details?}', function ($which, $details = null) {
     // Options are: /all
     //              /source/source_id
@@ -81,11 +81,7 @@ Route::get('/simpleapi/{which}/{details?}', function ($which, $details = null) {
         // case 'category'
         }
     abort(404);
-});
-//
-// todo: middleware auth
-
-// ///////////////////////////////////////
+})->middleware('auth');
 
 Route::get('/app/sources', function () {
     $sources = Source::all();
