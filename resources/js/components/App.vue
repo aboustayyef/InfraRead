@@ -1,433 +1,240 @@
 <template>
-  <div
-    id="scrollable_body"
-    :class="{ 'prevent-scrolling': page == 'post details' }"
-  >
-    <!-- Content of a Single Post -->
-    <!-- This view is hidden at the start (using: X-translate 100% to the right) -->
-    <!-- It only comes into view (X-translate:0%) when the page kind is 'post details'  -->
-    <post-details
-      v-if="posts_loaded"
-      :page="page"
-      :active_post="active_post"
-      :active_post_content="active_post_content"
-    ></post-details>
+  <div  class="relative w-full h-screen p-4 pt-12 overflow-y-auto text-left md:p-12">
+    <div class="flex items-center justify-between mx-auto mb-6 max-w-7xl">
+        
+        <!-- Logo -->
+        <a href="/"><img class="h-8 md:h-12" src="/img/infraread144.png"></a>
+        
+        <!-- Unread Count -->
+        <div id="ReadCount" class="text-gray-500 uppercase">
+                unread: {{number_of_unread_posts}} 
+        </div>
 
-    <!-- UI Element to show Unread Count -->
-    <unread-count :page="page" :unread_count="unread_count"> </unread-count>
+        <!-- Settings Gear -->
+        <a href="/admin" class="block">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 text-gray-300 cursor-pointer hover:text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+        </a>
+        
+    </div>
+        
+        <!-- Banner that will only be displayed if viewing one source -->
+        <div v-if="which_source !== 'all'"> 
+            <div class="container flex items-center justify-between p-2 py-4 mx-auto mb-4 rounded-md shadow-md bg-gray-50 max-w-7xl">
+                <div class="text-sm font-semibold text-gray-600 uppercase">Posts by {{source_name}}</div>
+                <button @click="reset_to_all()" class="w-8 h-8 text-lg text-gray-400 bg-gray-100 rounded-full hover:bg-primary hover:text-white">
+                    &times;
+                </button>
+            </div>
+        </div>
+        
+        <!-- List of Posts -->
+        <div v-for="(post , index) in unread_posts" :key="post.id" class="p-2 mx-auto border-b border-gray-200 cursor-pointer max-w-7xl" :class="{'bg-yellow-50': highlighter_on && index==highlighter_position }">
 
-    <!-- UI Element to show "saving" status when saving for later -->
-    <div id="savinglater">
-      <progress
-        v-if="saving_later_status == 'saving'"
-        class="progress is-primary"
-        max="100"
-      >
-        30%
-      </progress>
-      <span v-if="saving_later_status == 'success'">Saved!</span>
-      <span v-if="saving_later_status == 'failure'">couldn't save!</span>
+                <!-- Individual Post -->
+                <div :id="'post-' + index" class="md:flex">
+
+                    <!-- Title, author and date -->
+                    <div class="w-full md:mr-12 md:w-1/2">
+                        <h2 v-on:click="display_post(post)" class="pt-6 text-2xl font-semibold text-gray-700 cursor-pointer">{{post.title}}</h2>
+                        <h3 v-on:click="switch_source('source', post.source.id, post.source.name)" class="mt-2 text-xl font-semibold uppercase text-primary">{{post.source.name}}</h3>
+                        <h4 class="mt-4 text-lg text-gray-500">{{post.time_ago}}</h4>
+                    </div>
+
+                    <!-- Body of Post -->
+                    <div v-on:click="display_post(post)" class="w-full mt-6 text-xl font-light leading-relaxed text-gray-400 cursor-pointer overflow-clip md:mt-0 md:w-1/2">
+                        <p>{{post.excerpt}}</p>
+                    </div>
+
+                </div>
+                
+                <!-- Mark as Read Button -->
+                <div class="w-1/2 mb-6">
+                    <button v-on:click="mark_post_as_read(post)" class="px-4 py-2 mt-4 border border-gray-300 rounded-md hover:bg-primary hover:text-white">Mark Read</button>
+                </div>
+                
+        </div>
+        
+        <post 
+            :post="displayed_post"
+            v-on:exit-post="exit_post"
+        >
+        </post>  
+
+    <!-- Messages -->
+    <div class="fixed inline-block px-8 py-2 transition duration-75 ease-out transform border border-gray-600 shadow-md translate-x-72 top-8 right-8"
+                  :class="{'-translate-x-72' : show_message == true , 'bg-yellow-100': message_kind == 'warning', 'bg-blue-100': message_kind == 'info', 'bg-green-100': message_kind == 'success'}" 
+    >
+    {{message_content}} 
     </div>
 
-    <!-- UI Element to show Close Button for Article (to return to list view) -->
-    <bottom-nav
-      v-on:closeWindow="closeDetailsView()"
-      v-on:clickSaveLater="saveforlater(active_post.url)"
-      v-on:keyup.esc="closeDetailsView()"
-      :page="page"
-      :saving_later_status="saving_later_status"
-    ></bottom-nav>
+</div>
 
-    <!-- UI Collection of Toggle Settings Elements at the Top -->
-    <header-settings
-      :posts_description="posts_description"
-      :unread_only="unread_only"
-      v-on:UnreadOnlyToggle="ToggleUnreadOnly"
-      :oldest_on_top="oldest_on_top"
-      v-on:OldestOnTopToggle="ToggleOldestOnTop"
-      :last_successful_crawl="last_successful_crawl"
-    ></header-settings>
-
-    <!-- List of Posts -->
-    <div id="list_of_posts" class="container">
-      <!-- If all posts are read, display 'there are no unread posts' message  -->
-      <div class="row" v-if="filtered_posts.length == 0 && posts_loaded">
-        There are no unread posts...
-        <a @click="unread_only = false">See All posts</a>
-      </div>
-
-      <div v-if="posts_loaded" class="row">
-        <ul>
-          <li
-            class="post_list_item"
-            v-for="(post, i) in filtered_posts"
-            v-bind:key="post.id"
-          >
-            <!-- When a user clicks on an area of the post, change the current post and mark it as read -->
-            <post-list-item
-              :index="i"
-              :post="post"
-              v-on:show-post-details="showDetailsView(post)"
-              v-on:toggle-post-read="togglePostRead(post)"
-              :keyboard_navigation_active="keyboard_navigation_active"
-              :keyboard_navigation_index="keyboard_navigation_index"
-            ></post-list-item>
-            <hr v-if="!(unread_only && post.read)" />
-          </li>
-        </ul>
-      </div>
-      <div v-else>
-        <!-- show placeholder until posts load -->
-        <ul>
-          <li v-for="n in 6" :key="n">
-            <empty-post-list-item></empty-post-list-item>
-            <hr />
-          </li>
-        </ul>
-      </div>
-    </div>
-  </div>
 </template>
 <script>
-import { setTimeout } from "timers";
 export default {
-  props: ["refreshinterval", "last_successful_crawl"],
+  props: ['refreshInterval'],
   data() {
     return {
-      page: window.page, // used to know which view we're in: options: 'post list', 'post details' or 'post filters'
-      posts_source: window.posts_source, // which XHR request to get posts
-      posts_description: window.posts_description,
-      posts: [], // the list of unfiltered posts
-      posts_loaded: false,
-      active_post: {}, // the posts which is in the post details view mode
-      active_post_content: "loading...",
-      unread_only: true, // default filter = unread posts
-      last_fetch_posts: 0,
-      all_sources: [],
-      all_categories: [],
-      oldest_on_top: true, //location on list page, to remember when exiting details page
-      areyousure: false,
-      keyboard_navigation_active: false,
-      keyboard_navigation_index: 0,
-      saving_later_status: "nothing", // options: 'nothing', 'saving' , 'success' , 'failure'
-      last_post_marked_as_read: {},
+      posts: {},
+      displayed_post:{},
+      which_posts:'all',
+      which_source: 'all',
+      source_name:'',
+      highlighter_on: false,
+      highlighter_position: 0,
+      message_kind:'warning',
+      message_content: 'this is the message',
+      show_message: false
     };
   },
   created() {
-    this.fetchPostList();
-
-    // Capture Keyboard input
-    document.addEventListener("keydown", this.handleKeyboardInput);
+      this.fetch_posts_from_server();
+      window.addEventListener('keydown', (e) => {
+          this.handle_keyboard_shortcut(e.key);
+      })
   },
   computed: {
-    unread_count() {
-      if (this.posts_loaded == true) {
-        return this.posts.filter((post) => {
-          return post.read == 0;
-        }).length;
+      unread_posts: function(){
+          if (Object.keys(this.posts).length > 0) {
+              return this.posts.filter((post) => !post.read == 1 );
+          }
+      },
+      number_of_unread_posts: function(){
+          if (Object.keys(this.posts).length > 0) {
+              return Object.keys(this.unread_posts).length
+      }},
+    //   view mode: post or list
+      view: function(){
+          if (Object.keys(this.displayed_post).length > 0) {
+              return 'post'
+          }
+          return 'list'
+      },
+      highlighted_post: function(){
+          return this.unread_posts[this.highlighter_position];
       }
-      return 0;
-    },
-    filtered_posts() {
-      if (this.posts_loaded) {
-        let posts_copy = this.posts.slice(); //used slice() because reverse() mutates original array
-        if (this.oldest_on_top) {
-          posts_copy.reverse();
-        }
-        if (this.unread_only) {
-          posts_copy = posts_copy.filter((post) => !post.read);
-        }
-        return posts_copy;
-      }
-      return false;
-    },
   },
   methods: {
-    handleKeyboardInput(e) {
-      // console.log(` ${e.code}`);
-      // escape key
-      if (e.code == "Escape") {
-        // exits details view if there
-        if (this.page == "post details") {
-          this.closeDetailsView();
-        }
-        //otherwise deactivates keyboard navigation
-        else {
-          this.keyboard_navigation_active = false;
-        }
-      }
-
-      // L (log distances and dimensions for figuring out scrolling)
-      if (e.code == "KeyL") {
-        let all_posts_window = document.getElementById("scrollable_body");
-        let height_of_all_posts_window = all_posts_window.offsetHeight;
-        const height_of_post_list_item = document
-          .getElementsByClassName("post_list_item")
-          .item(0).offsetHeight;
-        let highlighted_item = document
-          .getElementsByClassName("highlighted")
-          .item(0);
-        let scroll_amount = window.pageYOffset;
-        let viewport_height = window.innerHeight;
-        let highlighted_item_distance_from_top = highlighted_item.offsetTop;
-        let highlighted_item_height = highlighted_item.offsetHeight;
-        let highlighted_item_distance_from_top_of_viewport =
-          highlighted_item_distance_from_top - scroll_amount + 109;
-        let highlighted_item_distance_to_bottom_of_viewport =
-          viewport_height -
-          highlighted_item_distance_from_top_of_viewport -
-          highlighted_item_height;
-        console.table({
-          "page height": height_of_all_posts_window,
-          "scroll amount": scroll_amount,
-          "Viewport height": viewport_height,
-          "Highlighted Item Height": highlighted_item_height,
-          "Highlighted Item Distance From Top": highlighted_item_distance_from_top,
-          "Highlighted Item Distance From Top Of Viewport": highlighted_item_distance_from_top_of_viewport,
-          "Highlighted Item Distance to Bottom Of Viewport": highlighted_item_distance_to_bottom_of_viewport,
-        });
-      }
-
-      // J (move down the posts)
-      if (e.code == "KeyJ") {
-        if (this.page == "post details") {
-          // use J for scrolling down if in details view
-          document.getElementById("details-area").scrollBy(0, 200);
-        } else {
-          // if keyboard navigation is not active, turn it on
-          // and reset position of highlight
-          if (!this.keyboard_navigation_active) {
-            this.keyboard_navigation_active = true;
-            this.keyboard_navigation_index = 0;
-            // otherwise augment by 1
-          } else {
-            if (
-              this.keyboard_navigation_index <
-              this.filtered_posts.length - 1
-            ) {
-              this.keyboard_navigation_index += 1;
-              this.make_sure_highlighted_item_stays_visible();
-            }
-          }
-        }
-      }
-      // K (move up the posts)
-      if (e.code == "KeyK") {
-        if (this.page == "post details") {
-          // use K for scrolling up if in details view
-          document.getElementById("details-area").scrollBy(0, -200);
-        } else {
-          // if keyboard navigation is not active, turn it on
-          // and reset position of highlight
-          if (!this.keyboard_navigation_active) {
-            this.keyboard_navigation_active = true;
-            this.keyboard_navigation_index = 0;
-            // otherwise augment by 1
-          } else {
-            if (this.keyboard_navigation_index > 0) {
-              this.keyboard_navigation_index -= 1;
-              this.make_sure_highlighted_item_stays_visible();
-            }
-          }
-        }
-      }
-      // O or Enter (open highlighted post)
-      if (
-        (e.code == "KeyO" || e.code == "KeyEnter") &&
-        this.keyboard_navigation_active
-      ) {
-        // open highlighted post if we're in list mode
-        if (this.page == "post list") {
-          this.showDetailsView(
-            this.filtered_posts[this.keyboard_navigation_index]
-          );
-          // Navigate to url if we're in details mode
-        } else {
-          window.open(
-            this.filtered_posts[this.keyboard_navigation_index].url,
-            "_blank"
-          );
-        }
-      }
-      // R or E (Mark Post as read)
-      if (
-        (e.code == "KeyR" || e.code == "KeyE") &&
-        this.keyboard_navigation_active
-      ) {
-        this.last_post_marked_as_read = this.filtered_posts[
-          this.keyboard_navigation_index
-        ];
-        this.togglePostRead(
-          this.filtered_posts[this.keyboard_navigation_index]
-        );
-        if (this.page == "post details") {
-          this.closeDetailsView();
-        }
-      }
-      // U (undo mark post as read)
-      if (e.code == "KeyU" && this.keyboard_navigation_active) {
-        // If last post marked as read is empty, do nothing
-        if (Object.entries(this.last_post_marked_as_read).length === 0) {
-          // do nothing
-        } else {
-          this.togglePostRead(this.last_post_marked_as_read);
-          this.last_post_marked_as_read = {};
-        }
-      }
-
-      if (e.code == "KeyS") {
-        if (this.page == "post list" && this.keyboard_navigation_active) {
-          this.saveforlater(
-            this.filtered_posts[this.keyboard_navigation_index].url
-          );
-          // Navigate to url if we're in details mode
-        } else if (this.page == "post details") {
-          this.saveforlater(this.active_post.url);
-        }
-      }
-    },
-    NavigateToNthPost(n) {
-      //
-    },
-    ToggleUnreadOnly() {
-      this.unread_only = !this.unread_only;
-    },
-    ToggleOldestOnTop(d) {
-      this.oldest_on_top = d;
-    },
-    autoRefreshPosts() {
-      //refresh posts when last fetch is older than this.refreshinterval
-      console.log("refreshing posts");
-      if (Date.now() - this.last_fetch_posts > this.refreshinterval * 60000) {
-        this.fetchPostList();
-      }
-    },
-    fetchPostList() {
-      axios.get(this.posts_source).then((res) => {
+    fetch_posts_from_server: function(){
+        axios.get('/simpleapi/' + this.which_posts).then((res) => {
         this.posts = res.data;
-        this.active_post = this.posts[0];
-        this.last_fetch_posts = Date.now();
-        this.updateDocumentTitle();
-        this.posts_loaded = true;
-      });
+      })
     },
-    updateDocumentTitle() {
-      if (this.unread_count > 0) {
-        document.title = `(${this.unread_count}) InfraRead`;
-      } else {
-        document.title = `InfraRead`;
-      }
+    reset_to_all: function(){
+            this.which_posts = 'all';
+            this.which_source = 'all';
+            this.source_name = '';
+            this.fetch_posts_from_server()
     },
-    showDetailsView(post) {
-      document.getElementById("details-area").scrollTo(0, 0);
-      this.active_post = post;
-      this.page = "post details";
-      axios.get("/api/postContentById/" + this.active_post.id).then((res) => {
-        this.active_post_content = res.data.content;
-      });
+    switch_source: function(which, details = null, name=null){
+        if (which == 'all') {
+            this.reset_to_all()
+        } else {
+            this.which_posts = which + '/' + details;
+            this.which_source = details;
+            this.source_name = name
+        }
+        this.fetch_posts_from_server()
     },
-    closeDetailsView() {
-      console.log("called");
-      // mark post as read if unread
-      if (this.active_post.read == 0) {
-        this.togglePostRead(this.active_post);
-      }
-      this.active_post_content = "loading...";
-      // change to list view
-      this.page = "post list";
+    display_post: function(p) {
+        this.displayed_post = p;
+        // Timeout the animation then set as read
+            this.mark_post_as_read(p);
     },
-    togglePostRead(post) {
-      post.read = 1 - post.read; // toggle between 0 and 1
-      this.updateDocumentTitle();
-      axios
-        .patch("/api/posts/" + post.id, { read: post.read })
-        .then((res) => {
-          //nothing
-        })
+    mark_post_as_read: function(p){
+        // update locally
+        p.read = 1;
+        // update on the server
+        axios.patch("/api/posts/" + p.id, { read: 1 })
+        // If server update works, don't report anything
+        .then((res) => { })
+        // If there's a problem, undo mark as read
         .catch((res) => {
-          console.log("there was a problem with updating post status");
-          post.read = 1 - post.read;
-        });
-    },
-    saveforlater(url) {
-      this.saving_later_status = "saving";
-      axios
-        .get("/app/readlater?url=" + encodeURI(url))
-        .then((res) => {
-          if (res.data.bookmark_id || res.data.status == 1) {
-            this.saving_later_status = "success";
-            // remove success message after 2 seconds
-            setTimeout((t) => {
-              this.saving_later_status = "nothing";
-            }, 2000);
-          } else {
-            this.saving_later_status = "failure";
-          }
+          p.read = 0;
+          this.display_message('warning','Cannot contact server',2000);
         })
-        .catch((res) => {
-          // nothing
-        });
     },
-    updateActivePost(post) {
-      this.activepost = post;
-      this.visible = !this.visible;
+    display_message(kind,content,time){
+        this.message_kind = kind;
+        this.message_content = content;
+        this.show_message = true;
+        setTimeout(()=> {
+            this.show_message = false;
+        }, time);
     },
-    make_sure_highlighted_item_stays_visible() {
-      // Set the variables for dimensions and offsets
-      let all_posts_window = document.getElementById("scrollable_body");
-      let height_of_all_posts_window = all_posts_window.offsetHeight;
-      const height_of_post_list_item = document
-        .getElementsByClassName("post_list_item")
-        .item(0).offsetHeight;
-      let highlighted_item = document
-        .getElementsByClassName("post_list_item")
-        .item(this.keyboard_navigation_index);
-      let scroll_amount = window.pageYOffset;
-      let viewport_height = window.innerHeight;
-      let highlighted_item_distance_from_top = highlighted_item.offsetTop;
-      let highlighted_item_height = highlighted_item.offsetHeight;
-      let highlighted_item_distance_from_top_of_viewport =
-        highlighted_item_distance_from_top - scroll_amount + 109;
-      let highlighted_item_distance_to_bottom_of_viewport =
-        viewport_height -
-        highlighted_item_distance_from_top_of_viewport -
-        highlighted_item_height;
+    exit_post: function(){
+        this.displayed_post = {};
+    },
+    show_highlighted_post(){
+        document.querySelector('#post-'+this.highlighter_position).scrollIntoView({behavior: "smooth", block: "center", inline: "nearest"});
+    },
+    handle_keyboard_shortcut(key){
+        console.log(key);
+        switch (key) {
+            case 'Escape':
+                if (this.view == 'post') {
+                   this.exit_post(); 
+                }
+                if (this.view == 'list' && this.highlighter_on){
+                   this.highlighter_on = false;
+                   this.highlighter_position = 0; 
+                }
+                break;
+            case ('j' || 'J'): 
+                if (this.view == 'post') {
+                   document.querySelector('#post-view').scrollBy(0, 200) 
+                } else {
+                    if (this.highlighter_on == false) {
+                        this.highlighter_on = true;
+                        this.show_highlighted_post();
+                    } else {
+                        if (this.highlighter_position < this.number_of_unread_posts - 1) {
+                            this.highlighter_position++;
+                            this.show_highlighted_post();
+                        }
+                    }
+                }
+                break;
+            case ('k' || 'K'): 
+                if (this.view == 'post') {
+                   document.querySelector('#post-view').scrollBy(0, -200) 
+                } else {
+                    if (this.highlighter_on == false) {
+                        this.highlighter_on = true;
+                        this.show_highlighted_post();
+                    } else {
+                        if (this.highlighter_position > 0) {
+                            this.highlighter_position--;
+                            this.show_highlighted_post();
+                        }
+                    }
+                }
+                break;
+            case 'Enter': 
+                if (this.view == 'list' && this.highlighter_on == true) {
+                    this.display_post(this.highlighted_post);
+                } 
+                break;
+            
+            case ('o' || 'O'):
+                if (this.view == 'list' && this.highlighter_on == true) {
+                   this.display_post(this.highlighted_post); 
+                   return;
+                }
+                if (this.view == 'post') {
+                   window.open(this.displayed_post.url,'_blank');
+                }
 
-      let margin = 120;
-
-      // if highlighted item is below the viewport, scroll up
-      if (highlighted_item_distance_to_bottom_of_viewport < 0) {
-        window.scrollBy(
-          0,
-          -highlighted_item_distance_to_bottom_of_viewport + margin
-        );
-      }
-      console.log(highlighted_item_distance_from_top_of_viewport);
-      if (highlighted_item_distance_from_top_of_viewport < 0) {
-        window.scrollBy(
-          0,
-          highlighted_item_distance_from_top_of_viewport - margin
-        );
-      }
-    },
+            default:
+                break;
+        }
+    }
   },
 };
 </script>
+
 <style scoped>
-.prevent-scrolling {
-  height: 100vh;
-  overflow-y: hidden;
-}
-#savinglater {
-  z-index: 300;
-  position: fixed;
-  right: 1em;
-  top: 0;
-  padding: 3px;
-  color: grey;
-  font-size: 12px;
-}
-.progress {
-  height: 5px;
-}
 </style>

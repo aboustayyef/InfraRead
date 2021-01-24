@@ -11,12 +11,9 @@ window.Vue = require('vue');
  */
 
 Vue.component('app', require('./components/App.vue').default);
-Vue.component('header-settings', require('./components/HeaderSettings.vue').default);
-Vue.component('unread-count', require('./components/UnreadCount.vue').default);
-Vue.component('bottom-nav', require('./components/BottomNav.vue').default);
-Vue.component('post-details', require('./components/PostDetails.vue').default);
-Vue.component('post-list-item', require('./components/PostListItem.vue').default);
-Vue.component('empty-post-list-item', require('./components/EmptyPostListItem.vue').default);
+Vue.component('post', require('./components/Post.vue').default);
+Vue.component('save-later-button', require('./components/SaveLaterButton.vue').default);
+
 const app = new Vue({
     el: '#app'
 });
