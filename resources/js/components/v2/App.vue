@@ -1,42 +1,60 @@
 <template>
-  <div  class="pt-12 relative text-left w-full h-screen overflow-y-auto p-12">
-    <div class="max-w-7xl mx-auto flex mb-6 justify-between">
-        <div id="ReadCount" class="bg-primary px-4 py-1 rounded-md text-white">
-            <div class="max-w-7xl mx-auto">
-                Unread: {{number_of_unread_posts}} 
-            </div>
+  <div  class="relative w-full h-screen p-4 pt-12 overflow-y-auto text-left md:p-12">
+    <div class="flex items-center justify-between mx-auto mb-6 max-w-7xl">
+        
+        <!-- Logo -->
+        <a href="/"><img class="h-8 md:h-12" src="/img/infraread144.png"></a>
+        
+        <!-- Unread Count -->
+        <div id="ReadCount" class="text-gray-500 uppercase">
+                unread: {{number_of_unread_posts}} 
         </div>
+
+        <!-- Settings Gear -->
         <a href="/admin" class="block">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 text-gray-300 hover:text-primary cursor-pointer" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 text-gray-300 cursor-pointer hover:text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
             </svg>
         </a>
+        
     </div>
         
+        <!-- Banner that will only be displayed if viewing one source -->
         <div v-if="which_source !== 'all'"> 
-            <div class="bg-gray-50 shadow-md rounded-md mb-4 flex justify-between max-w-7xl p-2 container mx-auto py-4 items-center">
-                <div class="text-gray-600 uppercase text-sm font-semibold">Posts by {{source_name}}</div>
-                <button @click="reset_to_all()" class="text-lg text-gray-400  w-8 h-8 rounded-full bg-gray-100 hover:bg-primary hover:text-white">
+            <div class="container flex items-center justify-between p-2 py-4 mx-auto mb-4 rounded-md shadow-md bg-gray-50 max-w-7xl">
+                <div class="text-sm font-semibold text-gray-600 uppercase">Posts by {{source_name}}</div>
+                <button @click="reset_to_all()" class="w-8 h-8 text-lg text-gray-400 bg-gray-100 rounded-full hover:bg-primary hover:text-white">
                     &times;
                 </button>
             </div>
         </div>
         
-        <div v-for="(post , index) in unread_posts" :key="post.id" class="border-b border-gray-200 max-w-7xl mx-auto cursor-pointer p-2" :class="{'bg-yellow-50': highlighter_on && index==highlighter_position }">
-                <div :id="'post-' + index" class="flex">
-                <div class="mr-12 w-1/2">
-                        <h2 v-on:click="display_post(post)" class="cursor-pointer text-2xl font-semibold text-gray-700 pt-6">{{post.title}}</h2>
-                        <h3 v-on:click="switch_source('source', post.source.id, post.source.name)" class="mt-2 font-semibold text-xl uppercase text-primary">{{post.source.name}}</h3>
-                        <h4 class="mt-4 text-gray-500 text-lg">{{post.time_ago}}</h4>
+        <!-- List of Posts -->
+        <div v-for="(post , index) in unread_posts" :key="post.id" class="p-2 mx-auto border-b border-gray-200 cursor-pointer max-w-7xl" :class="{'bg-yellow-50': highlighter_on && index==highlighter_position }">
+
+                <!-- Individual Post -->
+                <div :id="'post-' + index" class="md:flex">
+
+                    <!-- Title, author and date -->
+                    <div class="w-full md:mr-12 md:w-1/2">
+                        <h2 v-on:click="display_post(post)" class="pt-6 text-2xl font-semibold text-gray-700 cursor-pointer">{{post.title}}</h2>
+                        <h3 v-on:click="switch_source('source', post.source.id, post.source.name)" class="mt-2 text-xl font-semibold uppercase text-primary">{{post.source.name}}</h3>
+                        <h4 class="mt-4 text-lg text-gray-500">{{post.time_ago}}</h4>
                     </div>
-                    <div v-on:click="display_post(post)" class="cursor-pointer w-1/2 font-light leading-relaxed text-gray-400 text-xl">
+
+                    <!-- Body of Post -->
+                    <div v-on:click="display_post(post)" class="w-full mt-6 text-xl font-light leading-relaxed text-gray-400 cursor-pointer overflow-clip md:mt-0 md:w-1/2">
                         <p>{{post.excerpt}}</p>
                     </div>
+
                 </div>
+                
+                <!-- Mark as Read Button -->
                 <div class="w-1/2 mb-6">
-                    <button v-on:click="mark_post_as_read(post)" class="border border-gray-300 rounded-md px-4 py-2 mt-4 hover:bg-primary hover:text-white">Mark Read</button>
+                    <button v-on:click="mark_post_as_read(post)" class="px-4 py-2 mt-4 border border-gray-300 rounded-md hover:bg-primary hover:text-white">Mark Read</button>
                 </div>
+                
         </div>
         
         <post 
@@ -46,7 +64,7 @@
         </post>  
 
     <!-- Messages -->
-    <div class="fixed shadow-md border border-gray-600 translate-x-72 inline-block top-8 px-8 py-2 right-8 transition duration-75 ease-out transform"
+    <div class="fixed inline-block px-8 py-2 transition duration-75 ease-out transform border border-gray-600 shadow-md translate-x-72 top-8 right-8"
                   :class="{'-translate-x-72' : show_message == true , 'bg-yellow-100': message_kind == 'warning', 'bg-blue-100': message_kind == 'info', 'bg-green-100': message_kind == 'success'}" 
     >
     {{message_content}} 

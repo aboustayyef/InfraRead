@@ -3883,6 +3883,24 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['refreshInterval'],
   data: function data() {
@@ -21871,27 +21889,30 @@ var render = function() {
     "div",
     {
       staticClass:
-        "pt-12 relative text-left w-full h-screen overflow-y-auto p-12"
+        "relative w-full h-screen p-4 pt-12 overflow-y-auto text-left md:p-12"
     },
     [
       _c(
         "div",
-        { staticClass: "max-w-7xl mx-auto flex mb-6 justify-between" },
+        {
+          staticClass:
+            "flex items-center justify-between mx-auto mb-6 max-w-7xl"
+        },
         [
+          _vm._m(0),
+          _vm._v(" "),
           _c(
             "div",
             {
-              staticClass: "bg-primary px-4 py-1 rounded-md text-white",
+              staticClass: "text-gray-500 uppercase",
               attrs: { id: "ReadCount" }
             },
             [
-              _c("div", { staticClass: "max-w-7xl mx-auto" }, [
-                _vm._v(
-                  "\n                Unread: " +
-                    _vm._s(_vm.number_of_unread_posts) +
-                    " \n            "
-                )
-              ])
+              _vm._v(
+                "\n                unread: " +
+                  _vm._s(_vm.number_of_unread_posts) +
+                  " \n        "
+              )
             ]
           ),
           _vm._v(" "),
@@ -21900,7 +21921,7 @@ var render = function() {
               "svg",
               {
                 staticClass:
-                  "h-8 text-gray-300 hover:text-primary cursor-pointer",
+                  "h-8 text-gray-300 cursor-pointer hover:text-primary",
                 attrs: {
                   xmlns: "http://www.w3.org/2000/svg",
                   fill: "none",
@@ -21939,13 +21960,13 @@ var render = function() {
               "div",
               {
                 staticClass:
-                  "bg-gray-50 shadow-md rounded-md mb-4 flex justify-between max-w-7xl p-2 container mx-auto py-4 items-center"
+                  "container flex items-center justify-between p-2 py-4 mx-auto mb-4 rounded-md shadow-md bg-gray-50 max-w-7xl"
               },
               [
                 _c(
                   "div",
                   {
-                    staticClass: "text-gray-600 uppercase text-sm font-semibold"
+                    staticClass: "text-sm font-semibold text-gray-600 uppercase"
                   },
                   [_vm._v("Posts by " + _vm._s(_vm.source_name))]
                 ),
@@ -21954,7 +21975,7 @@ var render = function() {
                   "button",
                   {
                     staticClass:
-                      "text-lg text-gray-400  w-8 h-8 rounded-full bg-gray-100 hover:bg-primary hover:text-white",
+                      "w-8 h-8 text-lg text-gray-400 bg-gray-100 rounded-full hover:bg-primary hover:text-white",
                     on: {
                       click: function($event) {
                         return _vm.reset_to_all()
@@ -21974,73 +21995,77 @@ var render = function() {
           {
             key: post.id,
             staticClass:
-              "border-b border-gray-200 max-w-7xl mx-auto cursor-pointer p-2",
+              "p-2 mx-auto border-b border-gray-200 cursor-pointer max-w-7xl",
             class: {
               "bg-yellow-50":
                 _vm.highlighter_on && index == _vm.highlighter_position
             }
           },
           [
-            _c("div", { staticClass: "flex", attrs: { id: "post-" + index } }, [
-              _c("div", { staticClass: "mr-12 w-1/2" }, [
+            _c(
+              "div",
+              { staticClass: "md:flex", attrs: { id: "post-" + index } },
+              [
+                _c("div", { staticClass: "w-full md:mr-12 md:w-1/2" }, [
+                  _c(
+                    "h2",
+                    {
+                      staticClass:
+                        "pt-6 text-2xl font-semibold text-gray-700 cursor-pointer",
+                      on: {
+                        click: function($event) {
+                          return _vm.display_post(post)
+                        }
+                      }
+                    },
+                    [_vm._v(_vm._s(post.title))]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "h3",
+                    {
+                      staticClass:
+                        "mt-2 text-xl font-semibold uppercase text-primary",
+                      on: {
+                        click: function($event) {
+                          return _vm.switch_source(
+                            "source",
+                            post.source.id,
+                            post.source.name
+                          )
+                        }
+                      }
+                    },
+                    [_vm._v(_vm._s(post.source.name))]
+                  ),
+                  _vm._v(" "),
+                  _c("h4", { staticClass: "mt-4 text-lg text-gray-500" }, [
+                    _vm._v(_vm._s(post.time_ago))
+                  ])
+                ]),
+                _vm._v(" "),
                 _c(
-                  "h2",
+                  "div",
                   {
                     staticClass:
-                      "cursor-pointer text-2xl font-semibold text-gray-700 pt-6",
+                      "w-full mt-6 text-xl font-light leading-relaxed text-gray-400 cursor-pointer overflow-clip md:mt-0 md:w-1/2",
                     on: {
                       click: function($event) {
                         return _vm.display_post(post)
                       }
                     }
                   },
-                  [_vm._v(_vm._s(post.title))]
-                ),
-                _vm._v(" "),
-                _c(
-                  "h3",
-                  {
-                    staticClass:
-                      "mt-2 font-semibold text-xl uppercase text-primary",
-                    on: {
-                      click: function($event) {
-                        return _vm.switch_source(
-                          "source",
-                          post.source.id,
-                          post.source.name
-                        )
-                      }
-                    }
-                  },
-                  [_vm._v(_vm._s(post.source.name))]
-                ),
-                _vm._v(" "),
-                _c("h4", { staticClass: "mt-4 text-gray-500 text-lg" }, [
-                  _vm._v(_vm._s(post.time_ago))
-                ])
-              ]),
-              _vm._v(" "),
-              _c(
-                "div",
-                {
-                  staticClass:
-                    "cursor-pointer w-1/2 font-light leading-relaxed text-gray-400 text-xl",
-                  on: {
-                    click: function($event) {
-                      return _vm.display_post(post)
-                    }
-                  }
-                },
-                [_c("p", [_vm._v(_vm._s(post.excerpt))])]
-              )
-            ]),
+                  [_c("p", [_vm._v(_vm._s(post.excerpt))])]
+                )
+              ]
+            ),
             _vm._v(" "),
             _c("div", { staticClass: "w-1/2 mb-6" }, [
               _c(
                 "button",
                 {
                   staticClass:
-                    "border border-gray-300 rounded-md px-4 py-2 mt-4 hover:bg-primary hover:text-white",
+                    "px-4 py-2 mt-4 border border-gray-300 rounded-md hover:bg-primary hover:text-white",
                   on: {
                     click: function($event) {
                       return _vm.mark_post_as_read(post)
@@ -22063,7 +22088,7 @@ var render = function() {
         "div",
         {
           staticClass:
-            "fixed shadow-md border border-gray-600 translate-x-72 inline-block top-8 px-8 py-2 right-8 transition duration-75 ease-out transform",
+            "fixed inline-block px-8 py-2 transition duration-75 ease-out transform border border-gray-600 shadow-md translate-x-72 top-8 right-8",
           class: {
             "-translate-x-72": _vm.show_message == true,
             "bg-yellow-100": _vm.message_kind == "warning",
@@ -22077,7 +22102,19 @@ var render = function() {
     2
   )
 }
-var staticRenderFns = []
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("a", { attrs: { href: "/" } }, [
+      _c("img", {
+        staticClass: "h-8 md:h-12",
+        attrs: { src: "/img/infraread144.png" }
+      })
+    ])
+  }
+]
 render._withStripped = true
 
 
@@ -22110,45 +22147,53 @@ var render = function() {
       },
       [
         _vm.shown
-          ? _c("div", { staticClass: "w-full mx-auto mt-12 pb-36 max-w-7xl" }, [
-              _c("div", { staticClass: "pb-4 mb-6 border-b border-gray-200" }, [
-                _c("a", { attrs: { href: _vm.post.url } }, [
-                  _c(
-                    "h1",
-                    {
-                      staticClass:
-                        "text-3xl font-semibold text-gray-700 max-w-prose"
-                    },
-                    [
-                      _vm._v(
-                        "\n                        " +
-                          _vm._s(_vm.post.title) +
-                          "\n                    "
-                      )
-                    ]
-                  )
-                ]),
-                _vm._v(" "),
+          ? _c(
+              "div",
+              { staticClass: "w-full px-4 mt-12 md:mx-auto pb-36 max-w-7xl" },
+              [
                 _c(
-                  "h2",
-                  {
-                    staticClass:
-                      "mt-2 text-xl font-semibold uppercase text-primary"
-                  },
-                  [_vm._v(_vm._s(_vm.post.source.name))]
+                  "div",
+                  { staticClass: "pb-4 mb-6 border-b border-gray-200" },
+                  [
+                    _c("a", { attrs: { href: _vm.post.url } }, [
+                      _c(
+                        "h1",
+                        {
+                          staticClass:
+                            "text-3xl font-semibold text-gray-700 max-w-prose"
+                        },
+                        [
+                          _vm._v(
+                            "\n                        " +
+                              _vm._s(_vm.post.title) +
+                              "\n                    "
+                          )
+                        ]
+                      )
+                    ]),
+                    _vm._v(" "),
+                    _c(
+                      "h2",
+                      {
+                        staticClass:
+                          "mt-2 text-xl font-semibold uppercase text-primary"
+                      },
+                      [_vm._v(_vm._s(_vm.post.source.name))]
+                    ),
+                    _vm._v(" "),
+                    _c("h3", { staticClass: "mt-6 text-gray-300" }, [
+                      _vm._v(_vm._s(_vm.post.time_ago))
+                    ])
+                  ]
                 ),
                 _vm._v(" "),
-                _c("h3", { staticClass: "mt-6 text-gray-300" }, [
-                  _vm._v(_vm._s(_vm.post.time_ago))
-                ])
-              ]),
-              _vm._v(" "),
-              _c("div", {
-                staticClass:
-                  "text-xl font-light leading-relaxed text-gray-700 content has-columns",
-                domProps: { innerHTML: _vm._s(_vm.post.content) }
-              })
-            ])
+                _c("div", {
+                  staticClass:
+                    "text-xl font-light leading-relaxed text-gray-700 content has-columns",
+                  domProps: { innerHTML: _vm._s(_vm.post.content) }
+                })
+              ]
+            )
           : _vm._e()
       ]
     ),
@@ -22326,7 +22371,7 @@ var render = function() {
                 _c(
                   "svg",
                   {
-                    staticClass: "w-12 h-12 text-gray-700",
+                    staticClass: "w-12 h-12 text-green-700",
                     attrs: {
                       xmlns: "http://www.w3.org/2000/svg",
                       fill: "none",
