@@ -4117,6 +4117,8 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['post'],
   computed: {
@@ -4137,6 +4139,12 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -4192,6 +4200,11 @@ __webpack_require__.r(__webpack_exports__);
             _this2.status = 'save';
           }, 1000);
         }
+      })["catch"](function (res) {
+        _this2.status = 'error';
+        setTimeout(function () {
+          _this2.status = 'save';
+        }, 1000);
       });
     },
     handle_keyboard_shortcut: function handle_keyboard_shortcut(k) {
@@ -22086,116 +22099,110 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c(
-    "div",
-    { staticClass: "realtive" },
-    [
-      _c(
-        "div",
-        {
-          staticClass:
-            "fixed top-0 right-0 w-full h-screen overflow-y-auto transition duration-75 ease-out transform bg-white",
-          class: { "translate-x-full": !_vm.shown, "translate-x-0": _vm.shown },
-          attrs: { id: "post-view" }
-        },
-        [
-          _vm.shown
-            ? _c(
-                "div",
-                { staticClass: "w-full mx-auto mt-12 pb-36 max-w-7xl" },
-                [
+  return _c("div", { staticClass: "realtive" }, [
+    _c(
+      "div",
+      {
+        staticClass:
+          "fixed top-0 right-0 w-full h-screen overflow-y-auto transition duration-75 ease-out transform bg-white",
+        class: { "translate-x-full": !_vm.shown, "translate-x-0": _vm.shown },
+        attrs: { id: "post-view" }
+      },
+      [
+        _vm.shown
+          ? _c("div", { staticClass: "w-full mx-auto mt-12 pb-36 max-w-7xl" }, [
+              _c("div", { staticClass: "pb-4 mb-6 border-b border-gray-200" }, [
+                _c("a", { attrs: { href: _vm.post.url } }, [
                   _c(
-                    "div",
-                    { staticClass: "pb-4 mb-6 border-b border-gray-200" },
+                    "h1",
+                    {
+                      staticClass:
+                        "text-3xl font-semibold text-gray-700 max-w-prose"
+                    },
                     [
-                      _c("a", { attrs: { href: _vm.post.url } }, [
-                        _c(
-                          "h1",
-                          {
-                            staticClass:
-                              "text-3xl font-semibold text-gray-700 max-w-prose"
-                          },
-                          [
-                            _vm._v(
-                              "\n                        " +
-                                _vm._s(_vm.post.title) +
-                                "\n                    "
-                            )
-                          ]
-                        )
-                      ]),
-                      _vm._v(" "),
-                      _c(
-                        "h2",
-                        {
-                          staticClass:
-                            "mt-2 text-xl font-semibold uppercase text-primary"
-                        },
-                        [_vm._v(_vm._s(_vm.post.source.name))]
-                      ),
-                      _vm._v(" "),
-                      _c("h3", { staticClass: "mt-6 text-gray-300" }, [
-                        _vm._v(_vm._s(_vm.post.time_ago))
-                      ])
+                      _vm._v(
+                        "\n                        " +
+                          _vm._s(_vm.post.title) +
+                          "\n                    "
+                      )
                     ]
-                  ),
-                  _vm._v(" "),
-                  _c("div", {
+                  )
+                ]),
+                _vm._v(" "),
+                _c(
+                  "h2",
+                  {
                     staticClass:
-                      "text-xl font-light leading-relaxed text-gray-700 content has-columns",
-                    domProps: { innerHTML: _vm._s(_vm.post.content) }
-                  })
-                ]
-              )
-            : _vm._e()
-        ]
-      ),
-      _vm._v(" "),
-      _vm.shown
-        ? _c(
-            "button",
-            {
-              staticClass:
-                "absolute flex items-center justify-center w-16 h-16 bg-gray-800 rounded-full shadow-md group bottom-8 left-8 hover:bg-gray-600",
-              on: {
-                click: function($event) {
-                  return _vm.$emit("exit-post")
-                }
-              }
-            },
-            [
-              _c(
-                "svg",
-                {
-                  staticClass: "h-10 text-white",
-                  attrs: {
-                    xmlns: "http://www.w3.org/2000/svg",
-                    fill: "none",
-                    viewBox: "0 0 24 24",
-                    stroke: "currentColor"
+                      "mt-2 text-xl font-semibold uppercase text-primary"
+                  },
+                  [_vm._v(_vm._s(_vm.post.source.name))]
+                ),
+                _vm._v(" "),
+                _c("h3", { staticClass: "mt-6 text-gray-300" }, [
+                  _vm._v(_vm._s(_vm.post.time_ago))
+                ])
+              ]),
+              _vm._v(" "),
+              _c("div", {
+                staticClass:
+                  "text-xl font-light leading-relaxed text-gray-700 content has-columns",
+                domProps: { innerHTML: _vm._s(_vm.post.content) }
+              })
+            ])
+          : _vm._e()
+      ]
+    ),
+    _vm._v(" "),
+    _c(
+      "div",
+      { staticClass: "fixed flex bottom-12 left-12" },
+      [
+        _vm.shown
+          ? _c(
+              "button",
+              {
+                staticClass:
+                  "flex items-center justify-center w-16 h-16 mr-4 bg-gray-800 rounded-full shadow-md group hover:bg-gray-600",
+                on: {
+                  click: function($event) {
+                    return _vm.$emit("exit-post")
                   }
-                },
-                [
-                  _c("path", {
+                }
+              },
+              [
+                _c(
+                  "svg",
+                  {
+                    staticClass: "h-10 text-white",
                     attrs: {
-                      "stroke-linecap": "round",
-                      "stroke-linejoin": "round",
-                      "stroke-width": "2",
-                      d: "M6 18L18 6M6 6l12 12"
+                      xmlns: "http://www.w3.org/2000/svg",
+                      fill: "none",
+                      viewBox: "0 0 24 24",
+                      stroke: "currentColor"
                     }
-                  })
-                ]
-              )
-            ]
-          )
-        : _vm._e(),
-      _vm._v(" "),
-      _c("save-later-button", {
-        attrs: { shown: _vm.shown, url: _vm.post.url }
-      })
-    ],
-    1
-  )
+                  },
+                  [
+                    _c("path", {
+                      attrs: {
+                        "stroke-linecap": "round",
+                        "stroke-linejoin": "round",
+                        "stroke-width": "2",
+                        d: "M6 18L18 6M6 6l12 12"
+                      }
+                    })
+                  ]
+                )
+              ]
+            )
+          : _vm._e(),
+        _vm._v(" "),
+        _c("save-later-button", {
+          attrs: { shown: _vm.shown, url: _vm.post.url }
+        })
+      ],
+      1
+    )
+  ])
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -22224,7 +22231,7 @@ var render = function() {
         "button",
         {
           staticClass:
-            "absolute flex items-center justify-center w-16 h-16 border rounded-full shadow-md group bottom-8 left-28 bg-yellow-50"
+            "flex items-center justify-center w-16 h-16 border rounded-full shadow-md group bg-yellow-50"
         },
         [
           _vm.status == "save" && _vm.readlaterservice == "pocket"
@@ -22334,6 +22341,34 @@ var render = function() {
                         "stroke-linejoin": "round",
                         "stroke-width": "2",
                         d: "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                      }
+                    })
+                  ]
+                )
+              ])
+            : _vm._e(),
+          _vm._v(" "),
+          _vm.status == "error"
+            ? _c("div", [
+                _c(
+                  "svg",
+                  {
+                    staticClass: "w-10 h-10 text-primary",
+                    attrs: {
+                      xmlns: "http://www.w3.org/2000/svg",
+                      fill: "none",
+                      viewBox: "0 0 24 24",
+                      stroke: "currentColor"
+                    }
+                  },
+                  [
+                    _c("path", {
+                      attrs: {
+                        "stroke-linecap": "round",
+                        "stroke-linejoin": "round",
+                        "stroke-width": "2",
+                        d:
+                          "M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
                       }
                     })
                   ]
