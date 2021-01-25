@@ -227,6 +227,16 @@ export default {
                 if (this.view == 'post') {
                    window.open(this.displayed_post.url,'_blank');
                 }
+                break;
+
+            case ('e' || 'E'):
+                if (this.view == 'list' && this.highlighter_on == true) {
+                   this.mark_post_as_read(this.highlighted_post); 
+                   return;
+                }
+                if (this.view == 'post') {
+                    this.exit_post();
+                }
 
             default:
                 break;
