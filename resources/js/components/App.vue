@@ -1,6 +1,7 @@
 <template>
   <div  class="relative w-full h-screen p-4 pt-12 overflow-y-auto text-left md:p-12">
-    <div class="flex items-center justify-between mx-auto mb-6 max-w-7xl">
+    <div v-cloak v-if="posts_loaded == false">Loading...</div>
+    <div v-if="posts_loaded == true" class="flex items-center justify-between mx-auto mb-6 max-w-7xl">
         
         <!-- Logo -->
         <a href="/"><img class="h-8 md:h-12" src="/img/infraread144.png"></a>
@@ -78,8 +79,10 @@ export default {
   props: ['refreshInterval'],
   data() {
     return {
+      posts_loaded: false,
       posts: {},
       displayed_post:{},
+      posts_marked_as_read:[],
       which_posts:'all',
       which_source: 'all',
       source_name:'',
@@ -121,6 +124,7 @@ export default {
     fetch_posts_from_server: function(){
         axios.get('/simpleapi/' + this.which_posts).then((res) => {
         this.posts = res.data;
+        this.posts_loaded = true;
       })
     },
     reset_to_all: function(){
@@ -147,6 +151,7 @@ export default {
     mark_post_as_read: function(p){
         // update locally
         p.read = 1;
+        this.posts_marked_as_read.push(p);
         // update on the server
         axios.patch("/api/posts/" + p.id, { read: 1 })
         // If server update works, don't report anything
@@ -154,6 +159,7 @@ export default {
         // If there's a problem, undo mark as read
         .catch((res) => {
           p.read = 0;
+          this.posts_marked_as_read.pop();
           this.display_message('warning','Cannot contact server',2000);
         })
     },
@@ -237,7 +243,25 @@ export default {
                 if (this.view == 'post') {
                     this.exit_post();
                 }
+            case ('u' || 'U'):
+                if (this.view == 'list' && this.posts_marked_as_read.length > 0) {
+                    
+                    // mark last post in list as unread
+                    let last_post_marked_as_read = this.posts_marked_as_read[this.posts_marked_as_read.length - 1];
+                    last_post_marked_as_read.read = 0;
 
+                    // update on server
+                    axios.patch("/api/posts/" + last_post_marked_as_read.id, { read: 0 })
+                    // If server update works, update list of posts marked as read 
+                    .then((res) => { 
+                        this.posts_marked_as_read.pop();
+                    })
+                    // If there's a problem, undo mark as read
+                    .catch((res) => {
+                    last_post_marked_as_read.read = 1;
+                    this.display_message('warning','Cannot contact server',2000);
+                    }) 
+                }
             default:
                 break;
         }

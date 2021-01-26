@@ -8,7 +8,6 @@
 
     {{-- Transfer Variables from PHP to Js --}}
     <script>window.Laravel = { csrfToken: '{{ csrf_token() }}' }</script> 
-    
     <link rel="stylesheet" type="text/css" href="{{mix('/css/app.css')}}">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#da2525">
