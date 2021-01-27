@@ -243,6 +243,7 @@ export default {
                 if (this.view == 'post') {
                     this.exit_post();
                 }
+                break;
             case ('u' || 'U'):
                 if (this.view == 'list' && this.posts_marked_as_read.length > 0) {
                     
