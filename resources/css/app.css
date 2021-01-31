@@ -29,7 +29,9 @@
 .content blockquote {
     @apply p-4 mb-4 text-gray-500 bg-gray-100 border-b-8 border-gray-400;
 }
-
+.content img{
+    max-width: 100%;
+}
 .content a {
     @apply text-primary;
 }
