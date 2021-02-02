@@ -4,7 +4,7 @@
                         class="fixed top-0 right-0 w-full h-screen overflow-y-auto transition duration-75 ease-out transform bg-white"
                         :class="{'translate-x-full' : !shown ,  'translate-x-0': shown }" 
                 >
-                    <div v-if="shown" class="w-full max-w-3xl px-4 mx-auto mt-12 md:px-12 pb-72">
+                    <div v-if="shown" class="w-full max-w-3xl px-4 mx-auto mt-12 md:px-14 pb-72">
                         <div class="pb-4 mb-6 border-b border-gray-200">
                             <a :href="post.url">
                                 <h1 class="text-3xl font-semibold text-gray-700 max-w-prose">
@@ -14,7 +14,7 @@
                             <h2 class="mt-2 text-xl font-semibold uppercase text-primary">{{post.source.name}}</h2>
                             <h3 class="mt-6 text-gray-300">{{post.time_ago}}</h3>
                         </div>
-                        <div v-html="post.content" class="text-lg font-light leading-loose text-gray-500 content">
+                        <div v-html="post.content" class="text-xl font-light leading-loose text-gray-700 content">
                         </div>
                     </div>
             
