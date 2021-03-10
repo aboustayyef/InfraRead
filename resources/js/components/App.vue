@@ -189,6 +189,11 @@ export default {
                    this.highlighter_position = 0; 
                 }
                 break;
+            case 'Space':
+                if (this.view == 'post') {
+                   document.querySelector('#post-view').scrollBy({top: 500, behavior: 'smooth'});
+                }
+                break;
             case ('j' || 'J'): 
                 if (this.view == 'post') {
                    document.querySelector('#post-view').scrollBy(0, 200) 
