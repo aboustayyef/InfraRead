@@ -189,7 +189,7 @@ export default {
                    this.highlighter_position = 0; 
                 }
                 break;
-            case 'Space':
+            case ' ':
                 if (this.view == 'post') {
                    document.querySelector('#post-view').scrollBy({top: 500, behavior: 'smooth'});
                 }
