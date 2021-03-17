@@ -14,20 +14,15 @@
     <link href="https://fonts.googleapis.com/css?family=Bebas+Neue|Catamaran:400,600&display=swap" rel="stylesheet"> 
     <link href="{{ mix('css/app.css') }}" rel="stylesheet">
     @livewireStyles
+    @livewireScripts
+    <script src="{{ mix('js/admin.js') }}"></script>
 </head>
 <body>
     <style>
         [v-cloak] {display: none}
     </style>
     <div id="app">
-        @if(session()->has('message'))
-            <br>
-            <div class="container">
-                <div class="alert alert-info">
-                    {{session()->get('message')}}
-                </div>
-            </div>
-        @endif 
+        
         <div class="p-4 lg:p-0 lg:flex">
             {{-- Sidebar --}}
             <div id="sidebar-info" class="w-full bg-gray-100 lg:w-64 lg:min-h-screen lg:fixed">
@@ -57,6 +52,12 @@
             </div>
 
             <div id="content" class="w-full max-w-4xl pb-24 mt-20 lg:pl-72">
+                @if(session()->has('message'))
+                    <div class="p-4 bg-green-100 mb-4 flex justify-between items-center" x-data="{visible:true}" x-show="visible">
+                        <div>{{session()->get('message')}}</div>
+                        <div x-on:keydown.window.escape="visible = false" @click="visible = false" class="text-xl cursor-pointer" >&times;</div>
+                    </div>
+                @endif 
                 @yield('content')
             </div>
         </div>
@@ -65,9 +66,8 @@
     </div>
 
     <!-- Scripts -->
-    <script src="{{ mix('js/admin.js') }}"></script>
     <!-- Extra Scripts -->
     @yield('extra_scripts')
-    @livewireScripts
+
 </body>
 </html>
