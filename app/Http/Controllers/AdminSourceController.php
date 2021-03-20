@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\NewSourceAdded;
 use App\Models\Category;
 use App\Models\Source;
 use Illuminate\Http\Request;
@@ -40,7 +41,10 @@ class AdminSourceController extends Controller
     {
         $request->validate(Source::validationRules());
 
-        Source::Create($request->except(['_token']));
+        $source = Source::Create($request->except(['_token']));
+
+        // Launch event
+        NewSourceAdded::dispatch($source);
 
         return redirect('/admin/source')->with('message', 'Source has been successfully created');
     }
