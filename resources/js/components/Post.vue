@@ -14,7 +14,7 @@
                             <h2 class="mt-2 text-xl font-semibold uppercase text-primary">{{post.source.name}}</h2>
                             <h3 class="mt-6 text-gray-300">{{post.time_ago}}</h3>
                         </div>
-                        <div v-html="post.content" class="text-xl font-light leading-loose text-gray-700 content">
+                        <div id="post-content" v-html="post.content" class="text-xl font-light leading-loose text-gray-700 content">
                         </div>
                     </div>
             

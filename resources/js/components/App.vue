@@ -90,7 +90,8 @@ export default {
       highlighter_position: 0,
       message_kind:'warning',
       message_content: 'this is the message',
-      show_message: false
+      show_message: false,
+      external_links_shortcuts: false,
     };
   },
   created() {
@@ -144,6 +145,7 @@ export default {
         this.fetch_posts_from_server()
     },
     display_post: function(p) {
+        this.external_links_shortcuts = false;
         this.displayed_post = p;
         // Timeout the animation then set as read
             this.mark_post_as_read(p);
@@ -177,9 +179,33 @@ export default {
     show_highlighted_post(){
         document.querySelector('#post-'+this.highlighter_position).scrollIntoView({behavior: "smooth", block: "center", inline: "nearest"});
     },
+
+    turn_on_external_links_shortcuts: function(){
+        let shortcut_style = "mx-1 px-2 bg-yellow-200 text-grey-800";
+        document.querySelectorAll('#post-content a').forEach(function(link,i){
+            var html = `<span data-destination="${link.getAttribute('href')}" class="externallink ${shortcut_style}">${i}</span>`;
+            link.insertAdjacentHTML('afterend', html);
+        })
+        this.external_links_shortcuts = true;
+    },
+
+    turn_off_external_links_shortcuts: function(){
+        document.querySelector('#post-content').innerHTML = this.displayed_post.content;
+        this.external_links_shortcuts = false;
+    },
+
     handle_keyboard_shortcut(key){
         console.log(key);
         switch (key) {
+            case ('f' || 'F'):
+                if (! this.external_links_shortcuts) {
+                    console.log('turn on');
+                    this.turn_on_external_links_shortcuts();
+                } else {
+                    this.turn_off_external_links_shortcuts();
+                }
+
+                break;
             case 'Escape':
                 if (this.view == 'post') {
                    this.exit_post(); 
@@ -229,7 +255,6 @@ export default {
                     this.display_post(this.highlighted_post);
                 } 
                 break;
-            
             case ('o' || 'O'):
                 if (this.view == 'list' && this.highlighter_on == true) {
                    this.display_post(this.highlighted_post); 
@@ -239,7 +264,6 @@ export default {
                    window.open(this.displayed_post.url,'_blank');
                 }
                 break;
-
             case ('e' || 'E'):
                 if (this.view == 'list' && this.highlighter_on == true) {
                    this.mark_post_as_read(this.highlighted_post); 
