@@ -92,12 +92,14 @@ export default {
       message_content: 'this is the message',
       show_message: false,
       external_links_shortcuts: false,
+      external_links: []
     };
   },
   created() {
       this.fetch_posts_from_server();
+
       window.addEventListener('keydown', (e) => {
-          this.handle_keyboard_shortcut(e.key);
+        this.handle_keyboard_shortcut(e.key);
       })
   },
   computed: {
@@ -181,10 +183,11 @@ export default {
     },
 
     turn_on_external_links_shortcuts: function(){
-        let shortcut_style = "mx-1 px-2 bg-yellow-200 text-grey-800";
-        document.querySelectorAll('#post-content a').forEach(function(link,i){
-            var html = `<span data-destination="${link.getAttribute('href')}" class="externallink ${shortcut_style}">${i}</span>`;
-            link.insertAdjacentHTML('afterend', html);
+        let shortcut_style = "mr-1 text-gray-700 px-2 bg-yellow-200 text-grey-800";
+        document.querySelectorAll('#post-content a').forEach((link,i) => {
+            var html = `<span class="externallink ${shortcut_style}">${i}</span>`;
+            link.insertAdjacentHTML('beforeend', html);
+            this.external_links.push(link.getAttribute('href'));
         })
         this.external_links_shortcuts = true;
     },
@@ -192,17 +195,27 @@ export default {
     turn_off_external_links_shortcuts: function(){
         document.querySelector('#post-content').innerHTML = this.displayed_post.content;
         this.external_links_shortcuts = false;
+        this.external_links = [];
     },
 
     handle_keyboard_shortcut(key){
         console.log(key);
+
+        // external links shortcuts
+        if (key.match(/\d/)) { 
+            if (eval(key) < this.external_links.length) {
+                window.open(this.external_links[key],'_blank');
+            }
+        }
         switch (key) {
             case ('f' || 'F'):
-                if (! this.external_links_shortcuts) {
-                    console.log('turn on');
-                    this.turn_on_external_links_shortcuts();
-                } else {
-                    this.turn_off_external_links_shortcuts();
+                if (this.view == 'post') {
+                    if (! this.external_links_shortcuts) {
+                        console.log('turn on');
+                        this.turn_on_external_links_shortcuts();
+                    } else {
+                        this.turn_off_external_links_shortcuts();
+                    }
                 }
 
                 break;
