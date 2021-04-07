@@ -177,6 +177,7 @@ export default {
     },
     exit_post: function(){
         this.displayed_post = {};
+        this.external_links = [];
     },
     show_highlighted_post(){
         document.querySelector('#post-'+this.highlighter_position).scrollIntoView({behavior: "smooth", block: "center", inline: "nearest"});
