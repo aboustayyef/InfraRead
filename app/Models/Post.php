@@ -3,8 +3,10 @@
 namespace App\Models;
 
 use App\Plugins\Kernel;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\File;
 
 class Post extends Model
 {
@@ -17,6 +19,20 @@ class Post extends Model
         'deleted_at',
         'posted_at',
     ];
+
+    public static function getLastSuccesfulCrawl(){
+        try {
+            $last_crawl = new Carbon(File::get(storage_path(). 'LastSuccessfulCrawl.txt'));
+            // If more than 30 minutes ago, there's a problem that needs to be looked into
+            if ($last_crawl->diffInMinutes() > 30) {
+                return 'problem';
+            }
+
+            return $last_crawl->diffForHumans();
+        } catch (\Exception $e) {
+            return 'problem';
+        }
+    }
 
     public static function getLatest($howmany = 60)
     {

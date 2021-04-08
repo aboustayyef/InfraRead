@@ -15,7 +15,6 @@ use App\Models\Source;
 use App\Utilities\OpmlImporter;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Storage;
 
 /*
 |--------------------------------------------------------------------------
@@ -51,10 +50,11 @@ Route::get('/', function () {
 Route::get('/app', function () {
     $posts = Post::where('read', 0)->orderBy('posted_at', 'asc')->get();
 
-    $last_successful_crawl = getLastSuccesfulCrawl();
+    $last_successful_crawl = Post::getLastSuccesfulCrawl();
 
     return view('home')->with('last_successful_crawl', $last_successful_crawl);
 })->middleware('auth');
+
 Route::get('/simpleapi/readlaterservice', function () {
     switch (env('PREFERRED_READLATER_SERVICE')) {
         case 'pocket':
@@ -95,7 +95,7 @@ Route::get('/app/category/{id}', function ($id) {
     $posts_source = '/api/postsByCategory/'.$id;
     $posts_description = 'Posts In the [ '.$category->description.' ] Category';
     $page = 'post list';
-    $last_successful_crawl = getLastSuccesfulCrawl();
+    $last_successful_crawl = Post::getLastSuccesfulCrawl();
 
     return view('home')
         ->with(compact('posts_source'))
@@ -152,21 +152,7 @@ Route::prefix('api')->middleware('auth')->group(function () {
 
     Route::get('urlanalyze', [UrlAnalysisController::class, 'index']);
 
-    function getLastSuccesfulCrawl()
-    {
-        try {
-            $last_crawl = new Carbon\Carbon(Storage::get('LastSuccessfulCrawl.txt'));
-            // If more than 30 minutes ago, there's a problem that needs to be looked into
-            if ($last_crawl->diffInMinutes() > 30) {
-                return 'problem';
-            }
-
-            return $last_crawl->diffForHumans();
-        } catch (\Exception $e) {
-            return 'problem';
-        }
-    }
-});
+    });
 
 // Saving for later
 Route::get('/app/readlater', [ReadlaterController::class, 'index'])->middleware('auth');
@@ -182,7 +168,7 @@ Route::get('/feeds.opml', function () {
 
 // Columns View
 Route::get('/columns', function (Request $request) {
-    $last_successful_crawl = getLastSuccesfulCrawl();
+    $last_successful_crawl = Post::getLastSuccesfulCrawl();
 
     $categories = Category::where('id', '>', 0)->select(['id', 'description'])->get()->toJson();
     $sources = Source::where('id', '>', 0)->select(['id', 'category_id', 'name', 'description'])->get()->toJson();
