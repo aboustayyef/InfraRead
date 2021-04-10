@@ -22,14 +22,20 @@ class Post extends Model
 
     public static function getLastSuccesfulCrawl(){
         try {
-            $last_crawl = new Carbon(File::get(storage_path(). 'LastSuccessfulCrawl.txt'));
+            $crawl_status = [];
+            $last_crawl = new Carbon(File::get(storage_path(). '/app/LastSuccessfulCrawl.txt'));
             // If more than 30 minutes ago, there's a problem that needs to be looked into
             if ($last_crawl->diffInMinutes() > 30) {
-                return 'problem';
+                $crawl_status['status'] = 'warning';
+                $crawl_status['message']= 'Warning. Last Crawl was ' . $last_crawl->diffForHumans();
+                return collect($crawl_status);
             }
-
-            return $last_crawl->diffForHumans();
+            
+            $crawl_status['status'] = 'ok';
+            $crawl_status['message'] = $last_crawl->diffForHumans(); 
+            return collect($crawl_status);
         } catch (\Exception $e) {
+            dd($e);
             return 'problem';
         }
     }

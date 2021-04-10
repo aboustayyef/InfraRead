@@ -30,7 +30,10 @@
                 </button>
             </div>
         </div>
-        
+
+        <div v-if="last_successful_crawl_data.status == 'warning'" class="text-yellow-800 max-w-7xl bg-yellow-50 w-full mx-auto px-4 py-2 border border-yellow-200 ">
+            {{last_successful_crawl_data.message}}
+        </div> 
         <!-- List of Posts -->
         <div v-for="(post , index) in unread_posts" :key="post.id" class="p-2 mx-auto border-b border-gray-200 cursor-pointer max-w-7xl" :class="{'bg-yellow-50': highlighter_on && index==highlighter_position }">
 
@@ -76,10 +79,11 @@
 </template>
 <script>
 export default {
-  props: ['refreshInterval'],
+  props: ['refreshInterval','last_successful_crawl'],
   data() {
     return {
       posts_loaded: false,
+      last_successful_crawl_data:{},
       posts: {},
       displayed_post:{},
       posts_marked_as_read:[],
@@ -97,7 +101,7 @@ export default {
   },
   created() {
       this.fetch_posts_from_server();
-
+      this.last_successful_crawl_data = JSON.parse(this.last_successful_crawl); 
       window.addEventListener('keydown', (e) => {
         this.handle_keyboard_shortcut(e.key);
       })

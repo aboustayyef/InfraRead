@@ -16,19 +16,7 @@ use App\Utilities\OpmlImporter;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
-*/
-
-// Authorisation Routes
-// Using the package Laravel Breeze
+// Authorisation Routes Using the Laravel Breeze package
 require __DIR__.'/auth.php';
 
 // Routes for external client apps that require access (example: column view netlify)
@@ -36,7 +24,7 @@ require __DIR__.'/auth.php';
 require __DIR__.'/clients.php';
 
 Route::get('/', function () {
-    // If a user exists, but not RSS feeds is set up
+    // If a user exists, but not RSS feeds is set up go to Setup Screen
     if (Source::count() == 0) {
         return redirect('/setup');
     }
@@ -44,14 +32,8 @@ Route::get('/', function () {
     return redirect('/app');
 });
 
-// ///////////////////////////////////////
-// ///////////////////////////////////////
-//
 Route::get('/app', function () {
-    $posts = Post::where('read', 0)->orderBy('posted_at', 'asc')->get();
-
     $last_successful_crawl = Post::getLastSuccesfulCrawl();
-
     return view('home')->with('last_successful_crawl', $last_successful_crawl);
 })->middleware('auth');
 
