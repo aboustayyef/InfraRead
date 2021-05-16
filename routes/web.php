@@ -23,6 +23,7 @@ require __DIR__.'/auth.php';
 // I haven't tested it with this new version yet
 require __DIR__.'/clients.php';
 
+// Onboarding
 Route::get('/', function () {
     // If a user exists, but not RSS feeds is set up go to Setup Screen
     if (Source::count() == 0) {

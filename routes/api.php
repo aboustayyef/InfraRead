@@ -17,3 +17,18 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+Route::get('test', function(){
+return 'test successful';
+});
+
+Route::get('readlaterservice', function () {
+        switch (env('PREFERRED_READLATER_SERVICE')) {
+            case 'pocket':
+                return 'pocket';
+                break;
+            case 'instapaper':
+                return 'instapaper';
+        }
+    
+        return 'none';
+})->middleware('auth');
