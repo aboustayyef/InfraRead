@@ -41,7 +41,7 @@ export default {
         window.addEventListener('keydown', (e) => {
           this.handle_keyboard_shortcut(e.key);
         });
-        axios.get('/simpleapi/readlaterservice').then((res) => {
+        axios.get('/api/readlaterservice').then((res) => {
             console.log(res);
         this.readlaterservice = res.data;
         })

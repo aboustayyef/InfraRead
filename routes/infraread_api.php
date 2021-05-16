@@ -6,7 +6,7 @@ use App\Models\Post;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PostController;
 
-Route::get('/simpleapi/readlaterservice', function () {
+Route::get('/api/readlaterservice', function () {
     switch (env('PREFERRED_READLATER_SERVICE')) {
         case 'pocket':
             return 'pocket';
@@ -17,9 +17,11 @@ Route::get('/simpleapi/readlaterservice', function () {
     return 'none';
 })->middleware('auth');
 
+// Remnant from previous api for patching read posts
+Route::resource('api/posts', PostController::class)->only(['index', 'update'])->middleware('auth');
 
 // Get Posts
-Route::get('/simpleapi/{which}/{details?}', function ($which, $details = null) {
+Route::get('/api/{which}/{details?}', function ($which, $details = null) {
     // Options are: /all
     //              /source/source_id
     //              /category/category_id
@@ -35,6 +37,3 @@ Route::get('/simpleapi/{which}/{details?}', function ($which, $details = null) {
         }
     abort(404);
 })->middleware('auth');
-
-// Remnant from previous api for patching read posts
-Route::resource('api/posts', PostController::class)->only(['index', 'update'])->middleware('auth');

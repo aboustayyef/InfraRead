@@ -129,7 +129,7 @@ export default {
   },
   methods: {
     fetch_posts_from_server: function(){
-        axios.get('/simpleapi/' + this.which_posts).then((res) => {
+        axios.get('/api/' + this.which_posts).then((res) => {
         this.posts = res.data;
         this.posts_loaded = true;
       })

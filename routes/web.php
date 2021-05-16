@@ -19,24 +19,17 @@ use Illuminate\Support\Facades\Route;
 // Authorisation Routes Using the Laravel Breeze package
 require __DIR__.'/auth.php';
 
-// Routes for external client apps that require access (example: column view netlify)
-// I haven't tested it with this new version yet
-require __DIR__.'/clients.php';
-
-// Ajax API for app and getting posts (/simpleapi)
-require __DIR__.'/simple_api.php';
+// Ajax API for app and getting posts 
+require __DIR__.'/infraread_api.php';
 
 // Onboarding
 require __DIR__.'/onboarding.php';
 
-
-
+// Launch App
 Route::get('/app', function () {
     $last_successful_crawl = Post::getLastSuccesfulCrawl();
     return view('home')->with('last_successful_crawl', $last_successful_crawl);
 })->middleware('auth');
-
-
 
 // Administration
 Route::prefix('admin')->middleware('auth')->group(function () {
@@ -57,7 +50,6 @@ Route::get('/markallread', function () {
     return redirect('/app');
 });
 
-
 // Saving for later
 Route::get('/app/readlater', [ReadlaterController::class, 'index'])->middleware('auth');
 Route::get('/app/setuppocket/authorise', [PocketSetupController::class, 'authorise'])->middleware('auth');
@@ -73,6 +65,10 @@ Route::get('/feeds.opml', function () {
 
 
 // Obsolete/ Previous Versions
+
+// Routes for external client apps that require access (example: column view netlify)
+// I haven't tested it with this new version yet
+// require __DIR__.'/clients.php';
 
 // Route::get('/app/sources', function () {
 //     $sources = Source::all();
