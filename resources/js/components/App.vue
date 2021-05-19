@@ -196,10 +196,14 @@ export default {
 
     turn_on_external_links_shortcuts: function(){
         let shortcut_style = "mr-1 text-gray-700 px-2 bg-yellow-200 text-grey-800";
+        var shortcut = 0;
         document.querySelectorAll('#post-content a').forEach((link,i) => {
-            var html = `<span class="externallink ${shortcut_style}">${i}</span>`;
-            link.insertAdjacentHTML('beforeend', html);
-            this.external_links.push(link.getAttribute('href'));
+            if (this.isInViewport(link)) {
+                var html = `<span class="externallink ${shortcut_style}">${shortcut}</span>`;
+                link.insertAdjacentHTML('beforeend', html);
+                this.external_links.push(link.getAttribute('href'));
+                shortcut++;
+            }
         })
         this.external_links_shortcuts = true;
     },
@@ -320,7 +324,17 @@ export default {
             default:
                 break;
         }
+    },
+    isInViewport(element) {
+        const rect = element.getBoundingClientRect();
+        return (
+            rect.top >= 0 &&
+            rect.left >= 0 &&
+            rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+            rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+        );
     }
+
   },
 };
 </script>
