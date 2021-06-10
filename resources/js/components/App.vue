@@ -85,6 +85,7 @@
 
 </template>
 <script>
+import { handle_keyboard_shortcut  } from "../keyboard_shortcuts.js";
 export default {
   props: ['refreshInterval','last_successful_crawl'],
   data() {
@@ -110,8 +111,8 @@ export default {
       this.fetch_posts_from_server();
       this.last_successful_crawl_data = JSON.parse(this.last_successful_crawl); 
       window.addEventListener('keydown', (e) => {
-        this.handle_keyboard_shortcut(e.key);
-      })
+        handle_keyboard_shortcut(e.key, this);
+      });
   },
   computed: {
       unread_posts: function(){
@@ -214,117 +215,6 @@ export default {
         this.external_links = [];
     },
 
-    handle_keyboard_shortcut(key){
-        console.log(key);
-
-        // external links shortcuts
-        if (key.match(/\d/)) { 
-            if (eval(key) < this.external_links.length) {
-                window.open(this.external_links[key],'_blank');
-            }
-        }
-        switch (key) {
-            case ('f' || 'F'):
-                if (this.view == 'post') {
-                    if (! this.external_links_shortcuts) {
-                        console.log('turn on');
-                        this.turn_on_external_links_shortcuts();
-                    } else {
-                        this.turn_off_external_links_shortcuts();
-                    }
-                }
-
-                break;
-            case 'Escape':
-                if (this.view == 'post') {
-                   this.exit_post(); 
-                }
-                if (this.view == 'list' && this.highlighter_on){
-                   this.highlighter_on = false;
-                   this.highlighter_position = 0; 
-                }
-                break;
-            case ' ':
-                if (this.view == 'post') {
-                   document.querySelector('#post-view').scrollBy({top: 500, behavior: 'smooth'});
-                }
-                break;
-            case ('j' || 'J'): 
-                if (this.view == 'post') {
-                   document.querySelector('#post-view').scrollBy(0, 200) 
-                } else {
-                    if (this.highlighter_on == false) {
-                        this.highlighter_on = true;
-                        this.show_highlighted_post();
-                    } else {
-                        if (this.highlighter_position < this.number_of_unread_posts - 1) {
-                            this.highlighter_position++;
-                            this.show_highlighted_post();
-                        }
-                    }
-                }
-                break;
-            case ('k' || 'K'): 
-                if (this.view == 'post') {
-                   document.querySelector('#post-view').scrollBy(0, -200) 
-                } else {
-                    if (this.highlighter_on == false) {
-                        this.highlighter_on = true;
-                        this.show_highlighted_post();
-                    } else {
-                        if (this.highlighter_position > 0) {
-                            this.highlighter_position--;
-                            this.show_highlighted_post();
-                        }
-                    }
-                }
-                break;
-            case 'Enter': 
-                if (this.view == 'list' && this.highlighter_on == true) {
-                    this.display_post(this.highlighted_post);
-                } 
-                break;
-            case ('o' || 'O'):
-                if (this.view == 'list' && this.highlighter_on == true) {
-                   this.display_post(this.highlighted_post); 
-                   return;
-                }
-                if (this.view == 'post') {
-                   window.open(this.displayed_post.url,'_blank');
-                }
-                break;
-            case ('e' || 'E'):
-                if (this.view == 'list' && this.highlighter_on == true) {
-                   this.mark_post_as_read(this.highlighted_post); 
-                   return;
-                }
-                if (this.view == 'post') {
-                    this.exit_post();
-                }
-                break;
-            case ('u' || 'U'):
-                if (this.view == 'list' && this.posts_marked_as_read.length > 0) {
-                    
-                    // mark last post in list as unread
-                    let last_post_marked_as_read = this.posts_marked_as_read[this.posts_marked_as_read.length - 1];
-                    last_post_marked_as_read.read = 0;
-
-                    // update on server
-                    axios.patch("/api/posts/" + last_post_marked_as_read.id, { read: 0 })
-                    // If server update works, update list of posts marked as read 
-                    .then((res) => { 
-                        this.posts_marked_as_read.pop();
-                    })
-                    // If there's a problem, undo mark as read
-                    .catch((res) => {
-                    last_post_marked_as_read.read = 1;
-                    this.display_message('warning','Cannot contact server',2000);
-                    }) 
-                }
-            default:
-                break;
-        }
-    },
     isInViewport(element) {
         const rect = element.getBoundingClientRect();
         return (
