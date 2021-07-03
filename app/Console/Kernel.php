@@ -22,7 +22,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('app:update_posts')->everyFiveMinutes();
+        $schedule->command('app:update_posts')->everyHour();
     }
 
     /**
