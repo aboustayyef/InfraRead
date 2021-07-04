@@ -24,8 +24,8 @@ class Post extends Model
         try {
             $crawl_status = [];
             $last_crawl = new Carbon(File::get(storage_path(). '/app/LastSuccessfulCrawl.txt'));
-            // If more than 30 minutes ago, there's a problem that needs to be looked into
-            if ($last_crawl->diffInMinutes() > 30) {
+            // If more than 80 minutes ago, there's a problem that needs to be looked into
+            if ($last_crawl->diffInMinutes() > 80) {
                 $crawl_status['status'] = 'warning';
                 $crawl_status['message']= 'Warning. Last Crawl was ' . $last_crawl->diffForHumans();
                 return collect($crawl_status);
