@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -21,6 +22,7 @@ class AdminSeeder extends Seeder
         $admin->name = env('ADMIN_NAME');
         $admin->email = env('ADMIN_EMAIL');
         $admin->password = bcrypt(env('ADMIN_PASSWORD'));
+        $admin->email_verified_at = new Carbon();
         $admin->save();
     }
 }
