@@ -2,15 +2,12 @@
   <div  class="relative w-full h-screen p-4 pt-12 overflow-y-auto text-left md:p-12">
     <div v-cloak v-if="posts_loaded == false">Loading...</div>
     <div v-if="posts_loaded == true" class="flex items-center justify-between mx-auto mb-6 max-w-7xl">
-        
+
         <!-- Logo -->
         <a href="/"><img class="h-8 md:h-12" src="/img/infraread144.png"></a>
-        
-        <!-- Unread Count -->
-        <div id="ReadCount" class="text-gray-500 uppercase">
-                <span v-if="number_of_unread_posts > 0"> unread: {{number_of_unread_posts}} </span>
-                <span v-else>Done! Enjoy your day</span>
-        </div>
+
+        <!-- Read Count -->
+        <ReadCount :count="number_of_unread_posts" />
 
         <!-- Settings Gear -->
         <a href="/admin" class="block">
@@ -19,11 +16,11 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
             </svg>
         </a>
-        
+
     </div>
-        
+
         <!-- Banner that will only be displayed if viewing one source -->
-        <div v-if="which_source !== 'all'"> 
+        <div v-if="which_source !== 'all'">
             <div class="container flex items-center justify-between p-2 py-4 mx-auto mb-4 rounded-md shadow-md bg-gray-50 max-w-7xl">
                 <div class="text-sm font-semibold text-gray-600 uppercase">Posts by {{source_name}}</div>
                 <button @click="reset_to_all()" class="w-8 h-8 text-lg text-gray-400 bg-gray-100 rounded-full hover:bg-primary hover:text-white">
@@ -34,7 +31,7 @@
 
         <div v-if="last_successful_crawl_data.status == 'warning'" class="text-yellow-800 max-w-7xl bg-yellow-50 w-full mx-auto px-4 py-2 border border-yellow-200 ">
             {{last_successful_crawl_data.message}}
-        </div> 
+        </div>
 
         <!-- Well Done! You've read everything -->
         <div v-if="number_of_unread_posts < 1" class="container mx-auto">
@@ -60,34 +57,40 @@
                     </div>
 
                 </div>
-                
+
                 <!-- Mark as Read Button -->
                 <div class="w-1/2 mb-6">
                     <button v-on:click="mark_post_as_read(post)" class="px-4 py-2 mt-4 border border-gray-300 rounded-md hover:bg-primary hover:text-white">Mark Read</button>
                 </div>
-                
+
         </div>
-        
-        <post 
+
+        <post
             :post="displayed_post"
             v-on:exit-post="exit_post"
         >
-        </post>  
+        </post>
 
     <!-- Messages -->
     <div class="fixed inline-block px-8 py-2 transition duration-75 ease-out transform border border-gray-600 shadow-md translate-x-72 top-8 right-8"
-                  :class="{'-translate-x-72' : show_message == true , 'bg-yellow-100': message_kind == 'warning', 'bg-blue-100': message_kind == 'info', 'bg-green-100': message_kind == 'success'}" 
+                  :class="{'-translate-x-72' : show_message == true , 'bg-yellow-100': message_kind == 'warning', 'bg-blue-100': message_kind == 'info', 'bg-green-100': message_kind == 'success'}"
     >
-    {{message_content}} 
+    {{message_content}}
     </div>
 
 </div>
 
 </template>
 <script>
+// Import Keyboard Shortcuts
 import { handle_keyboard_shortcut  } from "../keyboard_shortcuts.js";
+// Import Components
+import Post from "./Post.vue";
+import ReadCount from "./partials/ReadCount.vue";
+
 export default {
-  props: ['refreshInterval','last_successful_crawl'],
+  props: ['refreshinterval','last_successful_crawl'],
+  components: {Post, ReadCount},
   data() {
     return {
       posts_loaded: false,
@@ -109,7 +112,7 @@ export default {
   },
   created() {
       this.fetch_posts_from_server();
-      this.last_successful_crawl_data = JSON.parse(this.last_successful_crawl); 
+      this.last_successful_crawl_data = JSON.parse(this.last_successful_crawl);
       window.addEventListener('keydown', (e) => {
         handle_keyboard_shortcut(e.key, this);
       });

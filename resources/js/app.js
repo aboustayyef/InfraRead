@@ -11,8 +11,6 @@ window.Vue = require('vue');
  */
 
 Vue.component('app', require('./components/App.vue').default);
-Vue.component('post', require('./components/Post.vue').default);
-Vue.component('save-later-button', require('./components/SaveLaterButton.vue').default);
 
 const app = new Vue({
     el: '#app'

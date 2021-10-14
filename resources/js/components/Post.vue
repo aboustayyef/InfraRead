@@ -1,8 +1,8 @@
 <template>
             <div class="realtive">
-                <div    id="post-view" 
+                <div    id="post-view"
                         class="fixed top-0 right-0 w-full h-screen overflow-y-auto transition duration-75 ease-out transform bg-white"
-                        :class="{'translate-x-full' : !shown ,  'translate-x-0': shown }" 
+                        :class="{'translate-x-full' : !shown ,  'translate-x-0': shown }"
                 >
                     <div v-if="shown" class="w-full max-w-3xl px-4 mx-auto mt-12 md:px-14 pb-72">
                         <div class="pb-4 mb-6 border-b border-gray-200">
@@ -17,8 +17,8 @@
                         <div id="post-content" v-html="post.content" class="text-xl font-light leading-loose text-gray-700 content">
                         </div>
                     </div>
-            
-            
+
+
                 </div>
                 <div class="fixed flex bottom-12 left-12">
                     <button v-if="shown" @click="$emit('exit-post')" class="flex items-center justify-center w-16 h-16 mr-4 bg-gray-800 rounded-full shadow-md group hover:bg-gray-600">
@@ -26,14 +26,17 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                         </svg>
                     </button>
-                    <save-later-button :shown="shown" :url="post.url"></save-later-button>
+                    <SaveLaterButton :shown="shown" :url="post.url"></SaveLaterButton>
                 </div>
             </div>
 
 </template>
 <script>
+import SaveLaterButton from "./SaveLaterButton.vue";
+
 export default {
   props: ['post'],
+  components: {SaveLaterButton},
   computed: {
       shown: function(){
           return Object.keys(this.post).length > 0;
