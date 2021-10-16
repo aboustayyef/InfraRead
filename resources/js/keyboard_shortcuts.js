@@ -16,7 +16,7 @@ let settings = {
 export function handle_keyboard_shortcut(key, app){
 	console.log(key);
         // external links shortcuts
-        if (key.match(/\d/)) { 
+        if (key.match(/\d/)) {
             if (eval(key) < app.external_links.length) {
                 window.open(app.external_links[key],'_blank');
             }
@@ -35,11 +35,11 @@ export function handle_keyboard_shortcut(key, app){
                 break;
             case (settings.escape):
                 if (app.view == 'post') {
-                   app.exit_post(); 
+                   app.exit_post();
                 }
                 if (app.view == 'list' && app.highlighter_on){
                    app.highlighter_on = false;
-                   app.highlighter_position = 0; 
+                   app.highlighter_position = 0;
                 }
                 break;
             case (settings.jump):
@@ -47,9 +47,9 @@ export function handle_keyboard_shortcut(key, app){
                    document.querySelector('#post-view').scrollBy({top: 400, behavior: 'smooth'});
                 }
                 break;
-            case (settings.down): 
+            case (settings.down):
                 if (app.view == 'post') {
-                   document.querySelector('#post-view').scrollBy(0, 200) 
+                   document.querySelector('#post-view').scrollBy(0, 200)
                 } else {
                     if (app.highlighter_on == false) {
                         app.highlighter_on = true;
@@ -62,9 +62,9 @@ export function handle_keyboard_shortcut(key, app){
                     }
                 }
                 break;
-            case (settings.up): 
+            case (settings.up):
                 if (app.view == 'post') {
-                   document.querySelector('#post-view').scrollBy(0, -200) 
+                   document.querySelector('#post-view').scrollBy(0, -200)
                 } else {
                     if (app.highlighter_on == false) {
                         app.highlighter_on = true;
@@ -77,14 +77,14 @@ export function handle_keyboard_shortcut(key, app){
                     }
                 }
                 break;
-            case (settings.showPost): 
+            case (settings.showPost):
                 if (app.view == 'list' && app.highlighter_on == true) {
                     app.display_post(app.highlighted_post);
-                } 
+                }
                 break;
             case (settings.open):
                 if (app.view == 'list' && app.highlighter_on == true) {
-                   app.display_post(app.highlighted_post); 
+                   app.display_post(app.highlighted_post);
                    return;
                 }
                 if (app.view == 'post') {
@@ -93,7 +93,7 @@ export function handle_keyboard_shortcut(key, app){
                 break;
             case (settings.markAsRead):
                 if (app.view == 'list' && app.highlighter_on == true) {
-                   app.mark_post_as_read(app.highlighted_post); 
+                   app.mark_post_as_read(app.highlighted_post);
                    return;
                 }
                 if (app.view == 'post') {
@@ -101,24 +101,7 @@ export function handle_keyboard_shortcut(key, app){
                 }
                 break;
             case (settings.undo):
-                if (app.view == 'list' && app.posts_marked_as_read.length > 0) {
-                    
-                    // mark last post in list as unread
-                    let last_post_marked_as_read = app.posts_marked_as_read[app.posts_marked_as_read.length - 1];
-                    last_post_marked_as_read.read = 0;
-
-                    // update on server
-                    axios.patch("/api/posts/" + last_post_marked_as_read.id, { read: 0 })
-                    // If server update works, update list of posts marked as read 
-                    .then((res) => { 
-                        app.posts_marked_as_read.pop();
-                    })
-                    // If there's a problem, undo mark as read
-                    .catch((res) => {
-                    last_post_marked_as_read.read = 1;
-                    app.display_message('warning','Cannot contact server',2000);
-                    }) 
-                }
+                app.undo();
             default:
                 break;
         }

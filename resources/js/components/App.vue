@@ -9,13 +9,17 @@
         <!-- Read Count -->
         <ReadCount :count="number_of_unread_posts" />
 
-        <!-- Settings Gear -->
-        <a href="/admin" class="block">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 text-gray-300 cursor-pointer hover:text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-            </svg>
-        </a>
+        <div class="flex align-center">
+            <!-- Undo Button if exists -->
+            <svg v-if="undoable" @click="undo()" xmlns="http://www.w3.org/2000/svg" xml:space="preserve" class="h-8 text-gray-300 cursor-pointer hover:text-primary mr-4" fill="currentColor" viewBox="0 0 489.394 489.394"><path d="M375.789 92.867H166.864l17.507-42.795a22.21 22.21 0 0 0-6.691-25.744c-7.701-6.166-18.538-6.508-26.639-.879L9.574 121.71a22.297 22.297 0 0 0-9.563 18.995 22.278 22.278 0 0 0 10.71 18.359l147.925 89.823c8.417 5.108 19.18 4.093 26.481-2.499 7.312-6.591 9.427-17.312 5.219-26.202l-19.443-41.132h204.886c15.119 0 27.418 12.536 27.418 27.654V356.56c0 15.118-12.299 27.19-27.418 27.19h-226.74c-20.226 0-36.623 16.396-36.623 36.622v12.942c0 20.228 16.397 36.624 36.623 36.624h226.74c62.642 0 113.604-50.732 113.604-113.379v-149.85c.002-62.647-50.962-113.842-113.604-113.842z"/></svg>
+            <!-- Settings Gear -->
+            <a href="/admin" class="block">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 text-gray-300 cursor-pointer hover:text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+            </a>
+        </div>
 
     </div>
 
@@ -118,6 +122,9 @@ export default {
       });
   },
   computed: {
+      undoable: function(){
+          return this.view == 'list' && this.posts_marked_as_read.length > 0
+      },
       unread_posts: function(){
           if (Object.keys(this.posts).length > 0) {
               return this.posts.filter((post) => !post.read == 1 );
@@ -226,6 +233,29 @@ export default {
             rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
             rect.right <= (window.innerWidth || document.documentElement.clientWidth)
         );
+    },
+
+    undo(){
+        if (this.undoable) {
+            // mark last post in list as unread
+            let last_post_marked_as_read = this.posts_marked_as_read[this.posts_marked_as_read.length - 1];
+            last_post_marked_as_read.read = 0;
+
+            // update on server
+            axios.patch("/api/posts/" + last_post_marked_as_read.id, { read: 0 })
+            // If server update works, update list of posts marked as read
+            .then((res) => {
+                this.posts_marked_as_read.pop();
+            })
+            // If there's a problem, undo mark as read
+            .catch((res) => {
+            last_post_marked_as_read.read = 1;
+            this.display_message('warning','Cannot contact server',2000);
+            })
+            return true;
+        } else {
+            return false;
+        }
     }
 
   },
