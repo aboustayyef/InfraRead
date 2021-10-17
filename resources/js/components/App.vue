@@ -43,9 +43,9 @@
             </div>
         </div>
 
-        <div v-if="last_successful_crawl_data.status == 'warning'" class="text-yellow-800 max-w-7xl bg-yellow-50 w-full mx-auto px-4 py-2 border border-yellow-200 ">
+        <Message v-if="last_successful_crawl_data.status == 'warning'">
             {{last_successful_crawl_data.message}}
-        </div>
+        </Message>
 
     <!-- Well Done! You've read everything -->
         <div v-if="number_of_unread_posts < 1" class="container mx-auto">
@@ -101,10 +101,11 @@ import { handle_keyboard_shortcut  } from "../keyboard_shortcuts.js";
 // Import Components
 import Post from "./Post.vue";
 import ReadCount from "./partials/ReadCount.vue";
+import Message from "./partials/Message.vue";
 
 export default {
   props: ['refreshinterval','last_successful_crawl'],
-  components: {Post, ReadCount},
+  components: {Post, ReadCount, Message},
   data() {
     return {
       posts_loaded: false,
