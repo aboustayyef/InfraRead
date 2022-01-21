@@ -19,7 +19,7 @@
 
 
 .ir_button.attached{
-    @apply px-4 py-2 font-semibold text-gray-800 border border-l-0 border-gray-200 rounded-md rounded-l-none hover:text-white hover:bg-primary; 
+    @apply px-4 py-2 font-semibold text-gray-800 border border-l-0 border-gray-200 rounded-md rounded-l-none hover:text-white hover:bg-primary;
 }
 
 .content {
@@ -34,6 +34,13 @@
 }
 .content a {
     @apply text-primary;
+}
+
+.content pre {
+    overflow-x:scroll;
+}
+.content code{
+    overflow-x:scroll;
 }
 
 .content p {
