@@ -46,4 +46,7 @@ export default {
 </script>
 
 <style scoped>
+    figure{
+        max-width: 100%;
+    }
 </style>
