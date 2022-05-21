@@ -119,7 +119,7 @@ export function handle_keyboard_shortcut(key, app) {
 
         case settings.go_to_bottom:
             if (app.view == "post") {
-                // add behavior to scroll to the bottom in post mode
+                document.querySelector("#post-view").scrollBy(0, 20000);
             } else {
                 app.highlighter_position = app.number_of_unread_posts - 1;
                 app.show_highlighted_post();
@@ -128,7 +128,7 @@ export function handle_keyboard_shortcut(key, app) {
 
         case settings.go_to_top:
             if (app.view == "post") {
-                // add behavior to scroll to the top in post mode
+                document.querySelector("#post-view").scrollBy(0, -20000);
             } else {
                 app.highlighter_position = 0;
                 app.show_highlighted_post();
