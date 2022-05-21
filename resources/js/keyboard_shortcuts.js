@@ -103,6 +103,11 @@ export function handle_keyboard_shortcut(key, app) {
         case settings.markAsRead:
             if (app.view == "list" && app.highlighter_on == true) {
                 app.mark_post_as_read(app.highlighted_post);
+                // Check if it was the last post, then highlight to previous post
+                if (app.highlighter_position == app.number_of_unread_posts) {
+                    app.highlighter_position = app.number_of_unread_posts - 1;
+                    app.show_highlighted_post();
+                }
                 return;
             }
             if (app.view == "post") {
