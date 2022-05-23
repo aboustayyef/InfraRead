@@ -180,7 +180,9 @@ export default {
             if (Object.keys(this.posts).length > 0) {
                 return Object.keys(this.unread_posts).length;
             }
-            return 0;
+            if (this.posts_loaded) {
+                return 0;
+            }
         },
         //   view mode: post or list
         view: function () {
