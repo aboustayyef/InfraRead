@@ -12,6 +12,7 @@ let settings = {
     markAsRead: "e",
     go_to_bottom: "ShiftG",
     go_to_top: "gg",
+    search_on_twitter: "t",
 };
 
 export function handle_keyboard_shortcut(key, app) {
@@ -116,7 +117,6 @@ export function handle_keyboard_shortcut(key, app) {
             break;
         case settings.undo:
             app.undo();
-
         case settings.go_to_bottom:
             if (app.view == "post") {
                 document.querySelector("#post-view").scrollBy(0, 20000);
@@ -125,13 +125,21 @@ export function handle_keyboard_shortcut(key, app) {
                 app.show_highlighted_post();
             }
             break;
-
         case settings.go_to_top:
             if (app.view == "post") {
                 document.querySelector("#post-view").scrollBy(0, -20000);
             } else {
                 app.highlighter_position = 0;
                 app.show_highlighted_post();
+            }
+            break;
+        case settings.search_on_twitter:
+            if (app.view == "list" && app.highlighter_on == true) {
+                window.open('https://twitter.com/search?q=' + encodeURI(app.highlighted_post.url), "_blank");
+                return;
+            }
+            if (app.view == "post") {
+                window.open('https://twitter.com/search?q=' + encodeURI(app.displayed_post.url), "_blank");
             }
             break;
         default:
