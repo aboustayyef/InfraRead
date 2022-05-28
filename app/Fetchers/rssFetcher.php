@@ -7,6 +7,7 @@ use App\Models\Source;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
 use Illuminate\Support\Str;
+use willvincent\Feeds\Facades\FeedsFacade as Feeds;
 
 class rssFetcher implements Fetchable
 {
@@ -40,7 +41,7 @@ class rssFetcher implements Fetchable
     public function get_list_of_post_links()
     {
         $rss_feed = $this->source->fetcher_source;
-        $feed = \Feeds::make($rss_feed);
+        $feed = Feeds::make($rss_feed);
 
         // get all Items in the RSS feed
         $items = collect($feed->get_items());
