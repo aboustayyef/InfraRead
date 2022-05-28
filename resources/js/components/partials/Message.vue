@@ -1,5 +1,5 @@
 <template>
-        <div v-if="showing" class="text-yellow-800 max-w-7xl bg-yellow-50 w-full mx-auto px-4 py-2 border border-yellow-200 flex justify-between items-center ">
+        <div v-if="showing" class="py-3 mb-6 text-gray-600 max-w-7xl rounded-md bg-yellow-50 w-full mx-auto px-4 shadow-sm border border-yellow-100 flex justify-between items-center ">
             <div>
                 <slot/>
             </div>
