@@ -61,7 +61,7 @@
         </Message>
 
         <!-- Well Done! You've read everything -->
-        <div v-if="number_of_unread_posts < 1" class="container mx-auto">
+        <div v-if="number_of_unread_posts < 1" class="container max-w-md mx-auto">
             <InboxZero />
         </div>
 
