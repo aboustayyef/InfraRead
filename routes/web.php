@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Route;
 // Authorisation Routes Using the Laravel Breeze package
 require __DIR__.'/auth.php';
 
-// Ajax API for app and getting posts 
+// Ajax API for app and getting posts
 require __DIR__.'/infraread_api.php';
 
 // Onboarding
@@ -40,7 +40,7 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::resource('category', AdminCategoryController::class, ['as' => 'admin'])->except('show');
 });
 
-// Mark all as read 
+// Mark all as read
 Route::get('/markallread', function () {
     Post::all()->each(function ($post) {
         $post->read = 1;
@@ -61,8 +61,11 @@ Route::get('/feeds.opml', function () {
     return response()->view('opml', compact('categories'))->header('Content-Disposition', 'attachment')->header('Content-Type', 'text/xml');
 });
 
-
-
+// RSS Feeds for external readers
+Route::get('/rss/{source}', function(Source $source){
+    $feed_items = 50;
+    return response()->view('rss',['channel' => $source, 'items'=>$source->posts($feed_items)])->header('Content-Type', 'text/xml');
+});
 
 // Obsolete/ Previous Versions
 

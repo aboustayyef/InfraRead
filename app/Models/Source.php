@@ -11,9 +11,13 @@ class Source extends Model
     use HasFactory;
     protected $guarded = ['id'];
 
-    public function posts()
+    public function posts($howmany = null)
     {
-        return $this->hasMany('App\Models\Post');
+        $q =  $this->hasMany('App\Models\Post');
+        if ($howmany) {
+            return $q->latest()->take($howmany)->get();
+        }
+        return $q;
     }
 
     public function media()
