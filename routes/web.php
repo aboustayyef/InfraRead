@@ -42,11 +42,7 @@ Route::prefix('admin')->middleware('auth')->group(function () {
 
 // Mark all as read
 Route::get('/markallread', function () {
-    Post::all()->each(function ($post) {
-        $post->read = 1;
-        $post->save();
-    });
-
+    Post::where('read', 0)->update(array('read' => 1));
     return redirect('/app');
 });
 
