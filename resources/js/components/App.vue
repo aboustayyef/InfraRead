@@ -218,9 +218,10 @@ export default {
                 });
         },
         show_notification(kind, content, time) {
+            console.log('showing notification');
             this.notification.kind = kind;
             this.notification.message = content;
-            this.notification.display = true;
+            this.notification.displayed = true;
             setTimeout(() => {
                 this.show_message = false;
             }, time);
