@@ -20,7 +20,7 @@
                 </div>
                 <!-- Body of Post -->
                 <div v-on:click="$emit('displayPost', post)"
-                    class="w-full mt-6 text-xl font-light leading-relaxed text-gray-400 cursor-pointer overflow-clip md:mt-0 md:w-1/2">
+                    class="w-full mt-6 text-xl font-light leading-relaxed text-gray-400 cursor-pointer overflow-clip md:mt-4 md:w-1/2">
                     <p>{{ post.excerpt }}</p>
                 </div>
         </div>
