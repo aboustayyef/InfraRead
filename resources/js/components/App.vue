@@ -223,7 +223,7 @@ export default {
             this.notification.message = content;
             this.notification.displayed = true;
             setTimeout(() => {
-                this.show_message = false;
+                this.notification.displayed = false;
             }, time);
         },
         exit_post: function () {
