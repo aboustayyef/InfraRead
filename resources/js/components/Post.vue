@@ -13,6 +13,7 @@
                             </a>
                             <h2 class="mt-2 text-xl font-semibold uppercase text-primary">{{post.source.name}}</h2>
                             <h3 class="mt-6 text-gray-300">{{post.time_ago}}</h3>
+                            <div class="mt-4">🔗 <a class="text-primary ml-2 text-sm" :href="post.url">{{post.url}}</a></div>
                         </div>
                         <div id="post-content" v-html="post.content" class="text-xl font-light leading-loose text-gray-700 content break-words">
                         </div>
