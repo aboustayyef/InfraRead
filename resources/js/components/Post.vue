@@ -22,7 +22,7 @@
 
                 </div>
                 <div class="fixed flex bottom-12 left-12">
-                    <button v-if="shown" @click="$emit('exit-post')" class="flex items-center justify-center w-16 h-16 mr-4 bg-gray-800 rounded-full shadow-md group hover:bg-gray-600">
+                    <button v-if="shown" @click="$emit('exit-post', post)" class="flex items-center justify-center w-16 h-16 mr-4 bg-gray-800 rounded-full shadow-md group hover:bg-gray-600">
                         <svg class="h-10 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                         </svg>

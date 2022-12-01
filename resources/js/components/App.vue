@@ -195,7 +195,6 @@ export default {
             this.external_links_shortcuts = false;
             this.displayed_post = p;
             // Timeout the animation then set as read
-            this.mark_post_as_read(p);
         },
         mark_post_as_read: function (p) {
             // update locally
@@ -226,7 +225,8 @@ export default {
                 this.notification.displayed = false;
             }, time);
         },
-        exit_post: function () {
+        exit_post: function (p) {
+            this.mark_post_as_read(p);
             this.displayed_post = {};
             this.external_links = [];
         },

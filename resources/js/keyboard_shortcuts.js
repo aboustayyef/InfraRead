@@ -40,7 +40,7 @@ export function handle_keyboard_shortcut(key, app) {
             break;
         case settings.escape:
             if (app.view == "post") {
-                app.exit_post();
+                app.exit_post(app.displayed_post);
             }
             if (app.view == "list" && app.highlighter_on) {
                 app.highlighter_on = false;
@@ -112,7 +112,7 @@ export function handle_keyboard_shortcut(key, app) {
                 return;
             }
             if (app.view == "post") {
-                app.exit_post();
+                app.exit_post(app.displayed_post);
             }
             break;
         case settings.undo:
