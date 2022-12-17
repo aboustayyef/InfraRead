@@ -8,23 +8,31 @@
 
 
 {{-- modal --}}
-<div id="modal" class="hidden absolute top-0 left-0 w-screen h-screen bg-gray-800 bg-opacity-80 flex flex-col justify-center items-center" tabindex="-1" role="dialog">
-    <div class="w-full sm:max-w-md mt-6 px-6 py-4 bg-white shadow-md overflow-hidden sm:rounded-lg h-auto" role="document">
-      <div class="modal-content">
-        <div class="modal-header flex justify-between">
-            <h4 class="modal-title text-2xl font-bold text-center text-primary">Are you sure?</h4>
-            <button id="close" type="button" class="close text-2xl font-bold" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 
+{{-- dark background --}}
+<div id="modal" class="hidden fixed inset-0 w-screen h-screen bg-gray-800 bg-opacity-80 flex flex-col justify-center items-center" tabindex="-1" role="dialog">
+
+    {{-- modal itself --}}
+    <div class="w-full sm:max-w-md mt-6 bg-white shadow-md overflow-hidden sm:rounded-lg h-auto" role="document">
+      <div class="modal-content">
+        {{-- header --}}
+        <div class="modal-header flex justify-between p-4 items-center">
+            <h4 class="modal-title text-2xl font-bold text-center text-primary">Are you sure?</h4>
+            <button id="close" type="button" class="close text-3xl font-bold" aria-label="Close"><x-ui.close-button classes="h-8 w-8 hover:text-primary " /></button>
         </div>
-        <div class="modal-body my-4">
-          <p>{{$slot}}</p>
+        {{-- body --}}
+        <div class="modal-body p-4">
+          <p class="text-gray-500">{{$slot}}</p>
         </div>
-        <div class="modal-footer">
+        {{-- footer --}}
+        <div class="modal-footer mt-4 px-4 py-6 border-t border-gray-200 bg-gray-100">
           <form method="POST" action="{{$formAction}}" class="flex justify-center">
               {{csrf_field()}}
               <input name="_method" type="hidden" value="DELETE">
-              <button id="cancel" type="button" class="mr-4 px-4 py-2 border rounded-lg text-white bg-blue-700 hover:bg-blue-900">Cancel</button>
-              <button type="submit" class="mr-4 px-4 py-2 border rounded-lg bg-primary hover:bg-red-900 text-white">Yes, delete permanently</button>
+              <div class="w-full flex justify-between">
+                  <button id="cancel" type="button" class="flex-auto mr-4 px-4 py-2 border rounded-lg text-white bg-blue-700 hover:bg-blue-900">Cancel</button>
+                  <button type="submit" class="flex-auto mr-4 px-4 py-2 border rounded-lg bg-primary hover:bg-red-900 text-white">Yes, delete permanently</button>
+              </div>
           </form>
         </div>
       </div><!-- /.modal-content -->
