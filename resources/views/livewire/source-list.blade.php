@@ -1,10 +1,11 @@
 <div>
-    <div class="flex flex-wrap w-full max-w-2xl">
-        <h2 class="mb-4 mr-4 text-4xl font-bold text-gray-600 lg:mr-12">Sources</h2>
+    <h2 class="mr-4 text-4xl font-bold text-gray-600 lg:mr-12">Sources</h2>
+    <div class="flex flex-wrap w-full max-w-2xl items-center mt-4 space-x-4">
         <input type="text" placeholder="Filter Sources" wire:model="searchString" class="ir_input">
+        <a href="{{route('admin.source.create')}}" class="hover:text-white hover:bg-primary bg-white text-primary px-4 py-2 border border-primary rounded-md block">+ Add Source </a>
     </div>
-    <hr class="mt-12">
-    <div class="mt-12">
+
+    <div class="mt-6">
         @foreach ($sources as $source)
             @if ($this->matchSearchString($source))
                 <x-source-item v-for="source in this.filtered_sources" v-if="appReady">
@@ -12,7 +13,7 @@
                     <x-slot name="description">{{$source->description}}</x-slot>
                     <x-slot name="category">{{$source->category? $source->category->description:"No Category"}}</x-slot>
                     <x-slot name="edit">/admin/source/{{$source->id}}/edit</x-slot>
-                </x-source-item> 
+                </x-source-item>
             @endif
         @endforeach
     </div>
