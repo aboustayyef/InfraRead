@@ -44,7 +44,7 @@ class AdminSourceController extends Controller
         $source = Source::Create($request->except(['_token']));
 
         // Launch event
-        NewSourceAdded::dispatch($source);
+        // NewSourceAdded::dispatch($source);
 
         return redirect('/admin/source')->with('message', 'Source has been successfully created');
     }

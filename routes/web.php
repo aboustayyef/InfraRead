@@ -135,8 +135,8 @@ Route::get('/rss/{source}', function(Source $source){
 //         return Category::all();
 //     });
 
-//     // analyze URL for quick add
+    // analyze URL for quick add
 
-//     Route::get('urlanalyze', [UrlAnalysisController::class, 'index']);
+    // Route::get('urlanalyze', [UrlAnalysisController::class, 'index']);
 
-//     });
+    // });

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\UrlAnalysisController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -21,6 +22,9 @@ Route::get('test', function(){
 return 'test successful';
 });
 
+// URL analysis for adding new sources
+Route::get('urlanalyze', [UrlAnalysisController::class, 'index']);
+
 Route::get('readlaterservice', function () {
         switch (env('PREFERRED_READLATER_SERVICE')) {
             case 'pocket':
@@ -29,6 +33,6 @@ Route::get('readlaterservice', function () {
             case 'instapaper':
                 return 'instapaper';
         }
-    
+
         return 'none';
 })->middleware('auth');
