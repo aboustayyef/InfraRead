@@ -22,7 +22,6 @@
         [v-cloak] {display: none}
     </style>
     <div id="app">
-
         <div class="p-0 lg:flex">
             <x-admin-sidebar />
             <div id="content" class="w-full px-12 pb-24 mt-20 lg:pl-72">

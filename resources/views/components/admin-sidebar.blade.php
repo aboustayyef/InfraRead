@@ -1,4 +1,4 @@
-<div id="sidebar-info" class="w-full bg-gray-100 lg:w-64 lg:min-h-screen lg:fixed">
+<div id="sidebar-info" class="w-full bg-gray-100 lg:w-64 lg:min-h-screen lg:fixed lg:top-0">
     {{--sidebar info--}}
     <div class="lg:justify-between lg:h-full lg:flex lg:flex-col">
         {{-- sidebar top --}}
