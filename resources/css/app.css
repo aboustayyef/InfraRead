@@ -21,11 +21,21 @@
 .ir_button.attached{
     @apply px-4 py-2 font-semibold text-gray-800 border border-l-0 border-gray-200 rounded-md rounded-l-none hover:text-white hover:bg-primary;
 }
-
+strong {
+    @apply font-semibold;
+}
 .content {
     @apply mx-auto leading-relaxed tracking-wide;
 }
-
+.content ul{
+    @apply ml-10 list-disc my-2;
+}
+.content ol{
+    @apply ml-10 list-decimal my-2;
+}
+.content li{
+    @apply mb-2;
+}
 .content blockquote {
     @apply p-4 mb-4 text-gray-500 bg-gray-100 border-b-8 border-gray-400;
 }
