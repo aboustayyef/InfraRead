@@ -45,6 +45,17 @@ strong {
 .content a {
     @apply text-primary;
 }
+.content h1, h2, h3, h4 {
+    @apply font-semibold
+}
+
+.content h2{
+    @apply text-3xl my-2
+}
+
+.content h3{
+    @apply text-2xl my-2
+}
 
 .content pre {
     overflow-x:scroll;
