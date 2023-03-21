@@ -2,6 +2,7 @@ import { upperCase } from "lodash";
 
 let settings = {
     down: "j",
+    double_down: "d",
     up: "k",
     escape: "Escape",
     showLinks: "f",
@@ -70,6 +71,11 @@ export function handle_keyboard_shortcut(key, app) {
                         app.show_highlighted_post();
                     }
                 }
+            }
+            break;
+        case settings.double_down:
+            if (app.view == "post") {
+                document.querySelector("#post-view").scrollBy(0, 500);
             }
             break;
         case settings.up:
