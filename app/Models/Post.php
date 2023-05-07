@@ -7,6 +7,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Http;
 
 class Post extends Model
 {
@@ -19,20 +20,52 @@ class Post extends Model
         'deleted_at',
         'posted_at',
     ];
+    public function summary()
+    {
+        $apiKey = env('OPENAI_KEY');
+        $text = strip_tags($this->content);
+        $text = str_replace(PHP_EOL,'',$text);
+        // The API endpoint for text summarization
+        $endpoint = 'https://api.openai.com/v1/engines/' . env('OPENAI_MODEL') . '/completions';
 
-    public static function getLastSuccesfulCrawl(){
+        // The number of summary sentences you want
+        $numSentences = 3;
+
+        // Create the request payload
+        $data = [
+            'prompt' => 'Summarize this: ' . $text,
+            'temperature' => 0.5,
+            'max_tokens' => 100,
+            'n' => $numSentences,
+            'stop' => '.\n',
+        ];
+
+        // Send the request using Laravel's Http class
+        $response = Http::withHeaders([
+            'Content-Type' => 'application/json',
+            'Authorization' => 'Bearer ' . $apiKey,
+        ])->post($endpoint, $data);
+        if ($response->failed()) {
+            return 'Error summarizing';
+        } else {
+            $summary = $response->json()['choices'][0]['text'];
+            return $summary;
+        }
+    }
+    public static function getLastSuccesfulCrawl()
+    {
         try {
             $crawl_status = [];
-            $last_crawl = new Carbon(File::get(storage_path(). '/app/LastSuccessfulCrawl.txt'));
+            $last_crawl = new Carbon(File::get(storage_path() . '/app/LastSuccessfulCrawl.txt'));
             // If more than 80 minutes ago, there's a problem that needs to be looked into
             if ($last_crawl->diffInMinutes() > 80) {
                 $crawl_status['status'] = 'warning';
-                $crawl_status['message']= 'Warning. Last Crawl was ' . $last_crawl->diffForHumans();
+                $crawl_status['message'] = 'Warning. Last Crawl was ' . $last_crawl->diffForHumans();
                 return collect($crawl_status);
             }
-            
+
             $crawl_status['status'] = 'ok';
-            $crawl_status['message'] = $last_crawl->diffForHumans(); 
+            $crawl_status['message'] = $last_crawl->diffForHumans();
             return collect($crawl_status);
         } catch (\Exception $e) {
             dd($e);
@@ -58,8 +91,8 @@ class Post extends Model
     }
 
     /*
-        Relationships
-     */
+    Relationships
+    */
 
     public function source()
     {
@@ -77,8 +110,8 @@ class Post extends Model
     }
 
     /*
-        Utility Functions
-     */
+    Utility Functions
+    */
     public static function uid_exists($uid)
     {
         return static::where('uid', $uid)->count() > 0;
@@ -90,8 +123,8 @@ class Post extends Model
     }
 
     /*
-        Images and Media
-     */
+    Images and Media
+    */
 
     public function hasCache()
     {
@@ -107,7 +140,7 @@ class Post extends Model
     {
         // if cache exists, return cache,
         if ($this->hasCache()) {
-            return '/img/media/'.$this->media->first()->pointer;
+            return '/img/media/' . $this->media->first()->pointer;
         }
         // other wise if an original image exists, return it
         if ($this->original_image && $this->original_image !== 'NULL') {
@@ -121,7 +154,7 @@ class Post extends Model
     {
         if ($this->hasCache()) {
             $values = json_decode($this->media()->latest()->take(1)->first()->dominant_color);
-            $string = 'rgb('.$values[0].','.$values[1].','.$values[2].')';
+            $string = 'rgb(' . $values[0] . ',' . $values[1] . ',' . $values[2] . ')';
 
             return $string;
         }
@@ -157,7 +190,7 @@ class Post extends Model
             $applicable_plugins = $all_plugins[$this->source->shortname()];
 
             foreach ($applicable_plugins as $plugin) {
-                $className = 'App\Plugins\Plugin'.$plugin;
+                $className = 'App\Plugins\Plugin' . $plugin;
                 $post = (new $className($this))->handle();
             }
         }

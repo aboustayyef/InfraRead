@@ -31,6 +31,11 @@ Route::get('/app', function () {
     return view('home')->with('last_successful_crawl', $last_successful_crawl);
 })->middleware('auth');
 
+// get summary
+Route::get('/summary/{post}', function(Post $post) {
+   return response()->json(['summary' => $post->summary()]);
+})->middleware('auth');
+
 // Administration
 Route::prefix('admin')->middleware('auth')->group(function () {
     Route::get('/', function () {

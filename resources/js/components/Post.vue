@@ -15,29 +15,45 @@
                             <h3 class="mt-6 text-gray-300">{{post.time_ago}}</h3>
                             <div class="mt-4">🔗 <a class="text-primary ml-2 text-sm" :href="post.url">{{post.url}}</a></div>
                         </div>
+                        <div id="summary" v-if="summary !== null" class="bg-red-50 p-4 my-4">
+                            <h3 class="font-bold mb-2">Summary</h3>
+                            <p class="text-gray-700" v-text="summary"></p>
+                        </div>
                         <div id="post-content" v-html="post.content" class="text-xl font-light leading-loose text-gray-700 content break-words">
                         </div>
                     </div>
 
 
                 </div>
-                <div class="fixed flex bottom-12 left-12">
-                    <button v-if="shown" @click="$emit('exit-post', post)" class="flex items-center justify-center w-16 h-16 mr-4 bg-gray-800 rounded-full shadow-md group hover:bg-gray-600">
+                <div class="fixed flex bottom-12 left-12 space-x-4">
+                    <button v-if="shown" @click="$emit('exit-post', post)" class="flex items-center justify-center w-16 h-16 bg-gray-800 rounded-full shadow-md group hover:bg-gray-600">
                         <svg class="h-10 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                         </svg>
                     </button>
                     <SaveLaterButton :shown="shown" :url="post.url"></SaveLaterButton>
+                    <SummarizeButton :post="post.id" @summarized="handleSummary" />
                 </div>
             </div>
 
 </template>
 <script>
 import SaveLaterButton from "./SaveLaterButton.vue";
+import SummarizeButton from "./SummarizeButton.vue";
 
 export default {
   props: ['post'],
-  components: {SaveLaterButton},
+  components: {SaveLaterButton, SummarizeButton},
+  methods: {
+    handleSummary(summary){
+        this.summary=summary;
+    }
+  },
+  data() {
+        return {
+            summary: null,
+        };
+    },
   computed: {
       shown: function(){
           return Object.keys(this.post).length > 0;
