@@ -32,7 +32,7 @@
                         </svg>
                     </button>
                     <SaveLaterButton :shown="shown" :url="post.url"></SaveLaterButton>
-                    <SummarizeButton :post="post.id" @summarized="handleSummary" />
+                    <SummarizeButton v-show="shown" :post="post.id" @summarized="handleSummary" />
                 </div>
             </div>
 

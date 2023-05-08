@@ -5,17 +5,16 @@
         <div @click="summarize" v-if="status == 'summarize'">
             <svg
                 xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 512 512"
-                class="h-8 opacity-50 group-hover:opacity-100"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                class="opacity-50 group-hover:opacity-100 w-6 h-6"
             >
-                <path fill="#007acc" d="M240 32.7h32v446.6h-32z" />
                 <path
-                    fill="#007acc"
-                    d="M372.2 197.3h-232c-8.4 0-15.3-6.9-15.3-15.3s6.9-15.3 15.3-15.3h232c8.4 0 15.3 6.9 15.3 15.3s-6.9 15.3-15.3 15.3z"
-                />
-                <path
-                    fill="#007acc"
-                    d="M372.2 322.7h-232c-8.4 0-15.3-6.9-15.3-15.3s6.9-15.3 15.3-15.3h232c8.4 0 15.3 6.9 15.3 15.3s-6.9 15.3-15.3 15.3z"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M3 4.5h14.25M3 9h9.75M3 13.5h5.25m5.25-.75L17.25 9m0 0L21 12.75M17.25 9v12"
                 />
             </svg>
         </div>
@@ -109,9 +108,9 @@ export default {
                     if (res.data.summary) {
                         this.status = "summarize";
                         this.summary = res.data.summary;
-                        this.$emit('summarized', this.summary);
+                        this.$emit("summarized", this.summary);
                         setTimeout(() => {
-                            this.status = "save";
+                            this.status = "summarize";
                         }, 1000);
                     }
                 })
