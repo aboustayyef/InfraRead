@@ -41,12 +41,9 @@ class PluginMakeTextLegible implements PluginInterface
             $content = str_replace("\r", '', $content);
 
             // Divide into short sentences
-            $phrases = $this->breakLongText($content, 130, $max_length_of_paragraph);
-            $content = '<p>'.implode('</p><p>', $phrases).'</p>';
+            // $phrases = $this->breakLongText($content, 130, $max_length_of_paragraph);
+            $cleaned_content = $this->breakLongText($content, 300);
 
-            // then re-attach it
-            $parts[0] = $content;
-            $cleaned_content = implode($parts);
             $this->post->content = $cleaned_content;
             $this->post->save();
 
@@ -56,7 +53,58 @@ class PluginMakeTextLegible implements PluginInterface
         }
     }
 
-    private function breakLongText($text, $length = 200, $maxLength = 250)
+    function breakLongText($text, $minLettersCount = 350)
+    {
+        // Sometimes sentences include abbrevations containing dots. We shouldn't use them to divide paragraphs
+        $ignoredAbbreviations = ['U.S.'];
+        $paragraphs = [];
+
+        // Split the text into sentences using delimiters ".", "!", and "?"
+        $sentences = preg_split('/(?<=[.!?])\s+/', $text);
+
+        // Initialize a variable to hold the current paragraph
+        $currentParagraph = '';
+
+        // Iterate through the sentences
+        foreach ($sentences as $sentence) {
+            // Trim any leading or trailing whitespace from the sentence
+            $sentence = trim($sentence);
+
+            // Check if the sentence is an abbreviation to ignore
+            $isAbbreviation = false;
+            foreach ($ignoredAbbreviations as $abbreviation) {
+                if (stripos($sentence, $abbreviation) !== false) {
+                    $isAbbreviation = true;
+                    break;
+                }
+            }
+
+            // If the sentence is not empty and not an abbreviation, add it to the current paragraph
+            if (!empty($sentence)) {
+                $currentParagraph .= $sentence . ' ';
+            }
+
+            // If the sentence is empty (end of a paragraph) or meets the minimum letters count, add the current paragraph to the array
+            if (empty($sentence) || mb_strlen($currentParagraph) >= $minLettersCount || $sentence === end($sentences)) {
+
+                // If the paragraph doesn't end with an abbreviation, Add it to the array
+                if (!$isAbbreviation) {
+
+                    // Trim any trailing whitespace from the current paragraph
+                    $currentParagraph = rtrim($currentParagraph);
+                    $paragraphs[] = '<p>' . $currentParagraph . '</p>';
+
+                    // Reset the current paragraph
+                    $currentParagraph = '';
+                }
+            }
+        }
+
+        // Join the paragraphs with line breaks and return the HTML code
+        return implode("\n", $paragraphs);
+    }
+
+    private function breakLongText_old($text, $length = 200, $maxLength = 250)
     {
         // Source: http://www.brainbell.com/tutorials/php/long-to-small-paragraph.html
 
