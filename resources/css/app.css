@@ -25,7 +25,7 @@ strong {
     @apply font-semibold;
 }
 .content {
-    font-family: 'Noto Sans', sans-serif;
+    font-family: 'Roboto Slab', sans-serif;
 }
 .content {
     @apply mx-auto leading-relaxed tracking-wide;
