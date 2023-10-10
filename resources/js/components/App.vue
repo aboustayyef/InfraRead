@@ -17,7 +17,7 @@
         <!-- Header -->
         <div v-if="posts_loaded == true" class="flex items-center justify-between mx-auto mb-6 max-w-7xl">
             <!-- Logo -->
-            <a href="/"><img class="h-8 md:h-12" src="/img/infraread144.png" /></a>
+            <a href="/"><IrLogo class="h-8 md:h-12"/></a>
 
             <!-- Read Count -->
             <ReadCount :count="number_of_unread_posts" />
@@ -93,13 +93,14 @@ import InboxZero from "./partials/InboxZero.vue";
 import Notification from "./partials/Notification.vue";
 
 // UI Elements
+import IrLogo from "./partials/ui/IrLogo.vue";
 import LoadingIndicator from "./partials/ui/LoadingIndicator.vue";
 import UndoButton from "./partials/ui/UndoButton.vue";
 import SettingsIcon from "./partials/ui/SettingsIcon.vue";
 
 export default {
     props: ["refreshinterval", "last_successful_crawl"],
-    components: { Post, PostItem, ReadCount, Message, InboxZero, LoadingIndicator, UndoButton, SettingsIcon, Notification },
+    components: { Post, PostItem, ReadCount, Message, InboxZero, IrLogo, LoadingIndicator, UndoButton, SettingsIcon, Notification },
     data() {
         return {
             debug: false,
