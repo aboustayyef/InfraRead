@@ -294,7 +294,6 @@ export default {
                     this.posts_marked_as_read.length - 1
                     ];
                 last_post_marked_as_read.read = 0;
-                this.highlighter_position = 0;
                 // update on server
                 axios
                     .patch("/api/posts/" + last_post_marked_as_read.id, {
