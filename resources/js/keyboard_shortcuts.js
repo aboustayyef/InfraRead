@@ -123,6 +123,7 @@ export function handle_keyboard_shortcut(key, app) {
             break;
         case settings.undo:
             app.undo();
+            break;
         case settings.go_to_bottom:
             if (app.view == "post") {
                 document.querySelector("#post-view").scrollBy(0, 20000);

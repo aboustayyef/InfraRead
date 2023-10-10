@@ -1,6 +1,14 @@
 <template>
     <div class="relative w-full h-screen p-4 pt-12 overflow-y-auto text-left md:p-12">
 
+        <!-- Debug Bar -->
+        <div v-if="this.debug == true" class="fixed bg-green-100 top-0 left-0 right-0 p-2 space-x-2">
+            <span>Highlighter on: {{ this.highlighter_on }}</span>
+            <span>Highlighter position: {{ this.highlighter_position }}</span>
+            <span>posts marked as read: {{ this.posts_marked_as_read.length }}</span>
+            <span v-if="posts_loaded">unread posts length: {{this.unread_posts.length}}</span>
+        </div>
+
         <!-- Loading Indicator -->
         <div v-cloak v-if="posts_loaded == false" class="max-w-7xl mx-auto flex">
             <LoadingIndicator />
@@ -39,11 +47,12 @@
             </div>
         </div>
 
+        <!-- Crawl Warning Message if last crawl was long ago -->
         <Message v-if="last_successful_crawl_data.status == 'warning'">
             {{ last_successful_crawl_data.message }}
         </Message>
 
-        <!-- Well Done! You've read everything -->
+        <!-- Well Done! You've read everything message -->
         <div v-if="number_of_unread_posts < 1" class="container max-w-md mx-auto">
             <InboxZero />
         </div>
@@ -93,6 +102,7 @@ export default {
     components: { Post, PostItem, ReadCount, Message, InboxZero, LoadingIndicator, UndoButton, SettingsIcon, Notification },
     data() {
         return {
+            debug: false,
             posts_loaded: false,
             last_successful_crawl_data: {},
             posts: {},
@@ -231,6 +241,7 @@ export default {
             this.external_links = [];
         },
         show_highlighted_post() {
+            console.log('Showing post ' + this.highlighter_position);
             document
                 .querySelector("#post-" + this.highlighter_position)
                 .scrollIntoView({
@@ -283,7 +294,7 @@ export default {
                     this.posts_marked_as_read.length - 1
                     ];
                 last_post_marked_as_read.read = 0;
-
+                this.highlighter_position = 0;
                 // update on server
                 axios
                     .patch("/api/posts/" + last_post_marked_as_read.id, {
