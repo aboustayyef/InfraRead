@@ -78,6 +78,7 @@ class Source extends Model
             $post->source_id = $this->id;
             $post->save();
             $post->applyPlugins();
+            $post->markMutedPhrasesAsRead();
         }
 
         return $posts->count().' new posts saved';
