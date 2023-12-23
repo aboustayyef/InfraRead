@@ -15,8 +15,8 @@
    </div>
    <div class="mt-4">
       <input wire:keydown.enter="addPhrase" type="text" class="rounded border border-gray-300 p-2"
-         wire:model="phrase_to_add" placeholder="Your input here">
-      <button wire:click = "addPhrase" class="rounded bg-primary px-4 py-2 font-bold text-white">
+         wire:model="phrase_to_add" placeholder="Add new phrase">
+      <button title="remove phrase" wire:click = "addPhrase" class="rounded bg-primary px-4 py-2 font-bold text-white">
          Add
       </button>
    </div>
