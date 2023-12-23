@@ -26,6 +26,15 @@
                         </div>
                     </a>
                 </li>
+                <li
+                    class="hover:bg-primary hover:text-white @if (request()->routeIs('admin.muted.index')) bg-gray-200 @endif">
+                    <a href="/admin/muted" class="w-full pl-4 py-2 block">
+                        <div class="flex space-x-4">
+                            <x-ui.categories-icon classes="text-gray-400" />
+                            <div>Muted Phrases</div>
+                        </div>
+                    </a>
+                </li>
             </ul>
 
         </div>

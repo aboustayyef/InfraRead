@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminCategoryController;
 use App\Http\Controllers\AdminSourceController;
+use App\Http\Controllers\AdminMutedController;
 use App\Http\Controllers\PocketSetupController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\PostsByCategoryController;
@@ -43,6 +44,7 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     });
     Route::resource('source', AdminSourceController::class, ['as' => 'admin'])->except('show');
     Route::resource('category', AdminCategoryController::class, ['as' => 'admin'])->except('show');
+    Route::resource('muted', AdminMutedController::class, ['as' => 'admin']);
 });
 
 // Mark all as read
