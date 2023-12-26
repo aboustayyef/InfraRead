@@ -46,7 +46,8 @@ class PostsUpdater extends Command
             $source = Source::find($this->argument('source'));
             if ($source) {
                 $this->info('Getting Latest Posts of Source: '.$source->name);
-                $source->updatePosts();
+                $status = $source->updatePosts();
+                $this->info($status);
                 $this->info('done');
 
                 return;
