@@ -79,6 +79,7 @@ class Source extends Model
             $post->save();
             $post->applyPlugins();
             $post->markMutedPhrasesAsRead();
+            $post->save();
         }
 
         return $posts->count().' new posts saved';
