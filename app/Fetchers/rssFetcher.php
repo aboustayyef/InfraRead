@@ -8,12 +8,13 @@ use Carbon\Carbon;
 use GuzzleHttp\Client;
 use Illuminate\Support\Str;
 use willvincent\Feeds\Facades\FeedsFacade as Feeds;
+use Illuminate\Support\Collection;
 
-class rssFetcher implements Fetchable
+class rssFetcher
 {
     private $list_of_post_links; // raw collection of link and uid keys
     private $list_of_new_posts; // collection of App\Post obejcts of new posts only
-
+    private $source; //
     public function __construct(Source $source)
     {
         $this->source = $source;
@@ -24,9 +25,9 @@ class rssFetcher implements Fetchable
      * Step 1: Get a list of post links
      * Step 2: Filter the list to only new posts and get details.
      *
-     * @return Laravel Collection of post objects
+     * @return Collection of post objects
      */
-    public function fetch()
+    public function fetch(): Collection
     {
         $this->list_of_post_links = $this->get_list_of_post_links();
         $this->list_of_new_posts = $this->get_new_posts();
@@ -38,7 +39,7 @@ class rssFetcher implements Fetchable
      * This is step One. Use Simplepie to get list of new posts
      * Then remove everything but the link and uid and convert to collection.
      */
-    public function get_list_of_post_links()
+    public function get_list_of_post_links() :Collection
     {
         $rss_feed = $this->source->fetcher_source;
         $feed = Feeds::make($rss_feed);
@@ -53,16 +54,17 @@ class rssFetcher implements Fetchable
                 $author = '';
             }
 
-            return
-            [
-                'url' => $item->get_link(),
-                'uid' => $item->get_id(),
-                'date' => $item->get_date(),
-                'title' => html_entity_decode($item->get_title()),
-                'url' => $item->get_link(),
-                'author' => $author,
-                'content' => $item->get_content(),
-            ];
+            return collect
+            (
+                [
+                    'url' => $item->get_link(),
+                    'uid' => $item->get_id(),
+                    'date' => $item->get_date(),
+                    'title' => html_entity_decode($item->get_title()),
+                    'author' => $author,
+                    'content' => $item->get_content(),
+                ]
+            );
         });
 
         return $items;
@@ -71,9 +73,9 @@ class rssFetcher implements Fetchable
     /**
      * Step 2: Convert the collection of link/uid to full-fleshed post objects.
      *
-     * @return a Laravel Collection of Post objects
+     * @return Collection of Post objects
      */
-    public function get_new_posts()
+    public function get_new_posts() :Collection
     {
         //filter out posts that already exist in the database
         $new_links = $this->list_of_post_links->filter(function ($item) {
@@ -107,14 +109,14 @@ class rssFetcher implements Fetchable
         $client = new Client();
         try {
             $response = $client->request('GET', 'https://mercury.postlight.com/parser', [
-                    'query' => [
-                        'url' => $url,
-                    ],
-                    'headers' => [
-                        'Content-Type:' => 'application/json',
-                        'x-api-key' => env('MERCURY_API_KEY'),
-                    ],
-                ]);
+                'query' => [
+                    'url' => $url,
+                ],
+                'headers' => [
+                    'Content-Type:' => 'application/json',
+                    'x-api-key' => env('MERCURY_API_KEY'),
+                ],
+            ]);
             $content = json_decode($response->getBody());
 
             return $content->content;

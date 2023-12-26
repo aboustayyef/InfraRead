@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Fetchers\rssFetcher;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -63,13 +64,14 @@ class Source extends Model
         return $this->posts->last()->posted_at->diffInDays(new Carbon());
     }
 
-    public function updatePosts()
+    public function updatePosts(): string
     {
-        $className = 'App\Fetchers\\'.$this->fetcher_kind.'Fetcher';
+        // $className = 'App\Fetchers\\'.$this->fetcher_kind.'Fetcher';
 
         // Fetch The Posts into a collection;
-        $posts = (new $className($this))->fetch();
+        // $posts = (new $className($this))->fetch();
 
+        $posts = (new rssFetcher($this))->fetch();
         if ($posts->count() == 0) {
             return 'No New Posts Available';
         }
