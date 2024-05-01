@@ -4,6 +4,8 @@ namespace App\Utilities;
 
 use Exception;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\GuzzleException;
+use Illuminate\Support\Str;
 
 class ReadLater
 {
@@ -12,8 +14,13 @@ class ReadLater
     public function __construct($url)
     {
         // Check if Instapaper or Pocket are set up
-        if (!env('POCKET_ACCESS_TOKEN') && !env('INSTAPAPER_USERNAME') && !env('PREFERRED_READLATER_SERVICE')) {
-            throw new Exception('You have to setup either Instapaper or Pocket and choose which one you prefer');
+        if (
+            !env('OMNIVORE_API_KEY') &&
+            !env('POCKET_ACCESS_TOKEN') &&
+            !env('INSTAPAPER_USERNAME') &&
+            !env('PREFERRED_READLATER_SERVICE')
+        ) {
+            throw new Exception('You have to setup either Omnivore, Instapaper or Pocket and choose which one you prefer');
         }
         // Validate URL
         if (filter_var($url, FILTER_VALIDATE_URL)) {
@@ -27,16 +34,57 @@ class ReadLater
     {
         if (env('PREFERRED_READLATER_SERVICE') == 'pocket') {
             $response = json_decode((string) $this->saveToPocket());
+            if (isset($response->bookmark_id)) { return true;}
+        } elseif (env('PREFERRED_READLATER_SERVICE') == 'omnivore') {
+            return $this->saveToOmnivore();
         } else {
             $response = json_decode((string) $this->saveToInstapaper());
+            if ($response->status == 1) { return true; }
         }
-
-        if (isset($response->bookmark_id) || $response->status == 1) {
-            return true;
-        }
+        \Log::info('$response->saveUrl: ' . $response->saveUrl);
         throw new Exception('Couldnt save url', 1);
     }
 
+    public function saveToOmnivore()
+    {
+
+        $client = new Client();
+
+        // Replace '<your api key>' with your actual API key.
+        $apiKey = env('OMNIVORE_API_KEY');
+        $headers = [
+            'Content-Type' => 'application/json',
+            'Authorization' => $apiKey
+        ];
+
+        $body = json_encode([
+            'query' => 'mutation SaveUrl($input: SaveUrlInput!) { saveUrl(input: $input) { ... on SaveSuccess { url clientRequestId } ... on SaveError { errorCodes message } } }',
+            'variables' => [
+                'input' => [
+                    'clientRequestId' => Str::uuid()->toString(),
+                    'source' => 'api',
+                    'url' => urldecode($this->url)
+                ]
+            ]
+        ]);
+
+        try {
+            $response = $client->request('POST', 'https://api-prod.omnivore.app/api/graphql', [
+                'headers' => $headers,
+                'body' => $body
+            ]);
+            $json = $response->getBody()->getContents();
+            $data = json_decode($json, true);
+            if (is_array($data) && array_key_exists('data', $data)) {
+                return true; // Save was succesful
+            } else {
+                return false; // was was not succesful
+            }
+        } catch (GuzzleException $e) {
+            \Log::error($e->getMessage());
+            return false;
+        }
+    }
     public function saveToPocket()
     {
         $client = new Client();
@@ -53,10 +101,10 @@ class ReadLater
 
     public function saveToInstapaper()
     {
-        $saving_string = 'https://www.instapaper.com/api/add?'.
-        'username='.urlencode(env('INSTAPAPER_USERNAME')).
-        '&password='.urlencode(env('INSTAPAPER_PASSWORD')).
-        '&url='.$this->url;
+        $saving_string = 'https://www.instapaper.com/api/add?' .
+            'username=' . urlencode(env('INSTAPAPER_USERNAME')) .
+            '&password=' . urlencode(env('INSTAPAPER_PASSWORD')) .
+            '&url=' . $this->url;
 
         $client = new Client();
         $res = $client->request('GET', $saving_string, [

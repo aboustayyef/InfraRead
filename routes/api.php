@@ -25,14 +25,15 @@ return 'test successful';
 // URL analysis for adding new sources
 Route::get('urlanalyze', [UrlAnalysisController::class, 'index']);
 
-Route::get('readlaterservice', function () {
-        switch (env('PREFERRED_READLATER_SERVICE')) {
-            case 'pocket':
-                return 'pocket';
-                break;
-            case 'instapaper':
-                return 'instapaper';
-        }
-
-        return 'none';
-})->middleware('auth');
+Route::get('v2_readlaterservice', function () {
+    switch (env('PREFERRED_READLATER_SERVICE')) {
+        case 'pocket':
+            return 'pocket';
+        case 'instapaper':
+            return 'instapaper';
+        case 'omnivore':
+            return 'omnivore';
+        default:
+            return 'none';
+    }
+});
