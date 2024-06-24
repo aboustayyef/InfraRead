@@ -28,7 +28,7 @@ strong {
     font-family: 'Roboto Slab', sans-serif;
 }
 .content {
-    @apply mx-auto leading-relaxed tracking-wide;
+    @apply mx-auto leading-relaxed md:leading-relaxed tracking-wide text-base md:text-xl;
 }
 .content ul{
     @apply ml-10 list-disc my-2;
@@ -53,11 +53,11 @@ strong {
 }
 
 .content h2{
-    @apply text-3xl my-2
+    @apply text-xl md:text-3xl my-2
 }
 
 .content h3{
-    @apply text-2xl my-2
+    @apply text-lg md:text-2xl my-2
 }
 
 .content pre {

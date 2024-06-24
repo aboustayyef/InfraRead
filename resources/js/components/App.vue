@@ -1,5 +1,5 @@
 <template>
-    <div class="relative w-full h-screen p-4 pt-12 overflow-y-auto text-left md:p-12">
+    <div class="relative w-full h-screen p-2 md:p-4 pt-12 overflow-y-auto text-left md:p-12">
 
         <!-- Debug Bar -->
         <div v-if="this.debug == true" class="fixed bg-green-100 top-0 left-0 right-0 p-2 space-x-2">

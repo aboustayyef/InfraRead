@@ -4,15 +4,15 @@
                         class="fixed top-0 right-0 w-full h-screen overflow-y-auto transition duration-75 ease-out transform bg-white"
                         :class="{'translate-x-full' : !shown ,  'translate-x-0': shown }"
                 >
-                    <div v-if="shown" class="w-full max-w-4xl px-4 mx-auto mt-12 md:px-14 pb-72">
+                    <div v-if="shown" class="w-full max-w-4xl px-4 mx-auto mt-12 md:px-14 pb-72 overflow-hidden">
                         <div class="pb-4 mb-6 border-b border-gray-200">
                             <a :href="post.url">
-                                <h1 class="text-3xl font-semibold text-gray-700 max-w-prose">
+                                <h1 class="text-xl md:text-2xl font-semibold text-gray-700 max-w-prose">
                                     {{post.title}}
                                 </h1>
                             </a>
-                            <h2 class="mt-2 text-xl font-semibold uppercase text-primary">{{post.source.name}}</h2>
-                            <h3 class="mt-6 text-gray-300">{{post.time_ago}}</h3>
+                            <h2 class="mt-2 text-lg md:text-xl font-semibold uppercase text-primary">{{post.source.name}}</h2>
+                            <h3 class="mt-2 md:mt-6 text-gray-300">{{post.time_ago}}</h3>
                             <div class="mt-4">🔗 <a class="text-primary ml-2 text-sm" :href="post.url">{{post.url}}</a></div>
                         </div>
                         <div id="summary" v-if="summary !== null" class="bg-red-50 p-4 my-4">
