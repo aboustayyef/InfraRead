@@ -13,7 +13,7 @@
                             </a>
                             <h2 class="mt-2 text-lg md:text-xl font-semibold uppercase text-primary">{{post.source.name}}</h2>
                             <h3 class="mt-2 md:mt-6 text-gray-300">{{post.time_ago}}</h3>
-                            <div class="mt-4">🔗 <a class="text-primary ml-2 text-sm" :href="post.url">{{post.url}}</a></div>
+                            <div class="mt-4">🔗&nbsp;<a class="text-primary ml-2 text-sm" :href="post.url">{{post.url}}</a></div>
                         </div>
                         <div id="summary" v-if="summary !== null" class="bg-red-50 p-4 my-4">
                             <h3 class="font-bold mb-2">Summary</h3>
