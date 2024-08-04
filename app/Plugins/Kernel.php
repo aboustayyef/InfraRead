@@ -12,6 +12,7 @@ class Kernel
         // Remember, the order of the plugins matters. Start from left to right.
         return
         [
+            'httpskottkeorg' => ['FixRelativeLinks'],
             'httpsslashdotorg' => ['MakeTextLegible', 'ReplaceArticleLink'],
             'httpswwwmacstoriesnet' => ['MarkPostAsRead'],
             'httpswwwcaseylisscom' => ['MarkPostAsRead'],

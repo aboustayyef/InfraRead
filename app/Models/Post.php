@@ -203,7 +203,7 @@ class Post extends Model
 
             foreach ($applicable_plugins as $plugin) {
                 $className = 'App\Plugins\Plugin' . $plugin;
-                $post = (new $className($this))->handle();
+                (new $className($this))->handle();
             }
         }
     }

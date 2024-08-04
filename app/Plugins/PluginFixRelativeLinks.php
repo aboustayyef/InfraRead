@@ -1,0 +1,80 @@
+<?php
+
+namespace App\Plugins;
+
+use App\Models\Post;
+
+/**********************************************************************************
+ * All plugins take a App/Post object, transform it and return true if succesful
+ **********************************************************************************
+ *
+ * About This Plugin
+ * -------------------
+ * Clean Up Contents: Makes small improvements to content like replace relative links with absolute links for images.
+ *
+ * Modified Properties:
+ * --------------------
+ * Post->content
+ */
+
+class PluginFixRelativeLinks implements PluginInterface
+{
+    private $post;
+
+    public function __construct(Post $post)
+    {
+        $this->post = $post;
+    }
+
+    public function handle()
+    {
+        try {
+            $domain = $this->retrieveDomain($this->post->url);
+            $this->post->content = $this->convertRelativeLinksToAbsolute($this->post->content, $domain );
+            $this->post->save();
+            return true;
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+
+    private function retrieveDomain($url) {
+        // Parse the URL and get its components
+        $parsedUrl = parse_url($url);
+
+        // Reconstruct the domain part (scheme + host)
+        $domain = $parsedUrl['scheme'] . '://' . $parsedUrl['host'];
+
+        return $domain;
+    }
+    private function convertRelativeLinksToAbsolute($htmlContent, $domain) {
+        $dom = new \DOMDocument;
+
+        // Suppress errors due to malformed HTML and load the HTML content
+        @$dom->loadHTML($htmlContent, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+
+        // Create a new XPath object
+        $xpath = new \DOMXPath($dom);
+
+        // Find all <a> elements with href attribute
+        $links = $xpath->query("//a[@href]");
+        foreach ($links as $link) {
+            $href = $link->getAttribute('href');
+            if (parse_url($href, PHP_URL_SCHEME) === null) { // If the href is relative
+                $link->setAttribute('href', rtrim($domain, '/') . '/' . ltrim($href, '/'));
+            }
+        }
+
+        // Find all <img> elements with src attribute
+        $images = $xpath->query("//img[@src]");
+        foreach ($images as $img) {
+            $src = $img->getAttribute('src');
+            if (parse_url($src, PHP_URL_SCHEME) === null) { // If the src is relative
+                $img->setAttribute('src', rtrim($domain, '/') . '/' . ltrim($src, '/'));
+            }
+        }
+
+        // Return the modified HTML content
+        return $dom->saveHTML();
+    }
+}
