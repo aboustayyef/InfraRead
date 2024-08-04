@@ -72,6 +72,22 @@ class PluginFixRelativeLinks implements PluginInterface
             if (parse_url($src, PHP_URL_SCHEME) === null) { // If the src is relative
                 $img->setAttribute('src', rtrim($domain, '/') . '/' . ltrim($src, '/'));
             }
+
+            // Handle srcset attribute
+            $srcset = $img->getAttribute('srcset');
+            if ($srcset) {
+                $srcsetParts = explode(',', $srcset);
+                $absoluteSrcsetParts = [];
+                foreach ($srcsetParts as $part) {
+                    $urlDescriptor = explode(' ', trim($part));
+                    $url = $urlDescriptor[0];
+                    if (parse_url($url, PHP_URL_SCHEME) === null) { // If the url is relative
+                        $url = rtrim($domain, '/') . '/' . ltrim($url, '/');
+                    }
+                    $absoluteSrcsetParts[] = $url . (isset($urlDescriptor[1]) ? ' ' . $urlDescriptor[1] : '');
+                }
+                $img->setAttribute('srcset', implode(', ', $absoluteSrcsetParts));
+            }
         }
 
         // Return the modified HTML content
