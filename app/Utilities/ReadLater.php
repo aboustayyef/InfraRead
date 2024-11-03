@@ -34,12 +34,17 @@ class ReadLater
     {
         if (env('PREFERRED_READLATER_SERVICE') == 'pocket') {
             $response = json_decode((string) $this->saveToPocket());
-            if (isset($response->bookmark_id)) { return true;}
+            // Check if the `status` is `1` for success
+            if (isset($response->status) && $response->status == 1) {
+                return true;
+            }
         } elseif (env('PREFERRED_READLATER_SERVICE') == 'omnivore') {
             return $this->saveToOmnivore();
         } else {
             $response = json_decode((string) $this->saveToInstapaper());
-            if ($response->status == 1) { return true; }
+            if ($response->status == 1) {
+                return true;
+            }
         }
         \Log::info('$response->saveUrl: ' . $response->saveUrl);
         throw new Exception('Couldnt save url', 1);
