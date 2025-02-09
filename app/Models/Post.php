@@ -23,24 +23,30 @@ class Post extends Model
         'deleted_at',
         'posted_at',
     ];
-    public function summary()
+    public function summary($numSentences = 3)
     {
         $apiKey = env('OPENAI_KEY');
         $text = strip_tags($this->content);
-        $text = str_replace(PHP_EOL,'',$text);
-        // The API endpoint for text summarization
-        $endpoint = 'https://api.openai.com/v1/engines/' . env('OPENAI_MODEL') . '/completions';
+        $text = str_replace(PHP_EOL, '', $text);
 
-        // The number of summary sentences you want
-        $numSentences = 3;
+        // The API endpoint for text summarization using GPT-4o mini
+        $endpoint = 'https://api.openai.com/v1/chat/completions';
 
         // Create the request payload
         $data = [
-            'prompt' => 'Summarize this: ' . $text,
+            'model' => 'gpt-4o-mini',
+            'messages' => [
+                [
+                    'role' => 'system',
+                    'content' => 'You are a helpful assistant that summarizes text.'
+                ],
+                [
+                    'role' => 'user',
+                    'content' => 'Summarize this in ' . $numSentences . ' sentences: ' . $text
+                ]
+            ],
+            'max_tokens' => 250, // Increased max_tokens for better summaries
             'temperature' => 0.5,
-            'max_tokens' => 100,
-            'n' => $numSentences,
-            'stop' => '.\n',
         ];
 
         // Send the request using Laravel's Http class
@@ -48,10 +54,11 @@ class Post extends Model
             'Content-Type' => 'application/json',
             'Authorization' => 'Bearer ' . $apiKey,
         ])->post($endpoint, $data);
+
         if ($response->failed()) {
             return 'Error summarizing';
         } else {
-            $summary = $response->json()['choices'][0]['text'];
+            $summary = $response->json()['choices'][0]['message']['content'];
             return $summary;
         }
     }
