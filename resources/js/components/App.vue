@@ -1,23 +1,39 @@
 <template>
-    <div class="relative w-full h-screen p-2 md:p-4 pt-12 overflow-y-auto text-left md:p-12">
-
+    <div
+        class="relative w-full h-screen p-2 md:p-4 pt-12 overflow-y-auto text-left md:p-12"
+    >
         <!-- Debug Bar -->
-        <div v-if="this.debug == true" class="fixed bg-green-100 top-0 left-0 right-0 p-2 space-x-2">
+        <div
+            v-if="this.debug == true"
+            class="fixed bg-green-100 top-0 left-0 right-0 p-2 space-x-2"
+        >
             <span>Highlighter on: {{ this.highlighter_on }}</span>
             <span>Highlighter position: {{ this.highlighter_position }}</span>
-            <span>posts marked as read: {{ this.posts_marked_as_read.length }}</span>
-            <span v-if="posts_loaded">unread posts length: {{this.unread_posts.length}}</span>
+            <span
+                >posts marked as read:
+                {{ this.posts_marked_as_read.length }}</span
+            >
+            <span v-if="posts_loaded"
+                >unread posts length: {{ this.unread_posts.length }}</span
+            >
         </div>
 
         <!-- Loading Indicator -->
-        <div v-cloak v-if="posts_loaded == false" class="max-w-7xl mx-auto flex">
+        <div
+            v-cloak
+            v-if="posts_loaded == false"
+            class="max-w-7xl mx-auto flex"
+        >
             <LoadingIndicator />
         </div>
 
         <!-- Header -->
-        <div v-if="posts_loaded == true" class="flex items-center justify-between mx-auto mb-6 max-w-7xl">
+        <div
+            v-if="posts_loaded == true"
+            class="flex items-center justify-between mx-auto mb-6 max-w-7xl"
+        >
             <!-- Logo -->
-            <a href="/"><IrLogo class="h-8 md:h-12"/></a>
+            <a href="/"><IrLogo class="h-8 md:h-12" /></a>
 
             <!-- Read Count -->
             <ReadCount :count="number_of_unread_posts" />
@@ -25,7 +41,7 @@
             <!-- Undo & Settings -->
             <div class="flex align-center">
                 <!-- Undo Button if exists -->
-                <div v-if="undoable" @click="undo()" >
+                <div v-if="undoable" @click="undo()">
                     <UndoButton />
                 </div>
                 <!-- Settings -->
@@ -36,12 +52,15 @@
         <!-- Banner that will only be displayed if viewing one source -->
         <div v-if="which_source !== 'all'">
             <div
-                class="container flex items-center justify-between p-2 py-4 mx-auto mb-4 rounded-md shadow-md bg-gray-50 max-w-7xl">
+                class="container flex items-center justify-between p-2 py-4 mx-auto mb-4 rounded-md shadow-md bg-gray-50 max-w-7xl"
+            >
                 <div class="text-sm font-semibold text-gray-600 uppercase">
                     Posts by {{ source_name }}
                 </div>
-                <button @click="reset_to_all()"
-                    class="w-8 h-8 text-lg text-gray-400 bg-gray-100 rounded-full hover:bg-primary hover:text-white">
+                <button
+                    @click="reset_to_all()"
+                    class="w-8 h-8 text-lg text-gray-400 bg-gray-100 rounded-full hover:bg-primary hover:text-white"
+                >
                     &times;
                 </button>
             </div>
@@ -53,7 +72,10 @@
         </Message>
 
         <!-- Well Done! You've read everything message -->
-        <div v-if="number_of_unread_posts < 1" class="container max-w-md mx-auto">
+        <div
+            v-if="number_of_unread_posts < 1"
+            class="container max-w-md mx-auto"
+        >
             <InboxZero />
         </div>
 
@@ -77,7 +99,6 @@
 
         <!-- Notifications (hidden if none) -->
         <Notification :notification="notification" />
-
     </div>
 </template>
 <script>
@@ -100,7 +121,18 @@ import SettingsIcon from "./partials/ui/SettingsIcon.vue";
 
 export default {
     props: ["refreshinterval", "last_successful_crawl"],
-    components: { Post, PostItem, ReadCount, Message, InboxZero, IrLogo, LoadingIndicator, UndoButton, SettingsIcon, Notification },
+    components: {
+        Post,
+        PostItem,
+        ReadCount,
+        Message,
+        InboxZero,
+        IrLogo,
+        LoadingIndicator,
+        UndoButton,
+        SettingsIcon,
+        Notification,
+    },
     data() {
         return {
             debug: false,
@@ -132,11 +164,34 @@ export default {
             this.last_successful_crawl
         );
         window.keys_entered = "";
+        window.shortcutTimer = null; // Timer for handling multi-digit shortcuts
+
         window.addEventListener("keydown", (e) => {
             window.keys_entered += e.key;
-            if (window.keys_entered !== "") {
+
+            // Handle special multi-key sequences like "gg" and "ShiftG"
+            if (
+                window.keys_entered === "g" ||
+                window.keys_entered === "Shift"
+            ) {
+                return; // Wait for the next key
+            }
+
+            if (window.keys_entered.match(/^\d$/)) {
+                // If it's a single digit (0-9), set a timeout to execute after 200ms
+                window.shortcutTimer = setTimeout(() => {
+                    handle_keyboard_shortcut(window.keys_entered, this);
+                    window.keys_entered = ""; // Reset after execution
+                }, 200);
+            } else if (window.keys_entered.match(/^\d{2}$/)) {
+                // If a second digit is entered, cancel the previous timeout and execute immediately
+                clearTimeout(window.shortcutTimer);
                 handle_keyboard_shortcut(window.keys_entered, this);
-                this.reset_keys_entered();
+                window.keys_entered = ""; // Reset after execution
+            } else {
+                // For non-numeric keys, process immediately
+                handle_keyboard_shortcut(window.keys_entered, this);
+                window.keys_entered = ""; // Reset after execution
             }
         });
     },
@@ -184,7 +239,6 @@ export default {
             } else {
                 window.keys_entered = "";
             }
-
         },
         reset_to_all: function () {
             this.which_posts = "all";
@@ -215,7 +269,7 @@ export default {
             axios
                 .patch("/api/posts/" + p.id, { read: 1 })
                 // If server update works, don't report anything
-                .then((res) => { })
+                .then((res) => {})
                 // If there's a problem, undo mark as read
                 .catch((res) => {
                     p.read = 0;
@@ -228,7 +282,7 @@ export default {
                 });
         },
         show_notification(kind, content, time) {
-            console.log('showing notification');
+            console.log("showing notification");
             this.notification.kind = kind;
             this.notification.message = content;
             this.notification.displayed = true;
@@ -242,7 +296,7 @@ export default {
             this.external_links = [];
         },
         show_highlighted_post() {
-            console.log('Showing post ' + this.highlighter_position);
+            console.log("Showing post " + this.highlighter_position);
             document
                 .querySelector("#post-" + this.highlighter_position)
                 .scrollIntoView({
@@ -257,12 +311,10 @@ export default {
                 "mr-1 text-gray-700 px-2 bg-yellow-200 text-grey-800";
             var shortcut = 0;
             document.querySelectorAll("#post-content a").forEach((link, i) => {
-                if (this.isInViewport(link)) {
-                    var html = `<span class="externallink ${shortcut_style}">${shortcut}</span>`;
-                    link.insertAdjacentHTML("beforeend", html);
-                    this.external_links.push(link.getAttribute("href"));
-                    shortcut++;
-                }
+                var html = `<span class="externallink ${shortcut_style}">${shortcut}</span>`;
+                link.insertAdjacentHTML("beforeend", html);
+                this.external_links.push(link.getAttribute("href"));
+                shortcut++;
             });
             this.external_links_shortcuts = true;
         },
@@ -274,25 +326,12 @@ export default {
             this.external_links = [];
         },
 
-        isInViewport(element) {
-            const rect = element.getBoundingClientRect();
-            return (
-                rect.top >= 0 &&
-                rect.left >= 0 &&
-                rect.bottom <=
-                (window.innerHeight ||
-                    document.documentElement.clientHeight) &&
-                rect.right <=
-                (window.innerWidth || document.documentElement.clientWidth)
-            );
-        },
-
         undo() {
             if (this.undoable) {
                 // mark last post in list as unread
                 let last_post_marked_as_read =
                     this.posts_marked_as_read[
-                    this.posts_marked_as_read.length - 1
+                        this.posts_marked_as_read.length - 1
                     ];
                 last_post_marked_as_read.read = 0;
                 // update on server
@@ -322,5 +361,4 @@ export default {
 };
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>
