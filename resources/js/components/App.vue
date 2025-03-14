@@ -182,7 +182,7 @@ export default {
                 window.shortcutTimer = setTimeout(() => {
                     handle_keyboard_shortcut(window.keys_entered, this);
                     window.keys_entered = ""; // Reset after execution
-                }, 200);
+                }, 400);
             } else if (window.keys_entered.match(/^\d{2}$/)) {
                 // If a second digit is entered, cancel the previous timeout and execute immediately
                 clearTimeout(window.shortcutTimer);
