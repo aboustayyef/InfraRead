@@ -42,18 +42,14 @@ import SaveLaterButton from "./SaveLaterButton.vue";
 import SummarizeButton from "./SummarizeButton.vue";
 
 export default {
-  props: ['post'],
+  props: ['post','summary'],
   components: {SaveLaterButton, SummarizeButton},
   methods: {
-    handleSummary(summary){
-        this.summary=summary;
-    }
+      handleSummary: function(summary){
+          this.$emit('summary-ready', summary);
+      }
   },
-  data() {
-        return {
-            summary: null,
-        };
-    },
+
   computed: {
       shown: function(){
           return Object.keys(this.post).length > 0;

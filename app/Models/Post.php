@@ -23,7 +23,53 @@ class Post extends Model
         'deleted_at',
         'posted_at',
     ];
+
     public function summary($numSentences = 3)
+    {
+        $apiKey = env('OPENAI_KEY');
+        $text = strip_tags($this->content);
+        $text = str_replace(PHP_EOL, ' ', $text); // Replace new lines with space for better formatting
+
+        // OpenAI API endpoint for chat-based models
+        $endpoint = 'https://api.openai.com/v1/chat/completions';
+
+        // Request payload for GPT-3.5-Turbo
+        $data = [
+            'model' => 'gpt-3.5-turbo',
+            'messages' => [
+                [
+                    'role' => 'system',
+                    'content' => 'You are a helpful assistant that summarizes text concisely.'
+                ],
+                [
+                    'role' => 'user',
+                    'content' => "Summarize this in {$numSentences} sentences:\n\n{$text}"
+                ]
+            ],
+            'max_tokens' => 200, // Slightly reduced to optimize cost
+            'temperature' => 0.5,
+        ];
+
+        // Make the API request using Laravel's Http client
+        $response = Http::withHeaders([
+            'Content-Type' => 'application/json',
+            'Authorization' => 'Bearer ' . $apiKey,
+        ])->post($endpoint, $data);
+
+        // Handle API response
+        if ($response->failed()) {
+            \Log::error('OpenAI API Error: ' . $response->body()); // Log error for debugging
+            return 'Error summarizing the text.';
+        }
+
+        // Extract summary from response
+        $summary = optional($response->json())['choices'][0]['message']['content'] ?? 'Error generating summary';
+
+        return $summary;
+    }
+
+
+    public function old_summary($numSentences = 3)
     {
         $apiKey = env('OPENAI_KEY');
         $text = strip_tags($this->content);
@@ -195,7 +241,7 @@ class Post extends Model
         // Get List of Muted Phrases
         $jsonString = Storage::disk('local')->get("muted_phrases.json");
         $list_of_phrases = json_decode($jsonString, true); // Converts to an array
-        if (Str::contains($this->title,$list_of_phrases)) {
+        if (Str::contains($this->title, $list_of_phrases)) {
             $this->read = 1;
         }
     }

@@ -95,7 +95,7 @@
         </ul>
 
         <!-- Single post details -->
-        <post :post="displayed_post" v-on:exit-post="exit_post"> </post>
+        <post :post="displayed_post" :summary="displayed_summary" v-on:exit-post="exit_post" @summary-ready="handleSummary"> </post>
 
         <!-- Notifications (hidden if none) -->
         <Notification :notification="notification" />
@@ -140,6 +140,7 @@ export default {
             last_successful_crawl_data: {},
             posts: {},
             displayed_post: {},
+            displayed_summary: null,
             posts_marked_as_read: [],
             which_posts: "all",
             which_source: "all",
@@ -224,6 +225,9 @@ export default {
         },
     },
     methods: {
+        handleSummary(summary) {
+            this.displayed_summary = summary;
+        },
         fetch_posts_from_server: function () {
             axios.get("/api/" + this.which_posts).then((res) => {
                 this.posts = res.data;
@@ -259,6 +263,7 @@ export default {
         display_post: function (p) {
             this.external_links_shortcuts = false;
             this.displayed_post = p;
+            this.displayed_summary = null;
             // Timeout the animation then set as read
         },
         mark_post_as_read: function (p) {
