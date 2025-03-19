@@ -6,19 +6,37 @@ use App\Fetchers\rssFetcher;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 
 class Source extends Model
 {
     use HasFactory;
     protected $guarded = ['id'];
 
-    public function posts($howmany = null)
+    // this method has been replaced by the posts method below
+    // remove later if everything is working fine
+    public function posts_before_optimization($howmany = null)
     {
         $q =  $this->hasMany('App\Models\Post');
         if ($howmany) {
             return $q->latest()->take($howmany)->get();
         }
         return $q;
+    }
+
+    public function posts($howmany = null)
+    {
+        $key = "source_{$this->id}_posts_" . ($howmany ?: 'all');
+
+        return Cache::remember($key, now()->addMinutes(10), function () use ($howmany) {
+            $query = $this->hasMany('App\\Models\\Post')->latest();
+
+            if ($howmany) {
+                return $query->limit($howmany)->get();
+            }
+
+            return $query->get();
+        });
     }
 
     public function media()
