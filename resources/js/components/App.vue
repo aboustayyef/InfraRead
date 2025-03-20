@@ -24,7 +24,9 @@
             v-if="posts_loaded == false"
             class="max-w-7xl mx-auto flex"
         >
-            <LoadingIndicator />
+            <div class="bg-white fixed inset-0 flex items-center justify-center w-full h-full">
+                <LoadingIndicator />
+            </div>
         </div>
 
         <!-- Header -->
