@@ -17,6 +17,7 @@
         "itsgoingd/clockwork": "^5.0",
         "laminas/laminas-diactoros": "^2.5",
         "laravel/framework": "^8.12",
+        "laravel/helpers": "^1.7",
         "laravel/tinker": "^2.5",
         "livewire/livewire": "^2.3",
         "nesbot/carbon": "^2.42",
