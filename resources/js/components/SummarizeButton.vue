@@ -94,14 +94,13 @@ export default {
     },
     methods: {
         handle_keyboard_shortcut(k) {
-            if (this.url) {
-                if (k == "m") {
-                    this.summarize();
-                }
+            if (k == "m") {
+                this.summarize();
             }
         },
         summarize() {
             this.status = "summarizing";
+            this.$emit("summarized", "Summarizing post...");
             axios
                 .get("/summary/" + this.post)
                 .then((res) => {
