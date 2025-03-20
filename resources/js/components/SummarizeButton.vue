@@ -100,7 +100,7 @@ export default {
         },
         summarize() {
             this.status = "summarizing";
-            this.$emit("summarized", "Summarizing post...");
+            this.$emit("summarized", "summarizing");
             axios
                 .get("/summary/" + this.post)
                 .then((res) => {

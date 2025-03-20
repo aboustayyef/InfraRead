@@ -15,9 +15,14 @@
                             <h3 class="mt-2 md:mt-6 text-gray-300">{{post.time_ago}}</h3>
                             <div class="mt-4">🔗&nbsp;<a class="text-primary ml-2 text-sm" :href="post.url">{{post.url}}</a></div>
                         </div>
-                        <div id="summary" v-if="summary !== null" class="bg-red-50 p-4 my-4">
+                        <div id="summary" v-if="summary !== null" class="bg-yellow-50 p-4 my-4">
                             <h3 class="font-bold mb-2">Summary</h3>
-                            <p class="text-gray-700" v-text="summary"></p>
+                            <div v-if="summary === 'summarizing'" >
+                                <LoadingIndicator />
+                            </div>
+                            <div v-else>
+                                <p class="text-gray-700" v-text="summary"></p>
+                            </div>
                         </div>
                         <div id="post-content" v-html="post.content" class="text-xl font-light leading-loose text-gray-700 content break-words">
                         </div>
@@ -40,10 +45,11 @@
 <script>
 import SaveLaterButton from "./SaveLaterButton.vue";
 import SummarizeButton from "./SummarizeButton.vue";
+import LoadingIndicator from "./partials/ui/LoadingIndicator.vue";
 
 export default {
   props: ['post','summary'],
-  components: {SaveLaterButton, SummarizeButton},
+  components: {SaveLaterButton, SummarizeButton, LoadingIndicator},
   methods: {
       handleSummary: function(summary){
           this.$emit('summary-ready', summary);
