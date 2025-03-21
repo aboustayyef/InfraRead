@@ -24,7 +24,9 @@
             v-if="posts_loaded == false"
             class="max-w-7xl mx-auto flex"
         >
-            <div class="bg-white fixed inset-0 flex items-center justify-center w-full h-full">
+            <div
+                class="bg-white fixed inset-0 flex items-center justify-center w-full h-full"
+            >
                 <LoadingIndicator />
             </div>
         </div>
@@ -97,7 +99,13 @@
         </ul>
 
         <!-- Single post details -->
-        <post :post="displayed_post" :summary="displayed_summary" v-on:exit-post="exit_post" @summary-ready="handleSummary"> </post>
+        <post
+            :post="displayed_post"
+            :summary="displayed_summary"
+            v-on:exit-post="exit_post"
+            @summary-ready="handleSummary"
+        >
+        </post>
 
         <!-- Notifications (hidden if none) -->
         <Notification :notification="notification" />
@@ -184,23 +192,43 @@ export default {
             if (window.keys_entered.match(/^\d$/)) {
                 // Highlight the shortcut
                 document.querySelectorAll(".externallink").forEach((item) => {
-                    if (item.textContent.trim() === window.keys_entered || item.textContent.trim().startsWith(window.keys_entered)) {
-                        item.classList.replace("bg-yellow-200", "bg-yellow-300");
+                    if (
+                        item.textContent.trim() === window.keys_entered ||
+                        item.textContent.trim().startsWith(window.keys_entered)
+                    ) {
+                        if (item.textContent.trim().length > 1) {
+                            item.innerHTML = `<span class="bg-yellow-400 px-1">${
+                                item.textContent.trim()[0]
+                            }</span>${item.textContent.trim().slice(1)}`;
+                        } else {
+                            item.classList.replace(
+                                "bg-yellow-200",
+                                "bg-yellow-400"
+                            );
+                        }
                     }
                 });
                 window.shortcutTimer = setTimeout(() => {
                     handle_keyboard_shortcut(window.keys_entered, this);
                     window.keys_entered = ""; // Reset after execution
-                    //remove highlighted shortcuts
-                    document.querySelectorAll(".externallink.bg-yellow-300").forEach((item) => {
-                        item.classList.replace("bg-yellow-300", "bg-yellow-200");
-                    });
+                    // Replace all instances of bg-yellow-400 with bg-yellow-200
+                    document
+                        .querySelectorAll(".bg-yellow-400")
+                        .forEach((item) => {
+                            item.classList.replace(
+                                "bg-yellow-400",
+                                "bg-yellow-200"
+                            );
+                        });
                 }, 400);
             } else if (window.keys_entered.match(/^\d{2}$/)) {
                 // If a second digit is entered, cancel the previous timeout and execute immediately
                 clearTimeout(window.shortcutTimer);
                 handle_keyboard_shortcut(window.keys_entered, this);
                 window.keys_entered = ""; // Reset after execution
+                document.querySelectorAll(".bg-yellow-400").forEach((item) => {
+                    item.classList.replace("bg-yellow-400", "bg-yellow-200");
+                });
             } else {
                 // For non-numeric keys, process immediately
                 handle_keyboard_shortcut(window.keys_entered, this);
