@@ -180,11 +180,21 @@ export default {
                 return; // Wait for the next key
             }
 
+            // If it's a single digit (0-9), set a timeout to execute after 200ms
             if (window.keys_entered.match(/^\d$/)) {
-                // If it's a single digit (0-9), set a timeout to execute after 200ms
+                // Highlight the shortcut
+                document.querySelectorAll(".externallink").forEach((item) => {
+                    if (item.textContent.trim() === window.keys_entered || item.textContent.trim().startsWith(window.keys_entered)) {
+                        item.classList.replace("bg-yellow-200", "bg-yellow-300");
+                    }
+                });
                 window.shortcutTimer = setTimeout(() => {
                     handle_keyboard_shortcut(window.keys_entered, this);
                     window.keys_entered = ""; // Reset after execution
+                    //remove highlighted shortcuts
+                    document.querySelectorAll(".externallink.bg-yellow-300").forEach((item) => {
+                        item.classList.replace("bg-yellow-300", "bg-yellow-200");
+                    });
                 }, 400);
             } else if (window.keys_entered.match(/^\d{2}$/)) {
                 // If a second digit is entered, cancel the previous timeout and execute immediately
