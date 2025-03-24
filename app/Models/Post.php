@@ -24,52 +24,63 @@ class Post extends Model
         'posted_at',
     ];
 
-    public function summary($numSentences = 3)
+    public function summary($numSentences = 2)
     {
         $apiKey = env('OPENAI_KEY');
-        $text = strip_tags($this->content);
-        $text = str_replace(PHP_EOL, ' ', $text); // Replace new lines with space for better formatting
 
-        // OpenAI API endpoint for chat-based models
+        // Keep HTML but remove potentially dangerous scripts or styles
+        $text = $this->content; // Already contains HTML
+
+        // OpenAI API endpoint
         $endpoint = 'https://api.openai.com/v1/chat/completions';
 
-        // Request payload for GPT-3.5-Turbo
+        // Clarify in the system prompt how blockquotes should be interpreted
+        $systemPrompt = <<<EOT
+You are a helpful assistant that summarizes HTML content.
+The content may include <blockquote> tags, which indicate quoted text from someone else.
+Distinguish between the main author's commentary and the quoted material when generating the summary.
+EOT;
+
+        $userPrompt = <<<EOT
+Summarize the following content in {$numSentences} sentences.
+Preserve any <blockquote> tags from the input, as they indicate quoted material.
+Don't include <blockquote> tags in the output, but wrap each output sentence in a <p> tag to make it HTML-ready.
+
+{$text}
+EOT;
+
         $data = [
             'model' => 'gpt-3.5-turbo',
             'messages' => [
                 [
                     'role' => 'system',
-                    'content' => 'You are a helpful assistant that summarizes text concisely.'
+                    'content' => $systemPrompt,
                 ],
                 [
                     'role' => 'user',
-                    'content' => "Summarize this in {$numSentences} sentences:\n\n{$text}"
-                ]
+                    'content' => $userPrompt,
+                ],
             ],
-            'max_tokens' => 200, // Slightly reduced to optimize cost
+            'max_tokens' => 200,
             'temperature' => 0.5,
         ];
 
-        // Make the API request using Laravel's Http client
         $response = Http::withHeaders([
             'Content-Type' => 'application/json',
             'Authorization' => 'Bearer ' . $apiKey,
         ])->post($endpoint, $data);
 
-        // Handle API response
         if ($response->failed()) {
-            \Log::error('OpenAI API Error: ' . $response->body()); // Log error for debugging
+            \Log::error('OpenAI API Error: ' . $response->body());
             return 'Error summarizing the text.';
         }
 
-        // Extract summary from response
-        $summary = optional($response->json())['choices'][0]['message']['content'] ?? 'Error generating summary';
-
-        return $summary;
+        return optional($response->json())['choices'][0]['message']['content'] ?? 'Error generating summary';
     }
 
 
-    public function old_summary($numSentences = 3)
+
+    public function old_summary($numSentences = 4)
     {
         $apiKey = env('OPENAI_KEY');
         $text = strip_tags($this->content);

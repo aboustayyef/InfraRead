@@ -21,7 +21,7 @@
                                 <LoadingIndicator />
                             </div>
                             <div v-else>
-                                <p class="text-gray-700" v-text="summary"></p>
+                                <p class="content text-gray-700" v-html="summary"></p>
                             </div>
                         </div>
                         <div id="post-content" v-html="post.content" class="text-xl font-light leading-loose text-gray-700 content break-words">
