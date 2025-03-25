@@ -23,7 +23,7 @@
             <div>
                 <!-- First, the header -->
                 <div class="w-full max-w-7xl mx-auto">
-                    <div class="ml-2 w-12 h-12 bg-gray-200 animate-pulse"></div>
+                    <div class="mb-6 ml-2 w-8 h-8 md:w-12 md:h-12 bg-gray-200 animate-pulse"></div>
                 </div>
                 <!-- The the skeleton "posts" -->
                 <LoadingSkeleton />
@@ -41,7 +41,7 @@
             class="flex items-center justify-between mx-auto mb-6 max-w-7xl"
         >
             <!-- Logo -->
-            <a href="/"><IrLogo class="h-8 md:h-12" /></a>
+            <a href="/"><IrLogo class="ml-2 h-8 md:h-12" /></a>
 
             <!-- Read Count -->
             <ReadCount :count="number_of_unread_posts" />
