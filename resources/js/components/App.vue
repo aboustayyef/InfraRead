@@ -19,15 +19,19 @@
         </div>
 
         <!-- Loading Indicator -->
-        <div
-            v-cloak
-            v-if="posts_loaded == false"
-            class="max-w-7xl mx-auto flex"
-        >
-            <div
-                class="bg-white fixed inset-0 flex items-center justify-center w-full h-full"
-            >
-                <LoadingIndicator />
+        <div v-cloak v-if="(posts_loaded == false)">
+            <div>
+                <!-- First, the header -->
+                <div class="w-full max-w-7xl mx-auto">
+                    <div class="ml-2 w-12 h-12 bg-gray-200 animate-pulse"></div>
+                </div>
+                <!-- The the skeleton "posts" -->
+                <LoadingSkeleton />
+                <LoadingSkeleton />
+                <LoadingSkeleton />
+                <LoadingSkeleton />
+                <LoadingSkeleton />
+                <LoadingSkeleton />
             </div>
         </div>
 
@@ -126,6 +130,7 @@ import Notification from "./partials/Notification.vue";
 // UI Elements
 import IrLogo from "./partials/ui/IrLogo.vue";
 import LoadingIndicator from "./partials/ui/LoadingIndicator.vue";
+import LoadingSkeleton from "./partials/ui/LoadingSkeleton.vue";
 import UndoButton from "./partials/ui/UndoButton.vue";
 import SettingsIcon from "./partials/ui/SettingsIcon.vue";
 
@@ -139,6 +144,7 @@ export default {
         InboxZero,
         IrLogo,
         LoadingIndicator,
+        LoadingSkeleton,
         UndoButton,
         SettingsIcon,
         Notification,
