@@ -14,6 +14,9 @@ module.exports = {
                 primary: '#B90C11'
             },
         },
+        screens: {
+            md: '700px',
+        },
     },
 
     variants: {
