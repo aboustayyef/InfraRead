@@ -41,8 +41,9 @@ class PluginReplaceArticleLink implements PluginInterface
 
             $articleLinks = $crawler->filter('article a');
             foreach ($articleLinks as $key => $link) {
-                if (!str_contains($link->getAttribute('href'), 'slashdot')) {
-                    $this->post->url = $link->getAttribute('href');
+                $href = $link->getAttribute('href');
+                if (!str_contains($href, 'slashdot') && !str_contains($href, 'linkedin.com/in/beauhd')) {
+                    $this->post->url = $href;
                     $this->post->save();
                     break;
                 }
