@@ -42,7 +42,7 @@ class ReadLater
             return $this->saveToOmnivore();
         } else {
             $response = json_decode((string) $this->saveToInstapaper());
-            if ($response->status == 1) {
+            if (isset($response->bookmark_id)) {
                 return true;
             }
         }
