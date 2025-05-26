@@ -34,12 +34,26 @@ class PluginReplaceArticleLink implements PluginInterface
 
     public function handle()
     {
-        $uid = $this->post->uid;
-        $uid = preg_replace('/-\d+$/', '', $uid);
-        if ($uid !== "https://www.linkedin.com/in/beauhd/") {
-            $this->post->url = $uid;
-            $this->post->save();
+                try {
+            $client = new Client();
+            $response = $client->request('GET', $this->post->url);
+            $html = (string) $response->getBody();
+            $crawler = new Crawler($html);
+
+            $articleLinks = $crawler->filter('article a');
+            foreach ($articleLinks as $key => $link) {
+                $href = $link->getAttribute('href');
+                if (!str_contains($href, 'slashdot') && !str_contains($href, 'linkedin.com/in/beauhd')) {
+                    $this->post->url = $href;
+                    $this->post->save();
+                    break;
+                }
+            }
+
+            return true;
+        } catch (\Exception $e) {
+            return false;
         }
-        return true;
+
     }
 }
