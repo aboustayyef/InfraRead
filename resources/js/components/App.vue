@@ -1,6 +1,6 @@
 <template>
     <div
-        class="relative w-full h-screen p-2 md:p-4 pt-12 overflow-y-auto text-left md:p-12"
+        class="relative w-full h-screen p-2 pt-12 overflow-y-auto text-left md:p-12"
     >
         <!-- Debug Bar -->
         <div
