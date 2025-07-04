@@ -9,6 +9,7 @@ let settings = {
     jump: " ",
     showPost: "Enter",
     open: "o",
+    openArchive: "a",
     undo: "u",
     markAsRead: "e",
     go_to_bottom: "ShiftG",
@@ -105,6 +106,11 @@ export function handle_keyboard_shortcut(key, app) {
             }
             if (app.view == "post") {
                 window.open(app.displayed_post.url, "_blank");
+            }
+            break;
+        case settings.openArchive:
+            if (app.view == "post") {
+                window.open(`https://archive.is/latest/${app.displayed_post.url}`, "_blank");
             }
             break;
         case settings.markAsRead:
