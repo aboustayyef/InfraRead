@@ -3,78 +3,80 @@
 @import "tailwindcss/utilities";
 
 .ir_input {
-    @apply flex-1 w-full p-3 border-gray-200 rounded-md bg-gray-50;
+  @apply flex-1 w-full p-3 border-gray-200 rounded-md bg-gray-50;
 }
 
 .ir_button {
-    @apply px-4 py-2 font-semibold text-gray-800 bg-white border border-gray-200 rounded-md cursor-pointer hover:text-white hover:bg-primary;
+  @apply px-4 py-2 font-semibold text-gray-800 bg-white border border-gray-200 rounded-md cursor-pointer hover:text-white hover:bg-primary;
 }
 
-.ir_input.attached{
-    @apply rounded-r-none;
+.ir_input.attached {
+  @apply rounded-r-none;
 }
-.ir_input.warning{
-    @apply border border-primary;
+.ir_input.warning {
+  @apply border border-primary;
 }
 
-
-.ir_button.attached{
-    @apply px-4 py-2 font-semibold text-gray-800 border border-l-0 border-gray-200 rounded-md rounded-l-none hover:text-white hover:bg-primary;
+.ir_button.attached {
+  @apply px-4 py-2 font-semibold text-gray-800 border border-l-0 border-gray-200 rounded-md rounded-l-none hover:text-white hover:bg-primary;
 }
 strong {
-    @apply font-semibold;
+  @apply font-semibold;
 }
 .content {
-    font-family: 'Roboto Slab', sans-serif;
+  font-family: "Roboto Slab", sans-serif;
 }
 .content {
-    @apply mx-auto leading-relaxed md:leading-relaxed tracking-wide text-base md:text-xl;
+  @apply mx-auto leading-relaxed md:leading-relaxed tracking-wide text-base md:text-xl;
 }
-.content ul{
-    @apply ml-10 list-disc my-2;
+.content ul {
+  @apply ml-10 list-disc my-2;
 }
-.content ol{
-    @apply ml-10 list-decimal my-2;
+.content ol {
+  @apply ml-10 list-decimal my-2;
 }
-.content li{
-    @apply mb-2;
+.content li {
+  @apply mb-2;
 }
 .content blockquote {
-    @apply p-4 mb-4 text-gray-500 bg-gray-100 border-b-8 border-gray-400;
+  @apply p-4 mb-4 text-gray-700 bg-gray-50 border-b-4 border-t-2 border-gray-200;
 }
-.content img{
-    max-width: 100%;
+.content img {
+  max-width: 100%;
 }
 .content a {
-    @apply text-primary;
+  @apply text-primary;
 }
-.content h1, h2, h3, h4 {
-    @apply font-semibold
+.content h1,
+h2,
+h3,
+h4 {
+  @apply font-semibold;
 }
 
-.content h2{
-    @apply text-xl md:text-3xl my-2
+.content h2 {
+  @apply text-xl md:text-3xl my-2;
 }
 
-.content h3{
-    @apply text-lg md:text-2xl my-2
+.content h3 {
+  @apply text-lg md:text-2xl my-2;
 }
 
 .content pre {
-    overflow-x:scroll;
+  overflow-x: scroll;
 }
-.content code{
-    overflow-x:scroll;
+.content code {
+  overflow-x: scroll;
 }
 
 .content p {
-    @apply py-2;
+  @apply py-2;
 }
-.content.has-columns{
-    column-width: 22em;
-    column-count:2;
-    column-rule: 1px dotted #ddd;
-  }
+.content.has-columns {
+  column-width: 22em;
+  column-count: 2;
+  column-rule: 1px dotted #ddd;
+}
 
 /* @layer utilities {
     @variants responsive {
