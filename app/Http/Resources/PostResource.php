@@ -1,0 +1,25 @@
+<?php
+
+namespace App\Http\Resources;
+
+use Illuminate\Http\Resources\Json\JsonResource;
+
+class PostResource extends JsonResource
+{
+    public function toArray($request)
+    {
+        return [
+            'id' => $this->id,
+            'title' => $this->title,
+            'url' => $this->url,
+            'excerpt' => $this->excerpt,
+            'posted_at' => optional($this->posted_at)->toIso8601String(),
+            'read' => (bool) $this->read,
+            'uid' => $this->uid,
+            'author' => $this->author,
+            'time_ago' => $this->time_ago,
+            'source' => new SourceResource($this->whenLoaded('source')),
+            'category' => new CategoryResource($this->whenLoaded('category')),
+        ];
+    }
+}
