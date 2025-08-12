@@ -11,6 +11,11 @@ class CategoryApiTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function actingUser()
+    {
+        return User::factory()->create();
+    }
+
     public function test_requires_authentication()
     {
         $response = $this->getJson('/api/v1/categories');
@@ -19,7 +24,7 @@ class CategoryApiTest extends TestCase
 
     public function test_lists_categories()
     {
-        $user = User::factory()->create();
+        $user = $this->actingUser();
         Category::factory()->count(3)->create();
 
         $response = $this->actingAs($user)->getJson('/api/v1/categories');

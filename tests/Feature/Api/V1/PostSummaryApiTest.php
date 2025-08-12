@@ -41,9 +41,12 @@ class PostSummaryApiTest extends TestCase
             ], 200)
         ]);
 
-        $response = $this->actingAs($user)->postJson('/api/v1/posts/'.$post->id.'/summary', [
-            'sentences' => 2,
-        ]);
+        $csrf = csrf_token();
+        $response = $this->withHeaders(['X-CSRF-TOKEN'=>$csrf])
+            ->actingAs($user)
+            ->postJson('/api/v1/posts/'.$post->id.'/summary', [
+                'sentences' => 2,
+            ]);
         $response->assertOk()
             ->assertJsonStructure(['data' => ['post_id','sentences','summary']]);
         $this->assertStringContainsString('Sentence one', $response->json('data.summary'));
@@ -60,7 +63,10 @@ class PostSummaryApiTest extends TestCase
             'api.openai.com/*' => Http::response('Server error', 500)
         ]);
 
-        $response = $this->actingAs($user)->postJson('/api/v1/posts/'.$post->id.'/summary');
+        $csrf = csrf_token();
+        $response = $this->withHeaders(['X-CSRF-TOKEN'=>$csrf])
+            ->actingAs($user)
+            ->postJson('/api/v1/posts/'.$post->id.'/summary');
         $response->assertStatus(502)
             ->assertJsonStructure(['error']);
     }

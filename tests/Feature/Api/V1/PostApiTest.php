@@ -17,7 +17,6 @@ class PostApiTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        // Ensure time consistency
         Carbon::setTestNow(now());
     }
 

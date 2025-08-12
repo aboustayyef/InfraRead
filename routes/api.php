@@ -42,8 +42,8 @@ Route::get('v2_readlaterservice', function () {
     }
 });
 
-// API V1 - Phase 1 read-only endpoints + summary
-Route::prefix('v1')->middleware('auth')->group(function () {
+// API V1 - sanctum protected
+Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     Route::get('/posts', [V1PostController::class, 'index']);
     Route::get('/posts/{post}', [V1PostController::class, 'show']);
     Route::post('/posts/{post}/summary', V1PostSummaryController::class)->middleware('throttle:summaries');

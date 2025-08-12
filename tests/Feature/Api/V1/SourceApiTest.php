@@ -12,6 +12,11 @@ class SourceApiTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function actingUser()
+    {
+        return User::factory()->create();
+    }
+
     public function test_requires_authentication()
     {
         $response = $this->getJson('/api/v1/sources');
@@ -20,7 +25,7 @@ class SourceApiTest extends TestCase
 
     public function test_lists_sources_with_optional_category_include()
     {
-        $user = User::factory()->create();
+        $user = $this->actingUser();
         $category = Category::factory()->create();
         Source::factory()->count(2)->create(['category_id' => $category->id]);
 
