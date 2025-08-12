@@ -21,10 +21,10 @@
     <style>
         [v-cloak] {display: none}
     </style>
-    <div id="app">
-        <div class="p-0 lg:flex">
+    <div id="app" class="min-h-screen">
+        <div class="flex min-h-screen">
             <x-admin-sidebar />
-            <div id="content" class="w-full px-12 pb-24 mt-20 lg:pl-72">
+            <div id="content" class="flex-1 px-12 py-24 overflow-y-auto">
                 @if(session()->has('message'))
                     <div class="p-4 bg-green-100 mb-4 flex justify-between items-center" x-data="{visible:true}" x-show="visible">
                         <div>{{session()->get('message')}}</div>

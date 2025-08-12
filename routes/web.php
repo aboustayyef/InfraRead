@@ -53,6 +53,10 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::resource('source', AdminSourceController::class, ['as' => 'admin'])->except('show');
     Route::resource('category', AdminCategoryController::class, ['as' => 'admin'])->except('show');
     Route::resource('muted', AdminMutedController::class, ['as' => 'admin']);
+    // Simple token management UI
+    Route::get('token', [\App\Http\Controllers\AdminTokenController::class, 'show'])->name('admin.token.show');
+    Route::post('token', [\App\Http\Controllers\AdminTokenController::class, 'store'])->name('admin.token.store');
+    Route::delete('token', [\App\Http\Controllers\AdminTokenController::class, 'destroy'])->name('admin.token.destroy');
 });
 
 // Mark all as read
