@@ -28,14 +28,21 @@ Constraints & Preferences:
 
 ---
 
-## Progress So Far (Phase 1 Complete)
+## Progress So Far (Phase 1 & 2 Complete)
 
-Backend API Foundations (Read / Derived Data):
+Backend API Foundations (Read / Derived Data - Phase 1):
 - Introduced versioned API namespace (`/api/v1`).
 - Implemented authenticated read‑only endpoints for posts, sources, categories (filtering / includes retained where applicable).
 - Added on‑demand AI summary endpoint (`POST /api/v1/posts/{post}/summary`) with rate limiting.
 - Integrated Laravel Sanctum personal access tokens; all v1 endpoints protected by `auth:sanctum`.
 - Implemented rate limiter group for summary generation.
+
+Core Mutation Endpoints (Phase 2):
+- Single post read/unread operations (`PATCH /api/v1/posts/{post}/read-status`) with idempotent behavior.
+- Bulk operations (`PATCH /api/v1/posts/bulk-read-status`) supporting up to 1000 posts with database transactions.
+- Efficient mark-all operations (`PATCH /api/v1/posts/mark-all-read`) with optional filtering by source, category, and date.
+- Comprehensive Form Request validation classes with custom error messages.
+- Performance-optimized queries that only update posts requiring state changes.
 
 Auth & Developer Experience:
 - Built minimal in‑app API token management page (generate & revoke tokens) under admin UI
@@ -47,11 +54,14 @@ Documentation & Housekeeping:
 - Refactored views to unify admin layout; cleaned up CSS linking issues.
 
 Testing & Reliability:
-- Feature tests cover authentication enforcement, filtering, summary success/failure, and rate limiting boundaries (baseline set—will expand in later phases).
+- Comprehensive feature test suite (42 tests, 165 assertions) covering authentication, validation, edge cases, and idempotency.
+- Tests validate proper error handling, bulk operation limits, filtering combinations, and performance optimizations.
+- All Phase 1 & 2 endpoints fully tested with both happy path and error conditions.
 
 Architecture Insights Captured:
 - Tailwind custom screen config currently only defines `md` (600px); design choices adjusted accordingly.
 - `User` model updated (`HasApiTokens`) enabling token issuance with fillable adjustments.
+- Established patterns for idempotent operations, bulk processing, and efficient database updates.
 
 ---
 
@@ -76,17 +86,17 @@ Principles:
 
 ## Remaining Roadmap (Proposed Phased Plan)
 
-### Phase 2: Core Mutation Endpoints
+### Phase 2: Core Mutation Endpoints ✅ COMPLETE
 Goal: Parity for essential user actions via API.
-- Endpoints: 
-  - Mark single post read/unread 
-  - Mark posts read/unread (bulk with specific IDs for user selections)
-  - Mark all posts read/unread (efficient bulk operations with optional filtering by source/category/date)
-- Request validation objects + idempotency safeguards.
-- Expand tests (happy path, unauthorized, rate limiting, idempotent repeat calls).
-- Note: Posts have only two states: read (archived) or unread (inbox). No additional dismiss/archive functionality needed.
-- Note: "Save for Later" is handled client-side by directly integrating with external read-later services (Pocket, Instapaper, etc.) using their APIs, not stored in our database.
-- Note: Bulk operations use Laravel's efficient query builder methods (e.g., `Post::where(...)->update(...)`) rather than loading models into memory for better performance.
+- ✅ Endpoints implemented:
+  - Mark single post read/unread (`PATCH /api/v1/posts/{post}/read-status`)
+  - Mark posts read/unread (bulk with specific IDs for user selections) (`PATCH /api/v1/posts/bulk-read-status`)
+  - Mark all posts read/unread (efficient bulk operations with optional filtering by source/category/date) (`PATCH /api/v1/posts/mark-all-read`)
+- ✅ Request validation objects + idempotency safeguards implemented.
+- ✅ Comprehensive test suite (happy path, unauthorized, rate limiting, idempotent repeat calls).
+- ✅ Posts maintain two-state model: read (archived) or unread (inbox).
+- ✅ "Save for Later" remains client-side responsibility (external read-later services).
+- ✅ Bulk operations use Laravel's efficient query builder methods for optimal performance.
 
 ### Phase 3: Feed & Category Management APIs
 Goal: Allow external client to manage sources fully.
@@ -172,10 +182,11 @@ Goal: Allow external client to manage sources fully.
 ---
 
 ## Immediate Next Step (When Work Resumes)
-Start Phase 2:
-1. Design mutation endpoint contracts (request/response JSON + error shapes) & add to this file / OpenAPI draft.
-2. Implement mark read/unread (single, bulk with IDs, efficient mark-all with filters) with tests.
-3. Focus on Laravel's efficient bulk update patterns using query builder methods rather than loading models into memory.
+Start Phase 3:
+1. Design feed & category management endpoint contracts (request/response JSON + error shapes) & add to this file / OpenAPI draft.
+2. Implement Source CRUD (create, read, update, delete) with feed URL validation and normalization.
+3. Implement Category CRUD with post/source reassignment capabilities.
+4. Focus on feed discovery (auto-detect RSS/Atom URLs from webpage URLs) and validation patterns.
 
 Note: Simple two-state model: posts are either read (archived) or unread (inbox). No additional dismiss/archive states.
 Note: "Save for Later" functionality is handled client-side by integrating directly with external read-later services, not via API endpoints.
@@ -192,7 +203,10 @@ Note: Single-user application - all tokens have full access, no scope restrictio
 | Sanctum auth + token issuance UI | Done | Basic create/revoke by name |
 | Admin layout responsive fix | Done | md breakpoint alignment |
 | API tester page | Done | Temporary dev tool |
-| Mutation endpoints | Pending | Phase 2 |
+| Single post read/unread mutation | Done | Phase 2 - idempotent operations |
+| Bulk post operations (by IDs) | Done | Phase 2 - up to 1000 posts, transactions |
+| Mark-all operations with filters | Done | Phase 2 - efficient query optimization |
+| Comprehensive mutation testing | Done | Phase 2 - 42 tests, 165 assertions |
 | Source/category CRUD via API | Pending | Phase 3 |
 | Enhanced auth & audit logging | Pending | Phase 4 |
 | Vue SPA extraction | Pending | Phase 5 |
