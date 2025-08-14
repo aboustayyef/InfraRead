@@ -67,7 +67,7 @@ class SourceManagementController extends Controller
 
         try {
             $metadata = $analyzer->getMetadata();
-            
+
             $source = Source::create([
                 'name' => $validated['name'] ?? $metadata['title'],
                 'description' => $validated['description'] ?? $metadata['description'],
@@ -120,14 +120,14 @@ class SourceManagementController extends Controller
     {
         // Optional: Add soft delete or archive instead of hard delete
         $sourceName = $source->name;
-        
+
         DB::beginTransaction();
-        
+
         try {
             // Note: Posts will remain due to potential historical value
             // You might want to add a 'source_deleted' flag to posts instead
             $source->delete();
-            
+
             DB::commit();
 
             return response()->json([

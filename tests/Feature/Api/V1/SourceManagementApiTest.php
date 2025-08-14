@@ -119,7 +119,7 @@ class SourceManagementApiTest extends TestCase
         $user = $this->actingUser();
         $category = $this->createCategory();
         $newCategory = $this->createCategory(['description' => 'New Category']);
-        
+
         $source = Source::factory()->create([
             'category_id' => $category->id,
             'name' => 'Original Name'
@@ -228,7 +228,7 @@ class SourceManagementApiTest extends TestCase
         // This test would require mocking UrlAnalyzer or using a real feed
         // For now, let's test the concept by checking database constraints
         $this->expectException(\Illuminate\Database\QueryException::class);
-        
+
         // Try to create another source with the same RSS URL
         Source::factory()->create([
             'category_id' => $category->id,
@@ -255,7 +255,7 @@ class SourceManagementApiTest extends TestCase
 
         // This will likely fail because httpbin doesn't have RSS, but we're testing the validation flow
         $response->assertStatus(422); // Should fail because no RSS feed found
-        
+
         $response->assertJsonStructure([
             'message',
             'errors' => ['url']

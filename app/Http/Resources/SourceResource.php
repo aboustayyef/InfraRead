@@ -20,7 +20,7 @@ class SourceResource extends JsonResource
             'category' => new CategoryResource($this->whenLoaded('category')),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
-            
+
             // Only include deactivation reason if source is inactive
             'deactivation_reason' => $this->when(!$this->active, $this->why_deactivated),
         ];

@@ -57,21 +57,21 @@ class OpmlApiTest extends TestCase
         // Create test data
         $category1 = Category::factory()->create(['description' => 'Tech News']);
         $category2 = Category::factory()->create(['description' => 'Sports']);
-        
+
         Source::factory()->create([
             'name' => 'TechCrunch',
             'fetcher_source' => 'https://techcrunch.com/feed/',
             'url' => 'https://techcrunch.com',
             'category_id' => $category1->id
         ]);
-        
+
         Source::factory()->create([
             'name' => 'ESPN',
             'fetcher_source' => 'https://espn.com/feed/',
             'url' => 'https://espn.com',
             'category_id' => $category2->id
         ]);
-        
+
         // Uncategorized source
         Source::factory()->create([
             'name' => 'Random Blog',
@@ -104,9 +104,9 @@ class OpmlApiTest extends TestCase
     {
         // Remove Sanctum authentication
         app('auth')->forgetGuards();
-        
+
         $response = $this->getJson('/api/v1/export-opml');
-        
+
         $response->assertUnauthorized();
     }
 
@@ -279,7 +279,7 @@ class OpmlApiTest extends TestCase
 
         $data = $response->json('data');
         $this->assertGreaterThan(0, $data['sources_skipped']);
-        
+
         // Should only have one TechCrunch source
         $this->assertEquals(1, Source::where('fetcher_source', 'https://techcrunch.com/feed/')->count());
     }
@@ -303,10 +303,10 @@ class OpmlApiTest extends TestCase
     {
         // Remove Sanctum authentication
         app('auth')->forgetGuards();
-        
+
         $file = UploadedFile::fake()->create('test.opml');
         $response = $this->postJson('/api/v1/import-opml', ['opml' => $file]);
-        
+
         $response->assertUnauthorized();
     }
 
@@ -322,12 +322,12 @@ class OpmlApiTest extends TestCase
     </head>
     <body>
         <outline text="Tech News" title="Tech News">
-            <outline type="rss" text="TechCrunch" title="TechCrunch" 
-                     xmlUrl="https://techcrunch.com/feed/" 
+            <outline type="rss" text="TechCrunch" title="TechCrunch"
+                     xmlUrl="https://techcrunch.com/feed/"
                      htmlUrl="https://techcrunch.com" />
         </outline>
-        <outline type="rss" text="Random Blog" title="Random Blog" 
-                 xmlUrl="https://randomblog.com/feed/" 
+        <outline type="rss" text="Random Blog" title="Random Blog"
+                 xmlUrl="https://randomblog.com/feed/"
                  htmlUrl="https://randomblog.com" />
     </body>
 </opml>';

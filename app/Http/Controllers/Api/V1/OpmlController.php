@@ -86,7 +86,7 @@ class OpmlController extends Controller
         try {
             $file = $request->file('opml');
             $mode = $request->get('mode', 'replace'); // 'replace' or 'merge'
-            
+
             $tempPath = $file->store('temp');
 
             $importer = new OpmlImporter();

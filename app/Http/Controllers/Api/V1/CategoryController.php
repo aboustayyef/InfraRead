@@ -17,7 +17,7 @@ class CategoryController extends Controller
         $categories = Category::withCount('sources')
             ->orderBy('description')
             ->get();
-            
+
         return CategoryResource::collection($categories);
     }
 
@@ -54,27 +54,27 @@ class CategoryController extends Controller
     public function destroy(Category $category): JsonResponse
     {
         DB::beginTransaction();
-        
+
         try {
             // Check if category has sources
             $sourceCount = $category->sources()->count();
-            
+
             if ($sourceCount > 0) {
                 // Find or create "Uncategorized" category
                 $uncategorizedCategory = Category::firstOrCreate([
                     'description' => 'Uncategorized'
                 ]);
-                
+
                 // Move all sources to uncategorized
                 $category->sources()->update([
                     'category_id' => $uncategorizedCategory->id
                 ]);
             }
-            
+
             $category->delete();
-            
+
             DB::commit();
-            
+
             return response()->json([
                 'message' => 'Category deleted successfully',
                 'data' => [
@@ -82,10 +82,10 @@ class CategoryController extends Controller
                     'moved_to_category' => $sourceCount > 0 ? 'Uncategorized' : null
                 ]
             ]);
-            
+
         } catch (\Exception $e) {
             DB::rollBack();
-            
+
             return response()->json([
                 'message' => 'Failed to delete category',
                 'error' => 'An error occurred while deleting the category'

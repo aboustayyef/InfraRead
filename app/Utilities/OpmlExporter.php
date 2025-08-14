@@ -36,26 +36,26 @@ class OpmlExporter
 
         // Add categories and their sources
         $categories = Category::with('sources')->get();
-        
+
         foreach ($categories as $category) {
             $categoryOutline = $xml->createElement('outline');
             $categoryOutline->setAttribute('text', $category->description);
             $categoryOutline->setAttribute('title', $category->description);
-            
+
             foreach ($category->sources as $source) {
                 $sourceOutline = $xml->createElement('outline');
                 $sourceOutline->setAttribute('type', 'rss');
                 $sourceOutline->setAttribute('text', $source->name);
                 $sourceOutline->setAttribute('title', $source->name);
                 $sourceOutline->setAttribute('xmlUrl', $this->getRssUrl($source));
-                
+
                 if ($source->url) {
                     $sourceOutline->setAttribute('htmlUrl', $source->url);
                 }
-                
+
                 $categoryOutline->appendChild($sourceOutline);
             }
-            
+
             $body->appendChild($categoryOutline);
         }
 
@@ -67,11 +67,11 @@ class OpmlExporter
             $sourceOutline->setAttribute('text', $source->name);
             $sourceOutline->setAttribute('title', $source->name);
             $sourceOutline->setAttribute('xmlUrl', $this->getRssUrl($source));
-            
+
             if ($source->url) {
                 $sourceOutline->setAttribute('htmlUrl', $source->url);
             }
-            
+
             $body->appendChild($sourceOutline);
         }
 
@@ -86,7 +86,7 @@ class OpmlExporter
         if (env('OPML_EXPORT_LOCAL_RSS_URLS', false)) {
             return route('api.v1.sources.rss', $source->id);
         }
-        
+
         return $source->fetcher_source;
     }
 }

@@ -80,7 +80,7 @@
 
         <div class="bg-white shadow rounded p-4 space-y-4">
             <h3 class="text-lg font-semibold">Post Mutations (Phase 2)</h3>
-            
+
             <!-- Mark Single Post Read/Unread -->
             <form id="form-post-read-status" class="space-y-2">
                 <h4 class="font-medium">Mark Post Read/Unread</h4>
@@ -97,7 +97,7 @@
                     <button class="bg-green-600 text-white px-4 py-1 rounded" type="submit">PATCH /api/v1/posts/:id/read-status</button>
                 </div>
             </form>
-            
+
             <!-- Bulk Mark Posts -->
             <form id="form-bulk-read-status" class="space-y-2">
                 <h4 class="font-medium">Bulk Mark Posts Read/Unread</h4>
@@ -114,7 +114,7 @@
                     <button class="bg-green-600 text-white px-4 py-1 rounded" type="submit">PATCH /api/v1/posts/bulk-read-status</button>
                 </div>
             </form>
-            
+
             <!-- Mark All Posts -->
             <form id="form-mark-all-read" class="space-y-2">
                 <h4 class="font-medium">Mark All Posts Read/Unread</h4>
@@ -139,14 +139,14 @@
                     <button class="bg-green-600 text-white px-4 py-1 rounded" type="submit">PATCH /api/v1/posts/mark-all-read</button>
                 </div>
             </form>
-            
+
             <div class="text-xs text-gray-500" id="mutations-url"></div>
             <pre class="bg-gray-900 text-green-200 text-sm p-3 rounded overflow-auto max-h-64" id="mutations-output">(response)</pre>
         </div>
 
         <div class="bg-white shadow rounded p-4 space-y-4">
             <h3 class="text-lg font-semibold">Source Management (Phase 3)</h3>
-            
+
             <!-- Create Source -->
             <form id="form-create-source" class="space-y-2">
                 <h4 class="font-medium">Create Source</h4>
@@ -168,7 +168,7 @@
                 </div>
                 <button class="bg-blue-600 text-white px-4 py-1 rounded" type="submit">POST /api/v1/sources</button>
             </form>
-            
+
             <!-- Update Source -->
             <form id="form-update-source" class="space-y-2">
                 <h4 class="font-medium">Update Source</h4>
@@ -185,7 +185,7 @@
                 </div>
                 <button class="bg-blue-600 text-white px-4 py-1 rounded" type="submit">PUT /api/v1/sources/:id</button>
             </form>
-            
+
             <!-- Delete Source -->
             <form id="form-delete-source" class="space-y-2">
                 <h4 class="font-medium">Delete Source</h4>
@@ -196,7 +196,7 @@
                     <button class="bg-red-600 text-white px-4 py-1 rounded" type="submit">DELETE /api/v1/sources/:id</button>
                 </div>
             </form>
-            
+
             <!-- Refresh Source -->
             <form id="form-refresh-source" class="space-y-2">
                 <h4 class="font-medium">Refresh Source Posts</h4>
@@ -207,14 +207,14 @@
                     <button class="bg-purple-600 text-white px-4 py-1 rounded" type="submit">POST /api/v1/sources/:id/refresh</button>
                 </div>
             </form>
-            
+
             <div class="text-xs text-gray-500" id="sources-mgmt-url"></div>
             <pre class="bg-gray-900 text-green-200 text-sm p-3 rounded overflow-auto max-h-64" id="sources-mgmt-output">(response)</pre>
         </div>
 
         <div class="bg-white shadow rounded p-4 space-y-4">
             <h3 class="text-lg font-semibold">Category Management (Phase 3)</h3>
-            
+
             <!-- Create Category -->
             <form id="form-create-category" class="space-y-2">
                 <h4 class="font-medium">Create Category</h4>
@@ -225,7 +225,7 @@
                     <button class="bg-blue-600 text-white px-4 py-1 rounded" type="submit">POST /api/v1/categories</button>
                 </div>
             </form>
-            
+
             <!-- Update Category -->
             <form id="form-update-category" class="space-y-2">
                 <h4 class="font-medium">Update Category</h4>
@@ -239,7 +239,7 @@
                     <button class="bg-blue-600 text-white px-4 py-1 rounded" type="submit">PUT /api/v1/categories/:id</button>
                 </div>
             </form>
-            
+
             <!-- Delete Category -->
             <form id="form-delete-category" class="space-y-2">
                 <h4 class="font-medium">Delete Category</h4>
@@ -250,20 +250,20 @@
                     <button class="bg-red-600 text-white px-4 py-1 rounded" type="submit">DELETE /api/v1/categories/:id</button>
                 </div>
             </form>
-            
+
             <div class="text-xs text-gray-500" id="categories-mgmt-url"></div>
             <pre class="bg-gray-900 text-green-200 text-sm p-3 rounded overflow-auto max-h-64" id="categories-mgmt-output">(response)</pre>
         </div>
 
         <div class="bg-white shadow rounded p-4 space-y-4">
             <h3 class="text-lg font-semibold">OPML Import/Export (Phase 3)</h3>
-            
+
             <!-- Export OPML -->
             <div class="space-y-2">
                 <h4 class="font-medium">Export OPML</h4>
                 <button id="btn-export-opml" class="bg-green-600 text-white px-4 py-1 rounded">GET /api/v1/export-opml</button>
             </div>
-            
+
             <!-- Preview OPML -->
             <form id="form-preview-opml" class="space-y-2">
                 <h4 class="font-medium">Preview OPML Import</h4>
@@ -274,7 +274,7 @@
                     <button class="bg-yellow-600 text-white px-4 py-1 rounded" type="submit">POST /api/v1/preview-opml</button>
                 </div>
             </form>
-            
+
             <!-- Import OPML -->
             <form id="form-import-opml" class="space-y-2">
                 <h4 class="font-medium">Import OPML</h4>
@@ -291,7 +291,7 @@
                     <button class="bg-red-600 text-white px-4 py-1 rounded" type="submit">POST /api/v1/import-opml</button>
                 </div>
             </form>
-            
+
             <div class="text-xs text-gray-500" id="opml-url"></div>
             <pre class="bg-gray-900 text-green-200 text-sm p-3 rounded overflow-auto max-h-64" id="opml-output">(response)</pre>
         </div>
@@ -309,8 +309,8 @@
     </div>
 
     <script>
-        function q(sel){return document.querySelector(sel);}    
-        function fmt(obj){return JSON.stringify(obj, null, 2);} 
+        function q(sel){return document.querySelector(sel);}
+        function fmt(obj){return JSON.stringify(obj, null, 2);}
         function buildPostsUrl(params){
             const usp = new URLSearchParams();
             if(params.include) usp.set('include', params.include);

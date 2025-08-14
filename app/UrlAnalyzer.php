@@ -42,9 +42,9 @@ class UrlAnalyzer
         try {
             $embed = new Embed();
             $info = $embed->get($this->url);
-            
+
             $this->extractMetadata($info);
-            
+
         } catch (\Embed\Exceptions\InvalidUrlException $e) {
             return $this->abort('Cannot access URL: ' . $e->getMessage());
         } catch (\Exception $e) {
@@ -106,10 +106,10 @@ class UrlAnalyzer
 
         // Remove extra whitespace and decode HTML entities
         $cleaned = trim(html_entity_decode($string, ENT_QUOTES, 'UTF-8'));
-        
+
         // Remove control characters
         $cleaned = preg_replace('/[\x00-\x1F\x7F]/', '', $cleaned);
-        
+
         return $cleaned ?: null;
     }
 
@@ -143,7 +143,7 @@ class UrlAnalyzer
     {
         $this->status = 'error';
         $this->error_messages[] = $message;
-        
+
         // Reset result to safe defaults
         $this->result = [
             'title' => null,

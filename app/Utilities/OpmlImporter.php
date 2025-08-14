@@ -24,10 +24,10 @@ class OpmlImporter
     public function preview(string $filePath): array
     {
         $this->validateOpmlFile($filePath);
-        
+
         $xml = simplexml_load_file($filePath);
         $collection = collect(json_decode(json_encode($xml), true));
-        
+
         if (!isset($collection['body']['outline'])) {
             throw new \Exception('Invalid OPML format: no feeds found');
         }
@@ -45,7 +45,7 @@ class OpmlImporter
                 // This is a category with sources
                 $categoryName = $group['@attributes']['title'] ?? 'Unnamed Category';
                 $sources = [];
-                
+
                 foreach ($group['outline'] as $source) {
                     $sourceDetails = $source['@attributes'] ?? $source;
                     $sources[] = [
@@ -54,13 +54,13 @@ class OpmlImporter
                         'site_url' => $sourceDetails['htmlUrl'] ?? '',
                     ];
                 }
-                
+
                 $preview['categories'][] = [
                     'name' => $categoryName,
                     'sources' => $sources,
                     'source_count' => count($sources),
                 ];
-                
+
                 $preview['total_sources'] += count($sources);
                 $preview['total_categories']++;
             } else {
@@ -84,13 +84,13 @@ class OpmlImporter
     public function import(string $filePath, string $mode = 'replace'): array
     {
         $this->validateOpmlFile($filePath);
-        
+
         DB::beginTransaction();
-        
+
         try {
             $xml = simplexml_load_file($filePath);
             $collection = collect(json_decode(json_encode($xml), true));
-            
+
             if (!isset($collection['body']['outline'])) {
                 throw new \Exception('Invalid OPML format: no feeds found');
             }
@@ -129,9 +129,9 @@ class OpmlImporter
 
             DB::commit();
             Log::info('OPML Import completed successfully', $result);
-            
+
             return $result;
-            
+
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('OPML Import failed', ['error' => $e->getMessage()]);
@@ -155,7 +155,7 @@ class OpmlImporter
         // Basic XML validation
         libxml_use_internal_errors(true);
         $xml = simplexml_load_file($filePath);
-        
+
         if ($xml === false) {
             $errors = libxml_get_errors();
             $errorMessage = 'Invalid XML: ';
@@ -177,7 +177,7 @@ class OpmlImporter
     private function processCategoryGroup(array $group, array &$result, string $mode): void
     {
         $categoryTitle = $group['@attributes']['title'] ?? 'Unnamed Category';
-        
+
         // Find or create category
         if ($mode === 'merge') {
             $category = Category::firstOrCreate(
@@ -228,7 +228,7 @@ class OpmlImporter
     private function processSource(array $source, int $categoryId, array &$result, string $mode): void
     {
         $sourceDetails = $source['@attributes'] ?? $source;
-        
+
         $sourceData = [
             'name' => $sourceDetails['text'] ?? 'Unknown Feed',
             'description' => $sourceDetails['title'] ?? $sourceDetails['text'] ?? 'Unknown Feed',
@@ -260,7 +260,7 @@ class OpmlImporter
 
             Source::create($sourceData);
             $result['sources_created']++;
-            
+
         } catch (\Exception $e) {
             $result['errors'][] = "Failed to create source '{$sourceData['name']}': " . $e->getMessage();
             $result['sources_skipped']++;

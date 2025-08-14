@@ -15,7 +15,7 @@ class UpdateSourceRequest extends FormRequest
      * Validation rules for updating a source.
      *
      * All fields are optional for updates - only include what you want to change.
-     * Note: We don't allow changing the RSS feed URL directly - 
+     * Note: We don't allow changing the RSS feed URL directly -
      * that would require re-validation and is better handled as delete + create.
      */
     public function rules(): array

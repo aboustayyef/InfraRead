@@ -27,7 +27,7 @@ class CategoryManagementApiTest extends TestCase
     {
         // Remove Sanctum authentication
         app('auth')->forgetGuards();
-        
+
         $category = Category::factory()->create();
 
         // Test store
@@ -226,7 +226,7 @@ class CategoryManagementApiTest extends TestCase
     public function it_moves_sources_to_uncategorized_when_deleting_category_with_sources()
     {
         $category = Category::factory()->create(['description' => 'Category with Sources']);
-        
+
         // Create sources in this category
         $source1 = Source::factory()->create(['category_id' => $category->id]);
         $source2 = Source::factory()->create(['category_id' => $category->id]);
@@ -267,7 +267,7 @@ class CategoryManagementApiTest extends TestCase
     {
         // Create existing "Uncategorized" category
         $existingUncategorized = Category::factory()->create(['description' => 'Uncategorized']);
-        
+
         $category = Category::factory()->create(['description' => 'Category to Delete']);
         $source = Source::factory()->create(['category_id' => $category->id]);
 
@@ -297,13 +297,13 @@ class CategoryManagementApiTest extends TestCase
     public function it_handles_deletion_errors_gracefully()
     {
         $category = Category::factory()->create();
-        
+
         // Mock a database exception scenario would be complex,
         // so we test the transaction rollback behavior indirectly
         // by ensuring the category still exists after a potential failure
-        
+
         $response = $this->deleteJson("/api/v1/categories/{$category->id}");
-        
+
         // Should succeed normally
         $response->assertOk();
     }
@@ -313,10 +313,10 @@ class CategoryManagementApiTest extends TestCase
     {
         $category1 = Category::factory()->create(['description' => 'Category 1']);
         $category2 = Category::factory()->create(['description' => 'Category 2']);
-        
+
         // Create sources for category1
         Source::factory()->count(3)->create(['category_id' => $category1->id]);
-        
+
         // No sources for category2
 
         $response = $this->getJson('/api/v1/categories');
@@ -335,11 +335,11 @@ class CategoryManagementApiTest extends TestCase
             ]);
 
         $categories = $response->json('data');
-        
+
         // Find our categories in the response
         $cat1Data = collect($categories)->firstWhere('id', $category1->id);
         $cat2Data = collect($categories)->firstWhere('id', $category2->id);
-        
+
         $this->assertEquals(3, $cat1Data['sources_count']);
         $this->assertEquals(0, $cat2Data['sources_count']);
     }
