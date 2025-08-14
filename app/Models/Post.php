@@ -24,6 +24,16 @@ class Post extends Model
         'posted_at',
     ];
 
+    /**
+     * The attributes that should be cast to native types.
+     *
+     * This tells Laravel to automatically convert database values
+     * to proper PHP types when retrieving and setting.
+     */
+    protected $casts = [
+        'read' => 'boolean',
+    ];
+
     public function summary($numSentences = 2)
     {
         $apiKey = env('OPENAI_KEY');

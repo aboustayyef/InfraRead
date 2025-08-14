@@ -1,6 +1,11 @@
 # Objectives
 
-Refactor the existing monolithic Laravel RSS reader into a cleanly separated system:
+Refactor the existing monolithic Laravel RSS reader iPrinciples:
+- Backwards compatible API evolution (additive first, remove with deprecation windows).
+- Idempotent write operations where practical (e.g., marking read). 
+- Clear separation of concerns (no view logic in controllers used by API).
+- Simple two-state post model: read (archived) or unread (inbox) - no additional states needed.
+- Client-side integration with external read-later services rather than internal storage. cleanly separated system:
 
 1. A backend service exposing a stable, versioned, token‑protected JSON API that ingests, processes, organizes, enriches (summaries, plugins) and stores feed data.
 2. One (later multiple) independent frontend clients (initially a Vue SPA in a separate repository) that consume only the public API for all read & write operations, preserving existing UX (keyboard shortcuts, fast navigation).
@@ -73,10 +78,15 @@ Principles:
 
 ### Phase 2: Core Mutation Endpoints
 Goal: Parity for essential user actions via API.
-- Endpoints: mark post read/unread (single & bulk), mark all in source/category up to a timestamp, toggle/save (lightweight internal flag), dismiss/archive.
+- Endpoints: 
+  - Mark single post read/unread 
+  - Mark posts read/unread (bulk with specific IDs for user selections)
+  - Mark all posts read/unread (efficient bulk operations with optional filtering by source/category/date)
 - Request validation objects + idempotency safeguards.
 - Expand tests (happy path, unauthorized, rate limiting, idempotent repeat calls).
-- Introduce basic token "capabilities" scaffolding (scopes stored with tokens, enforcement optional this phase but structure ready).
+- Note: Posts have only two states: read (archived) or unread (inbox). No additional dismiss/archive functionality needed.
+- Note: "Save for Later" is handled client-side by directly integrating with external read-later services (Pocket, Instapaper, etc.) using their APIs, not stored in our database.
+- Note: Bulk operations use Laravel's efficient query builder methods (e.g., `Post::where(...)->update(...)`) rather than loading models into memory for better performance.
 
 ### Phase 3: Feed & Category Management APIs
 Goal: Allow external client to manage sources fully.
@@ -86,10 +96,9 @@ Goal: Allow external client to manage sources fully.
 - Tests for feed validation errors (unreachable, invalid XML, duplicates).
 
 ### Phase 4: Enhanced Auth & Security
-- Token scopes (read_posts, write_posts, manage_sources, summaries, admin) enforced.
-- Per-scope rate limits; summary limiter refined to per-token basis.
 - Audit log (DB table) for sensitive mutations (source creation, token creation, feed deletion).
-- Optional token expiration & revocation UI improvements (copy button, last used timestamp).
+- Token expiration & revocation UI improvements (copy button, last used timestamp).
+- Enhanced rate limiting for summary generation and feed management operations.
 
 ### Phase 5: Vue SPA Extraction (Separate Repository)
 - New standalone repo (e.g., `infraread-frontend`).
@@ -134,22 +143,23 @@ Goal: Allow external client to manage sources fully.
 - Consolidate plugin lifecycle (pre-fetch vs post-fetch vs post-store hooks) with clear contracts.
 - Introduce DTO / API Resource normalization layer to reduce controller duplication.
 - Define serialization policy (fields whitelist, sparse fieldsets via `?fields[posts]=id,title,...`).
-- Rate limiter strategy centralization (config-driven, keyed by token scopes).
+- Rate limiter strategy centralization (config-driven, per-user basis for summary generation).
 - Data retention / pruning policy (archiving old posts, summary regeneration rules).
 
 ---
 
 ## External Read-It-Later Strategy (Preference Acknowledged)
-- Keep internal "save" minimal (boolean + timestamp) for UI speed.
-- Provide background job that maps saved posts to outbound integration queue.
-- Allow per-user selection of provider & credentials; failure isolation (invalid token does not block internal save).
-- Expose integration status via lightweight `/api/v1/integrations` endpoint later.
+- Client applications handle "save for later" directly by integrating with external read-later services (Pocket, Instapaper, Readwise, etc.) using their respective APIs.
+- No internal "saved" state stored in database - this is purely a frontend responsibility.
+- Infraread API provides post URLs and metadata needed for external service integration.
+- Each client can implement their preferred read-later service integration independently.
 
 ---
 
 ## Non-Goals / Explicit Exclusions (For Now)
 - Dockerization (explicitly declined; keep instructions native). Document optional future containerization separately if ever needed.
-- Building a proprietary complex offline read-later engine (outsourced to 3rd parties via integration layer).
+- Building a proprietary complex offline read-later engine (outsourced to client-side integration with 3rd party services).
+- Internal "saved for later" database storage (handled client-side via external service APIs).
 - Premature microservices split (stay within single codebase until clear scaling pain, rely on modular boundaries inside Laravel).
 
 ---
@@ -157,9 +167,12 @@ Goal: Allow external client to manage sources fully.
 ## Immediate Next Step (When Work Resumes)
 Start Phase 2:
 1. Design mutation endpoint contracts (request/response JSON + error shapes) & add to this file / OpenAPI draft.
-2. Implement mark read/unread (single, bulk) with tests.
-3. Add lightweight internal save toggle + tests.
-4. Introduce token scope columns & migration (populate existing tokens with *all* scopes for backward compatibility) – enforcement optional initially.
+2. Implement mark read/unread (single, bulk with IDs, efficient mark-all with filters) with tests.
+3. Focus on Laravel's efficient bulk update patterns using query builder methods rather than loading models into memory.
+
+Note: Simple two-state model: posts are either read (archived) or unread (inbox). No additional dismiss/archive states.
+Note: "Save for Later" functionality is handled client-side by integrating directly with external read-later services, not via API endpoints.
+Note: Single-user application - all tokens have full access, no scope restrictions needed.
 
 ---
 
@@ -174,7 +187,7 @@ Start Phase 2:
 | API tester page | Done | Temporary dev tool |
 | Mutation endpoints | Pending | Phase 2 |
 | Source/category CRUD via API | Pending | Phase 3 |
-| Token scopes & granular limits | Pending | Phase 4 |
+| Enhanced auth & audit logging | Pending | Phase 4 |
 | Vue SPA extraction | Pending | Phase 5 |
 | Queue & ingestion optimization | Pending | Phase 6 |
 | External read-it-later integrations | Pending | Phase 7 |
@@ -185,8 +198,8 @@ Start Phase 2:
 ---
 
 ## Open Questions (To Clarify Later)
-- Scope granularity: Do we need per-endpoint scopes or broader functional groups sufficient?
 - Bulk limits: Max posts allowed in a single mark-read operation?
+- Summary model retention: Regenerate strategy when original content updates?
 - Summary model retention: Regenerate strategy when original content updates?
 - Integration triggers: Immediate async job vs batched schedule for external read-later sync?
 
@@ -197,7 +210,20 @@ Start Phase 2:
 - When introducing breaking API changes, record deprecation timeline here first.
 
 ---
+## AI Approach
+While working, always explain what you are doing so that the coder can learn. The coder is intermediate level in Laravel and needs guidance with advanced architecture concepts, design patterns, testing strategies, and API best practices. 
 
-Last Updated: 2025-08-12
+**Teaching Focus Areas:**
+- API design principles and RESTful patterns
+- Laravel-specific patterns (Form Requests, Resources, Service classes)
+- Testing strategies (feature vs unit tests, test organization)
+- Database design decisions and migration patterns
+- Error handling and validation approaches
+- Code organization and separation of concerns
+
+Provide context for why specific approaches are chosen, explain trade-offs, and highlight Laravel conventions and best practices throughout the implementation process.
+
+
+Last Updated: 2025-08-14
 
 

@@ -5,6 +5,9 @@ use App\Http\Controllers\Api\V1\PostController as V1PostController;
 use App\Http\Controllers\Api\V1\SourceController as V1SourceController;
 use App\Http\Controllers\Api\V1\CategoryController as V1CategoryController;
 use App\Http\Controllers\Api\V1\PostSummaryController as V1PostSummaryController;
+use App\Http\Controllers\Api\V1\PostReadStatusController as V1PostReadStatusController;
+use App\Http\Controllers\Api\V1\BulkPostReadStatusController as V1BulkPostReadStatusController;
+use App\Http\Controllers\Api\V1\MarkAllReadController as V1MarkAllReadController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -44,11 +47,19 @@ Route::get('v2_readlaterservice', function () {
 
 // API V1 - sanctum protected
 Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
+    // Read endpoints
     Route::get('/posts', [V1PostController::class, 'index']);
     Route::get('/posts/{post}', [V1PostController::class, 'show']);
-    Route::post('/posts/{post}/summary', V1PostSummaryController::class)->middleware('throttle:summaries');
     Route::get('/sources', [V1SourceController::class, 'index']);
     Route::get('/sources/{source}', [V1SourceController::class, 'show']);
     Route::get('/categories', [V1CategoryController::class, 'index']);
     Route::get('/categories/{category}', [V1CategoryController::class, 'show']);
+
+    // Mutation endpoints (Phase 2)
+    Route::patch('/posts/{post}/read-status', [V1PostReadStatusController::class, 'update']);
+    Route::patch('/posts/bulk-read-status', [V1BulkPostReadStatusController::class, 'update']);
+    Route::patch('/posts/mark-all-read', [V1MarkAllReadController::class, 'markAll']);
+
+    // Special endpoints
+    Route::post('/posts/{post}/summary', V1PostSummaryController::class)->middleware('throttle:summaries');
 });
