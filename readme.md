@@ -17,6 +17,18 @@ InfraRead (pronounced _infrared_ ) is an elegant self-hosted RSS feed reader and
 *   Full Keyboard Navigation using Vim Shortcuts (Key bindings can be changed)
 *   Save For later, can choose between Instapaper and Pocket
 *   Offline persistence of settings and previously loaded posts
+*   **Complete REST API** for programmatic access and external client development
+
+## API Documentation
+
+InfraRead provides a comprehensive REST API for all functionality. See **[API-REFERENCE.md](API-REFERENCE.md)** for complete documentation including:
+
+- Authentication with personal access tokens
+- Posts management (read/unread, bulk operations, filtering)
+- Sources and categories CRUD
+- OPML import/export for RSS reader migration
+- Rate limiting and error handling
+- Complete examples and workflows
 
 ## Requirements
 

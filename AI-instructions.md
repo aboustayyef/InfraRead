@@ -18,7 +18,20 @@ Refactor the existing monolithic Laravel RSS reader iPrinciples:
 Single Laravel app handling:
 - Scheduled/Cron RSS fetch & plugin processing (store normalized posts, media, categories, sources).
 - Server-rendered & Vue-enhanced web UI (reading, mark read/unread, save for later, subscribe to feeds, AI summarize, etc.) using bespoke endpoints tightly coupled to views.
+- **OPML Import/Export functionality** for seamless RSS reader migration (setup workflow + source management).
 - Plugin system for post‑processing (e.g., fixing relative links, legibility, marking read, text transformations).
+
+## Critical Functionality to Preserve
+
+### **OPML Import/Export (Essential for RSS Reader Migration)**
+- **OPML Export**: Download all sources as standardized OPML file (`/feeds.opml`) for backup or migration to other RSS readers
+- **OPML Import**: Upload OPML file during setup workflow to bulk-import feeds from other RSS readers
+- **Current Implementation**: 
+  - Export: Simple route generating XML view with categories/sources
+  - Import: File upload + `OpmlImporter` utility class with XML parsing
+  - Setup integration: First-run onboarding flow includes OPML upload option
+- **API Evolution Strategy**: Maintain web routes for direct download/upload, add API endpoints for programmatic access
+- **Migration Compatibility**: Support standard OPML format used by major RSS readers (Feedly, Inoreader, etc.)
 
 Constraints & Preferences:
 - No Docker for local dev (run natively on host macOS; keep setup simple: PHP + Composer + Node). 
@@ -98,16 +111,52 @@ Goal: Parity for essential user actions via API.
 - ✅ "Save for Later" remains client-side responsibility (external read-later services).
 - ✅ Bulk operations use Laravel's efficient query builder methods for optimal performance.
 
-### Phase 3: Feed & Category Management APIs
-Goal: Allow external client to manage sources fully.
-- CRUD for Sources (add, rescan, mute/disable, delete) with validation + feed URL normalization & discovery (fetch & auto-detect if given a webpage URL).
-- CRUD for Categories (create, rename, reassign posts/sources).
-- Background job to validate and categorize new source after creation.
-- Tests for feed validation errors (unreachable, invalid XML, duplicates).
-- **Hybrid Processing Approach**: Enhance existing cron-based feed processing with Laravel jobs for on-demand actions:
-  - Keep existing cron job for regular scheduled feed updates (efficient batch processing)
-  - Add Laravel jobs for user-triggered actions (feed validation, manual refresh, on-demand processing)
-  - Jobs complement rather than replace the proven cron-based architecture
+### Phase 3: Feed & Category Management APIs ✅ COMPLETE
+**Objective:** Enable programmatic management of RSS feeds and categories.
+
+#### ✅ Completed Features:
+
+**Source Management API**
+- `POST /api/v1/sources` - Create new RSS feed source with automatic discovery
+- `PUT /api/v1/sources/{id}` - Update existing source
+- `DELETE /api/v1/sources/{id}` - Remove source and all its posts  
+- `POST /api/v1/sources/{id}/refresh` - Force refresh posts from source
+- Enhanced UrlAnalyzer class with robust error handling
+- Database constraints prevent duplicate RSS URLs
+- 11 comprehensive tests covering all scenarios
+
+**Category Management API ✅**
+- `GET /api/v1/categories` - List all categories with source counts
+- `GET /api/v1/categories/{id}` - Show category with sources
+- `POST /api/v1/categories` - Create new category
+- `PUT /api/v1/categories/{id}` - Update category  
+- `DELETE /api/v1/categories/{id}` - Remove category (automatically moves sources to "Uncategorized")
+- Form validation with uniqueness constraints
+- Smart deletion handling with source migration
+- 16 comprehensive tests covering all scenarios
+
+**OPML Import/Export API ✅**
+- `GET /api/v1/export-opml` - Export all sources as OPML format
+- `POST /api/v1/preview-opml` - Preview OPML file before import
+- `POST /api/v1/import-opml` - Import sources from OPML file
+- Supports both "replace" and "merge" import modes
+- Full validation and error handling
+- 11 comprehensive tests covering all scenarios
+- Preserves existing web-based OPML functionality
+
+**Implementation Highlights:**
+- **OpmlExporter**: Generates standard OPML 2.0 format with category structure
+- **OpmlImporter**: Enhanced with preview mode, merge capability, proper validation
+- **CategoryController**: Full CRUD with smart deletion (moves orphaned sources to "Uncategorized")
+- **Form Requests**: Comprehensive validation for all operations
+- **Database Transactions**: Ensures data integrity during complex operations
+- **Legacy Support**: Maintains existing web routes and functionality
+- **Security**: XML validation, file size limits, proper error handling
+- **API Documentation**: Complete API reference with examples and error handling
+
+**Total Phase 3 Tests: 38 (11 Source + 16 Category + 11 OPML)**
+
+**📖 Documentation:** See `API-REFERENCE.md` for complete endpoint documentation
 
 ### Phase 4: Enhanced Auth & Security
 - Audit log (DB table) for sensitive mutations (source creation, token creation, feed deletion).
@@ -162,6 +211,8 @@ Goal: Allow external client to manage sources fully.
 - Define serialization policy (fields whitelist, sparse fieldsets via `?fields[posts]=id,title,...`).
 - Rate limiter strategy centralization (config-driven, per-user basis for summary generation).
 - Data retention / pruning policy (archiving old posts, summary regeneration rules).
+- **📬 Update Postman Collection:** Current collection (`postman/infraread-phase1-api.postman_collection.json`) is outdated - needs Phase 2 & 3 endpoints, Sanctum auth, and proper variable setup.
+- **🧪 Enhance API Tester:** Add new Phase 2 & 3 endpoints to `/api-tester` interface for manual testing.
 
 ---
 
@@ -207,7 +258,9 @@ Note: Single-user application - all tokens have full access, no scope restrictio
 | Bulk post operations (by IDs) | Done | Phase 2 - up to 1000 posts, transactions |
 | Mark-all operations with filters | Done | Phase 2 - efficient query optimization |
 | Comprehensive mutation testing | Done | Phase 2 - 42 tests, 165 assertions |
-| Source/category CRUD via API | Pending | Phase 3 |
+| Source/category CRUD via API | Done | Phase 3 - Full CRUD with 38 tests |
+| OPML Import/Export API | Done | Phase 3 - Complete migration functionality |
+| API Reference Documentation | Done | Complete endpoint documentation with examples |
 | Enhanced auth & audit logging | Pending | Phase 4 |
 | Vue SPA extraction | Pending | Phase 5 |
 | Queue & ingestion optimization | Pending | Phase 6 |
@@ -229,6 +282,8 @@ Note: Single-user application - all tokens have full access, no scope restrictio
 ## Maintenance Notes
 - Keep this document updated at the end of each completed phase (append changelog segment rather than rewriting history).
 - When introducing breaking API changes, record deprecation timeline here first.
+- **📖 API Documentation:** Always update `API-REFERENCE.md` when adding new endpoints, changing request/response formats, or modifying authentication requirements.
+- **🧪 Developer Tools:** Keep `/api-tester` tool and `postman/infraread-phase1-api.postman_collection.json` updated with new endpoints for easy testing and integration.
 
 ---
 ## AI Approach
@@ -244,6 +299,8 @@ While working, always explain what you are doing so that the coder can learn. Th
 - **Background jobs and queues** (explain in simple, non-intimidating terms)
 - **Service layer architecture** and dependency injection
 - **External API integration** and HTTP client usage
+- **API Documentation:** Always update `API-REFERENCE.md` when implementing new endpoints
+- **Developer Tools:** Keep `/api-tester` and Postman collection updated with new endpoints
 
 **Special Emphasis on Background Jobs:**
 When teaching queues and background jobs, use simple analogies and step-by-step explanations:
