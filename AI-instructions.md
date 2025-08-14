@@ -94,6 +94,10 @@ Goal: Allow external client to manage sources fully.
 - CRUD for Categories (create, rename, reassign posts/sources).
 - Background job to validate and categorize new source after creation.
 - Tests for feed validation errors (unreachable, invalid XML, duplicates).
+- **Hybrid Processing Approach**: Enhance existing cron-based feed processing with Laravel jobs for on-demand actions:
+  - Keep existing cron job for regular scheduled feed updates (efficient batch processing)
+  - Add Laravel jobs for user-triggered actions (feed validation, manual refresh, on-demand processing)
+  - Jobs complement rather than replace the proven cron-based architecture
 
 ### Phase 4: Enhanced Auth & Security
 - Audit log (DB table) for sensitive mutations (source creation, token creation, feed deletion).
@@ -108,10 +112,13 @@ Goal: Allow external client to manage sources fully.
 - Incremental rollout: behind feature flag; keep legacy UI until parity reached.
 
 ### Phase 6: Background Processing & Performance
-- Queue feed fetch & plugin processing (one job per source; concurrency control & jitter to avoid thundering herd).
+- Enhance existing cron-based feed processing with Laravel jobs for on-demand actions
+- Keep proven scheduled batch processing via cron job for regular feed updates
+- Add Laravel jobs for user-triggered scenarios: feed validation, manual refresh, AI summaries
 - Introduce feed fetch status metrics (last fetched at, duration, error count, consecutive failures).
 - Add indexes (e.g., posts(read, source_id, category_id, published_at), summaries(post_id)).
 - Implement exponential backoff for failing sources.
+- Hybrid processing model: cron for efficiency, jobs for responsiveness
 
 ### Phase 7: External Read-It-Later Integration (Optional Plugins)
 - Abstract “save” action: internal flag + dispatch integration job.
@@ -220,6 +227,21 @@ While working, always explain what you are doing so that the coder can learn. Th
 - Database design decisions and migration patterns
 - Error handling and validation approaches
 - Code organization and separation of concerns
+- **Background jobs and queues** (explain in simple, non-intimidating terms)
+- **Service layer architecture** and dependency injection
+- **External API integration** and HTTP client usage
+
+**Special Emphasis on Background Jobs:**
+When teaching queues and background jobs, use simple analogies and step-by-step explanations:
+- Start with "why" before "how" (user experience benefits)
+- Use real-world analogies (restaurant kitchen, post office, etc.)
+- Explain each concept in isolation before combining them
+- Show both simple and complex examples with clear progression
+- Address common concerns about complexity and debugging
+- Provide practical examples relevant to RSS feed processing
+- **Hybrid Approach**: Build on existing cron-based feed processing rather than replacing it
+- Demonstrate when to use jobs vs cron vs immediate processing for different scenarios
+- Show how Laravel jobs complement existing reliable scheduled processing
 
 Provide context for why specific approaches are chosen, explain trade-offs, and highlight Laravel conventions and best practices throughout the implementation process.
 
