@@ -5,7 +5,7 @@ namespace App\Plugins;
 use App\Models\Post;
 
 /**********************************************************************************
- * All plugins take a App/Post object, transform it and return true if succesful
+ * All plugins take a App/Post object, transform it and return true if successful
  **********************************************************************************
  *
  * About This Plugin
@@ -14,23 +14,25 @@ use App\Models\Post;
  *
  * Modified Properties:
  * --------------------
- * [List the properties that will be modified by this plugin]
- * [Example: Post->content]
+ * Post->read - Sets to 1 if title matches blacklisted phrases for specific sources
  */
 
 class PluginMarkPostAsRead implements PluginInterface
 {
     private $post;
+    private $options;
 
-    public function __construct(Post $post)
+    public function __construct(Post $post, array $options = [])
     {
         $this->post = $post;
+        $this->options = $options;
     }
 
-    public function handle()
+    public function handle(): bool
     {
         try {
-            $phrases_to_blacklist = [
+            // Get blacklist from options or use default
+            $phrases_to_blacklist = $this->options['blacklist'] ?? [
                 ['url' => 'slowboring.com', 'string' => 'thread'],
                 ['url' => 'macstories.net', 'string' => 'AppStories, Episode'],
                 ['url' => 'macstories.net', 'string' => '[Sponsor]'],
@@ -51,5 +53,19 @@ class PluginMarkPostAsRead implements PluginInterface
         } catch (\Exception $e) {
             return false;
         }
+    }
+
+    public function getMetadata(): array
+    {
+        return [
+            'name' => 'Mark Post As Read',
+            'description' => 'Automatically marks posts as read based on title patterns and source URLs',
+            'version' => '1.1.0',
+            'author' => 'InfraRead',
+            'modifies' => ['read'],
+            'options' => [
+                'blacklist' => 'Array of url/string patterns to match for auto-marking as read'
+            ]
+        ];
     }
 }

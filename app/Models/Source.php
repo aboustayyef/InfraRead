@@ -229,15 +229,24 @@ class Source extends Model
                 $post->source_id = $this->id;
                 $post->save();
 
-                // Apply plugins (this will be improved in a later phase)
+                // Apply plugins with enhanced error handling
                 try {
                     $post->applyPlugins();
                     $post->markMutedPhrasesAsRead();
                     $post->save();
                     $processedCount++;
+                } catch (\App\Exceptions\FeedProcessing\PluginException $e) {
+                    // Plugin errors are already logged in the Post model with full context
+                    // Continue processing - post is still saved even if plugins fail
+                    Log::info('Plugin processing failed for post, but post was saved', [
+                        'source_id' => $this->id,
+                        'post_id' => $post->id ?? 'unsaved',
+                        'plugin_error' => $e->getMessage()
+                    ]);
+                    $processedCount++; // Still count as processed
                 } catch (\Exception $e) {
-                    // Log plugin errors but don't fail the entire operation
-                    Log::warning('Plugin processing failed for post', [
+                    // Log other errors but don't fail the entire operation
+                    Log::warning('Post processing failed', [
                         'source_id' => $this->id,
                         'post_id' => $post->id ?? 'unsaved',
                         'error' => $e->getMessage()

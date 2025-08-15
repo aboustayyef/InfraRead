@@ -265,6 +265,136 @@ Each command run provides detailed statistics:
 - Watch for sources stuck in "failed" status
 - Track processing duration trends
 
+## Plugin System
+
+InfraRead features a comprehensive plugin system for post-processing RSS content. Plugins can modify posts after they're fetched but before they're displayed, enabling content transformation, link fixing, automatic tagging, and more.
+
+### Available Plugins
+
+**FixRelativeLinks** - Converts relative links and images to absolute URLs
+- **Purpose**: Fixes broken images and links in RSS feeds that use relative paths
+- **Options**: 
+  - `convert_images` (bool): Convert relative image URLs (default: true)
+  - `convert_links` (bool): Convert relative link URLs (default: true)  
+  - `remove_srcset` (bool): Remove srcset attributes (default: true)
+
+**MakeTextLegible** - Improves text readability and formatting
+- **Purpose**: Breaks up long paragraphs, removes ads, and cleans formatting
+- **Options**:
+  - `min_letters_count` (int): Minimum paragraph length to split (default: 700)
+  - `max_paragraph_length` (int): Maximum allowed paragraph length (default: 1000)
+  - `remove_ads` (bool): Remove advertisement content (default: true)
+  - `clean_formatting` (bool): Clean excessive formatting (default: true)
+
+**MarkPostAsRead** - Auto-marks posts as read based on patterns
+- **Purpose**: Automatically marks certain posts as read based on title/source patterns
+- **Options**:
+  - `blacklist` (array): Array of url/string patterns to match for auto-reading
+
+**ReplaceArticleLink** - Replaces article URLs with embedded links
+- **Purpose**: For curated feeds, replaces the feed URL with the first external link found
+- **Options**:
+  - `exclusions` (array): Strings to exclude from link replacement
+  - `selector` (string): CSS selector for finding links (default: "article a")
+
+### Plugin Configuration
+
+Plugins are configured in `app/Plugins/Kernel.php` with source-specific settings:
+
+```php
+'plugins' => [
+    'kottke.org' => [
+        'FixRelativeLinks' => [
+            'convert_images' => true,
+            'convert_links' => true,
+            'remove_srcset' => true
+        ],
+        'MakeTextLegible' => [
+            'max_paragraph_length' => 800
+        ]
+    ]
+]
+```
+
+### Plugin Management Commands
+
+**List Available Plugins:**
+```bash
+php artisan plugins:manage list
+```
+
+**Validate Plugin Configuration:**
+```bash
+php artisan plugins:manage validate
+```
+
+**Test Plugin on Specific Source:**
+```bash
+php artisan plugins:manage test --source=123
+```
+
+**View Sources with Plugin Configuration:**
+```bash
+php artisan plugins:manage sources
+```
+
+### Creating Custom Plugins
+
+1. **Create Plugin Class** in `app/Plugins/` implementing `PluginInterface`:
+
+```php
+<?php
+namespace App\Plugins;
+use App\Models\Post;
+
+class MyCustomPlugin implements PluginInterface
+{
+    private $post;
+    private $options;
+
+    public function __construct(Post $post, array $options = [])
+    {
+        $this->post = $post;
+        $this->options = $options;
+    }
+
+    public function handle(): bool
+    {
+        try {
+            // Your plugin logic here
+            $this->post->save();
+            return true;
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+
+    public function getMetadata(): array
+    {
+        return [
+            'name' => 'My Custom Plugin',
+            'description' => 'What this plugin does',
+            'version' => '1.0.0',
+            'author' => 'Your Name',
+            'modifies' => ['field1', 'field2'],
+            'options' => [
+                'option1' => 'Description of option1'
+            ]
+        ];
+    }
+}
+```
+
+2. **Add to Kernel Configuration** in `app/Plugins/Kernel.php`
+3. **Test with Management Commands**
+
+### Plugin Error Handling
+
+- Plugins log failures with context preservation
+- Failed plugins don't prevent other plugins from running
+- Comprehensive error tracking in `storage/logs/laravel.log`
+- Plugin execution statistics and timing available
+
 ## API (Phases 1-3 Complete)
 
 The application now exposes a comprehensive versioned JSON API under `/api/v1` with full CRUD operations for posts, sources, and categories. All routes require authentication via Sanctum personal access tokens.
@@ -381,12 +511,13 @@ Path: `/api-tester` (behind normal web auth session). Paste a personal access to
 
 **Phase 6 Foundation Complete:**
 - Enhanced feed processing with comprehensive error handling
-- Source health monitoring with exponential backoff for failed feeds
+- Source health monitoring with exponential backoff for failed feeds  
 - Structured exception handling with detailed context preservation
 - Performance tracking and metrics collection
 - Improved console commands with progress reporting
 - Database optimization with strategic indexes
-- Comprehensive test coverage (119 tests passing)
+- **Plugin system overhaul with structured configuration and comprehensive testing**
+- Comprehensive test coverage (132 tests passing)
 
 **API Maturity:**
 - Complete CRUD operations for all entities

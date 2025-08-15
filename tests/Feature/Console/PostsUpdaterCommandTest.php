@@ -36,45 +36,45 @@ class PostsUpdaterCommandTest extends TestCase
     /** @test */
     public function can_process_single_source_successfully()
     {
-        <?php
+        // Create a source
+        $source = Source::factory()->create([
+            'user_id' => $this->user->id,
+            'category_id' => $this->category->id,
+            'url' => 'https://example.com/feed.xml',
+            'name' => 'Test Feed'
+        ]);
 
-namespace Tests\Feature\Console;
+        // Mock RSS response
+        Http::fake([
+            'example.com/feed.xml' => Http::response(
+                '<?xml version="1.0"?>
+                <rss version="2.0">
+                    <channel>
+                        <title>Test Feed</title>
+                        <item>
+                            <title>Test Post</title>
+                            <link>https://example.com/post1</link>
+                            <description>Test content</description>
+                            <pubDate>Wed, 01 Jan 2020 12:00:00 GMT</pubDate>
+                        </item>
+                    </channel>
+                </rss>',
+                200
+            )
+        ]);
 
-use Tests\TestCase;
-use App\Models\Source;
-use App\Models\User;
-use App\Models\Category;
-use App\Exceptions\FeedProcessing\FeedFetchException;
-use App\Exceptions\FeedProcessing\FeedParseException;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
-use Carbon\Carbon;
+        // Run the command
+        $this->artisan('posts:update', ['--source' => $source->id])
+             ->expectsOutput('Processing source: Test Feed')
+             ->assertExitCode(0);
 
-class PostsUpdaterCommandTest extends TestCase
-{
-    use RefreshDatabase;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        // Create test user and category
-        $this->user = User::factory()->create();
-        $this->category = Category::factory()->create();
-
-        // Mock the file storage
-        Storage::fake('local');
-
-        // Clear any logs
-        Log::spy();
+        // Verify post was created
+        $this->assertDatabaseHas('posts', [
+            'title' => 'Test Post',
+            'url' => 'https://example.com/post1',
+            'source_id' => $source->id
+        ]);
     }
-
-    /** @test */
-    public function can_process_single_source_successfully()
-    {
-        // Create a test source
         $source = Source::factory()->create([
             'category_id' => $this->category->id,
             'url' => 'https://example.com/feed.xml',

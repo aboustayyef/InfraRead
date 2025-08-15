@@ -5,12 +5,12 @@ namespace App\Plugins;
 use App\Models\Post;
 
 /**********************************************************************************
- * All plugins take a App/Post object, transform it and return true if succesful
+ * All plugins take a App/Post object, transform it and return true if successful
  **********************************************************************************
  *
  * About This Plugin
  * -------------------
- * NameOfPlugin [1 line description of what this plugin does]
+ * Sample Plugin - Template for creating new plugins
  *
  * Modified Properties:
  * --------------------
@@ -21,13 +21,15 @@ use App\Models\Post;
 class PluginSample implements PluginInterface
 {
     private $post;
+    private $options;
 
-    public function __construct(Post $post)
+    public function __construct(Post $post, array $options = [])
     {
         $this->post = $post;
+        $this->options = $options;
     }
 
-    public function handle()
+    public function handle(): bool
     {
         try {
             // All plugin's logic should be inside the try() function
@@ -36,6 +38,9 @@ class PluginSample implements PluginInterface
             Plugin logic goes here
             the logic is supposed to modify the $this->post object
 
+            You can use $this->options to access plugin configuration:
+            $someOption = $this->options['some_option'] ?? 'default_value';
+
             **************************/
             $this->post->save();
 
@@ -43,5 +48,19 @@ class PluginSample implements PluginInterface
         } catch (\Exception $e) {
             return false;
         }
+    }
+
+    public function getMetadata(): array
+    {
+        return [
+            'name' => 'Sample Plugin',
+            'description' => 'Template plugin for creating new post processing plugins',
+            'version' => '1.0.0',
+            'author' => 'InfraRead',
+            'modifies' => ['example_field'],
+            'options' => [
+                'example_option' => 'Description of what this option does'
+            ]
+        ];
     }
 }
