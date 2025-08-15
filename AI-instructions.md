@@ -169,15 +169,90 @@ Goal: Parity for essential user actions via API.
 - API client abstraction + offline optimistic UI for read/unread toggles.
 - Incremental rollout: behind feature flag; keep legacy UI until parity reached.
 
-### Phase 6: Background Processing & Performance
-- Enhance existing cron-based feed processing with Laravel jobs for on-demand actions
-- Keep proven scheduled batch processing via cron job for regular feed updates
-- Add Laravel jobs for user-triggered scenarios: feed validation, manual refresh, AI summaries
-- Introduce feed fetch status metrics (last fetched at, duration, error count, consecutive failures).
-- Add indexes (e.g., posts(read, source_id, category_id, published_at), summaries(post_id)).
-- Implement exponential backoff for failing sources.
-- Hybrid processing model: cron for efficiency, jobs for responsiveness
-- Queue setup: database queue driver. Minimal ops: set `QUEUE_CONNECTION=database`, migrate `jobs`/`failed_jobs`, run a long-lived `queue:work` process (supervised) with reasonable timeout/tries.
+### Phase 6: Background Processing & Performance ✅ FOUNDATION COMPLETE
+**Objective:** Enhance existing feed processing with improved error handling, metrics tracking, and performance monitoring while preserving the proven cron-based batch processing approach.
+
+#### ✅ Completed Foundation Work:
+
+**Enhanced Feed Processing Architecture**
+- **Source Health Metrics**: Added comprehensive tracking fields (last_fetched_at, last_fetch_duration_ms, consecutive_failures, last_error_at, last_error_message, status)
+- **Database Performance**: Added strategic indexes for posts (read + source_id + category_id, posted_at) and source metrics queries
+- **Structured Exception Handling**: Created dedicated exception hierarchy (FeedFetchException, FeedParseException, PluginException) with context preservation
+- **Source Health Monitoring**: Implemented exponential backoff for failed sources, health status tracking (active, failing, failed)
+- **Performance Tracking**: Capture and store feed processing duration, success/failure metrics, and error details
+
+**Improved Error Handling & Resilience**
+- **Custom Exception Classes**: 
+  - `FeedProcessingException` base class with source context tracking
+  - `FeedFetchException` for HTTP errors, timeouts, invalid URLs with retryability logic  
+  - `FeedParseException` for XML parsing errors, missing elements, empty feeds
+  - `PluginException` for plugin configuration and execution errors
+- **Exponential Backoff**: Intelligent retry scheduling for failed sources (2^failures minutes up to 24 hours)
+- **Structured Error Tracking**: Preserve full error context including HTTP status, XML parsing details, plugin failures
+- **Health Status System**: Active → Failing → Failed progression with automatic recovery on success
+
+**Enhanced Source Model**
+- **Metrics Methods**: `getSourceMetrics()`, `shouldSkipDueToBackoff()`, `getNextAttemptTime()`, `getHealthSummary()`
+- **Query Scopes**: `healthy()`, `failing()`, `failed()` for filtering sources by health status
+- **Status Descriptions**: Human-readable health status explanations for monitoring and debugging
+- **Protected Health Tracking**: Comprehensive `recordSuccessfulUpdate()` and `recordFailedUpdate()` methods
+
+**Value Objects & Structured Returns**
+- **SourceUpdateResult**: Immutable value object for feed processing results with success/failure handling
+- **Factory Methods**: `success()` and `failure()` constructors with consistent data structure
+- **Human-Readable Summaries**: Formatted result descriptions for logging and command output
+- **API-Ready Conversion**: `toArray()` method for structured API responses
+
+**Updated Console Command**
+- **Enhanced PostsUpdater**: Improved error handling, comprehensive progress reporting, metrics integration
+- **Intelligent Processing**: Respects exponential backoff, skips sources in cooldown period
+- **Detailed Logging**: Structured logs for monitoring, performance tracking, and debugging
+- **Progress Indicators**: Real-time status updates with emojis and clear success/failure reporting
+- **Performance Summary**: Complete processing statistics with duration, success rates, and error counts
+
+**Comprehensive Testing**
+- **Unit Test Coverage**: 34 tests covering exceptions, source metrics, value objects, and edge cases
+- **Exception Testing**: Validation of error context preservation, retryability logic, and factory methods
+- **Metrics Testing**: Source health tracking, exponential backoff calculations, and query scopes
+- **Value Object Testing**: Immutability, factory methods, serialization, and readonly properties
+- **Timing & Duration Tests**: Microsecond precision testing with proper timing delays
+
+**Database Migrations Applied**
+- **Source Metrics Migration**: Added tracking fields with proper defaults and indexes
+- **Posts Performance Migration**: Strategic indexes for read status filtering and date-based queries
+- **Constraint Updates**: Enhanced data integrity and query performance
+
+**Implementation Highlights:**
+- **Backward Compatibility**: All existing functionality preserved, new features are additive
+- **Error Boundaries**: Clear separation between different types of processing failures
+- **Performance Focus**: Minimal overhead for successful operations, detailed tracking for failures
+- **Monitoring Ready**: Rich metrics and logging for production observability
+- **Developer Experience**: Clear error messages, structured logs, and comprehensive test coverage
+
+**Foundation for Future Phases:**
+- Queue job infrastructure ready for user-triggered operations (manual refresh, AI summaries)
+- Metrics infrastructure supports future observability and monitoring endpoints
+- Exception handling provides foundation for retry mechanisms and external service integration
+- Performance tracking enables data-driven optimization decisions
+
+**Next Steps (Phase 6 Continuation):**
+- Implement Laravel jobs for user-triggered scenarios (feed validation, manual refresh)
+- Add read-only metrics API endpoints for monitoring and debugging
+- Create queue-based AI summary generation with proper job handling
+- Expand testing to include job dispatch and queue worker scenarios
+
+**Total Foundation Tests: 34 unit tests (all passing)**
+
+**Teaching Notes:**
+This foundation work demonstrates several key Laravel concepts:
+- **Exception Design**: Creating domain-specific exceptions with factory methods and context preservation
+- **Database Design**: Strategic indexing and performance considerations for real-world query patterns  
+- **Value Objects**: Immutable data structures for structured returns and API consistency
+- **Model Enhancement**: Adding business logic methods while maintaining clean separation of concerns
+- **Testing Strategy**: Comprehensive unit testing with proper mocking and timing considerations
+- **Command Design**: Building robust console commands with progress reporting and error handling
+
+The approach builds upon existing proven patterns (cron-based processing) rather than replacing them, showing how to enhance existing systems incrementally rather than rewriting from scratch.
 
 ### Phase 7: External Read-It-Later Integration (Optional Plugins)
 - Abstract “save” action: internal flag + dispatch integration job.
@@ -251,11 +326,15 @@ These are valuable for multi-user hardening and can be implemented later without
 ---
 
 ## Immediate Next Step (When Work Resumes)
-Start Phase 6 foundations (Background Processing & Performance):
-1. Add source metrics fields (last_fetched_at, last_fetch_duration_ms, error_count, consecutive_failures, last_error_at, status) and DB indexes (e.g., posts(read, source_id, category_id, published_at)).
-2. Scaffold jobs (RefreshSourceJob, GenerateSummaryJob) with idempotency, retry, and exponential backoff; keep cron for regular batch updates.
-3. Expose read-only metrics via API and document in `API-REFERENCE.md`.
-4. Write tests for job dispatch, metrics updates, and backoff on repeated failures.
+Continue Phase 6 (Background Processing & Performance):
+1. ✅ Enhanced feed processing foundation with metrics, error handling, and exponential backoff
+2. **Next:** Implement Laravel jobs for user-triggered scenarios (RefreshSourceJob, GenerateSummaryJob) with proper queue handling
+3. Add read-only metrics API endpoints (GET /api/v1/sources/{id}/metrics, GET /api/v1/system/processing-stats)
+4. Create feature tests for job dispatch and console command improvements
+5. Update API documentation with new metrics endpoints
+6. Set up database queue driver and worker process instructions
+
+**Current Status:** Phase 6 foundation complete with 34 passing unit tests. Ready to implement job-based processing for user-triggered actions while keeping proven cron-based batch processing for regular feed updates.
 
 Note: Simple two-state model: posts are either read (archived) or unread (inbox). No additional dismiss/archive states.
 Note: "Save for Later" functionality is handled client-side by integrating directly with external read-later services, not via API endpoints.
@@ -281,7 +360,7 @@ Note: Single-user application - all tokens have full access, no scope restrictio
 | API Reference Documentation | Done | Complete endpoint documentation with examples |
 | Enhanced auth & audit logging | Deferred | Moved to "Possible Future Improvements" |
 | Vue SPA extraction | Pending | Phase 5 |
-| Queue & ingestion optimization | Pending | Phase 6 |
+| Queue & ingestion optimization | In Progress | Phase 6 foundation complete: metrics, error handling, exponential backoff |
 | External read-it-later integrations | Pending | Phase 7 |
 | Observability & metrics | Pending | Phase 8 |
 | OpenAPI & public docs | Pending | Phase 9 |
@@ -335,6 +414,6 @@ When teaching queues and background jobs, use simple analogies and step-by-step 
 Provide context for why specific approaches are chosen, explain trade-offs, and highlight Laravel conventions and best practices throughout the implementation process.
 
 
-Last Updated: 2025-08-15
+Last Updated: 2025-08-15 (Phase 6 Foundation Complete)
 
 

@@ -144,11 +144,132 @@ Recommended worker flags
 
 Tune `--timeout` based on the slowest expected job (e.g., long feeds); avoid setting it too high to keep stuck jobs from blocking the worker.
 
-## API (Phase 1)
+## Feed Processing & Management
 
-The application now exposes a versioned read-only JSON API plus an on‑demand summary endpoint under `/api/v1` (all routes require authentication via Sanctum personal access tokens):
+InfraRead processes RSS feeds through a combination of scheduled batch processing (cron) and on-demand jobs. The system includes comprehensive error handling, health monitoring, and exponential backoff for failed feeds.
 
-Endpoints (GET unless noted):
+### Manual Feed Updates
+
+Update all active feeds:
+```bash
+php artisan app:update_posts
+```
+
+Update a specific feed:
+```bash
+php artisan app:update_posts {source_id}
+```
+
+The command provides real-time progress reporting with:
+- 🔄 Processing indicators for each feed
+- ✓ Success confirmations with post counts
+- ✗ Error notifications with details
+- ⏳ Backoff notifications for temporarily disabled feeds
+- 📊 Comprehensive summary with statistics
+
+### Feed Health Monitoring
+
+InfraRead tracks detailed metrics for each feed source:
+
+**Health Status:**
+- `active` - Feed processing normally
+- `failing` - Recent failures, but still being attempted
+- `failed` - Multiple consecutive failures, in exponential backoff
+
+**Exponential Backoff:**
+When feeds fail repeatedly, the system automatically implements exponential backoff:
+- 1st failure: retry in 2 minutes
+- 2nd failure: retry in 4 minutes  
+- 3rd failure: retry in 8 minutes
+- Up to 24 hours maximum delay
+
+**Metrics Tracked:**
+- `last_fetched_at` - When the feed was last successfully processed
+- `last_fetch_duration_ms` - Processing time in milliseconds
+- `consecutive_failures` - Number of failures since last success
+- `last_error_at` - When the most recent error occurred
+- `last_error_message` - Details of the most recent error
+
+### Checking Feed Status
+
+View detailed processing information:
+```bash
+# Check application logs
+tail -f storage/logs/laravel.log
+
+# Check for feed processing entries
+grep "Feed processing" storage/logs/laravel.log
+
+# Check for errors
+grep "ERROR" storage/logs/laravel.log | grep -i feed
+```
+
+**Log Entries Include:**
+- Feed processing summaries with statistics
+- Individual source success/failure details
+- Error context for debugging (HTTP status, XML parsing issues, etc.)
+- Performance metrics and processing duration
+
+### Troubleshooting Feed Issues
+
+**Common Issues and Solutions:**
+
+1. **HTTP Errors (404, 500, etc.)**
+   - Check feed URL is still valid
+   - Verify the website is accessible
+   - Look for redirects or URL changes
+
+2. **XML Parsing Errors**
+   - Feed may have malformed XML
+   - Check for encoding issues
+   - Verify RSS/Atom format compliance
+
+3. **Timeout Issues**
+   - Feed server may be slow
+   - Increase timeout in configuration if needed
+   - Monitor network connectivity
+
+4. **Plugin Errors**
+   - Check plugin configuration
+   - Review plugin-specific error messages
+   - Verify plugin dependencies
+
+**Manual Recovery:**
+```bash
+# Reset a failed source (via tinker)
+php artisan tinker
+>>> $source = App\Models\Source::find(123);
+>>> $source->update(['status' => 'active', 'consecutive_failures' => 0]);
+>>> $source->updatePosts();  // Try processing immediately
+```
+
+### Performance Monitoring
+
+**Database Indexes:**
+The system includes optimized database indexes for:
+- Posts filtering by read status, source, and category
+- Source health and metrics queries
+- Date-based post filtering
+
+**Processing Statistics:**
+Each command run provides detailed statistics:
+- Total sources processed
+- Success/failure counts
+- Sources skipped due to backoff
+- Total posts processed
+- Processing duration
+
+**Monitoring in Production:**
+- Set up log monitoring for "Feed processing completed" entries
+- Monitor consecutive failure counts
+- Watch for sources stuck in "failed" status
+- Track processing duration trends
+
+## API (Phases 1-3 Complete)
+
+The application now exposes a comprehensive versioned JSON API under `/api/v1` with full CRUD operations for posts, sources, and categories. All routes require authentication via Sanctum personal access tokens.
+
+**Read Endpoints (Phase 1):**
 
 * `/api/v1/posts` – Paginated list of posts (default page size 20)
 	* Filters (use JSON:API style bracket params):
@@ -159,11 +280,33 @@ Endpoints (GET unless noted):
 	* Sorting: `sort=-posted_at` (default newest first) or `sort=posted_at`
 	* Pagination: `page` (page number, starting at 1) and `page.size` (1–200)
 * `/api/v1/posts/{id}` – Single post, supports `include=source,category`
-* `/api/v1/posts/{id}/summary` (POST) – Generate a short HTML summary (see below)
+* `/api/v1/posts/{id}/summary` (POST) – Generate a short HTML summary
 * `/api/v1/sources` – List sources, optional `include=category`
-* `/api/v1/sources/{id}` – Single source (future expansion)
+* `/api/v1/sources/{id}` – Single source
 * `/api/v1/categories` – List categories
-* `/api/v1/categories/{id}` – Single category (future expansion)
+* `/api/v1/categories/{id}` – Single category
+
+**Mutation Endpoints (Phase 2):**
+
+* `PATCH /api/v1/posts/{id}/read-status` – Mark single post read/unread
+* `PATCH /api/v1/posts/bulk-read-status` – Mark multiple posts read/unread (up to 1000)
+* `PATCH /api/v1/posts/mark-all-read` – Mark all posts read/unread with optional filtering
+
+**Management Endpoints (Phase 3):**
+
+* `POST /api/v1/sources` – Create new RSS feed source
+* `PUT /api/v1/sources/{id}` – Update existing source
+* `DELETE /api/v1/sources/{id}` – Remove source and all posts
+* `POST /api/v1/sources/{id}/refresh` – Force refresh posts from source
+* `GET /api/v1/categories` – List categories with source counts
+* `POST /api/v1/categories` – Create new category
+* `PUT /api/v1/categories/{id}` – Update category
+* `DELETE /api/v1/categories/{id}` – Remove category
+* `GET /api/v1/export-opml` – Export all sources as OPML
+* `POST /api/v1/preview-opml` – Preview OPML file before import
+* `POST /api/v1/import-opml` – Import sources from OPML file
+
+See **[API-REFERENCE.md](API-REFERENCE.md)** for complete documentation with examples, request/response formats, and error handling.
 
 Response Shape (examples):
 
@@ -226,15 +369,35 @@ Path: `/api-tester` (behind normal web auth session). Paste a personal access to
 
 ## Roadmap / Next Ideas
 
-* Phase 2: Mutations (mark read/unread, mark batch, save for later).
-* Token management UI (issue / revoke without Tinker).
-* Service layer refactor for summaries (decouple from `Post` model).
-* Pagination / filtering metadata alignment with JSON:API (links, first/last URLs).
-* Additional includes (e.g. media, category on source detail).
+* ✅ Phase 1: Read-only API endpoints with authentication and summaries
+* ✅ Phase 2: Post mutation endpoints (mark read/unread, bulk operations)
+* ✅ Phase 3: Source/category management and OPML import/export
+* 🚧 Phase 6: Enhanced background processing and performance monitoring (foundation complete)
+* Future: Vue SPA extraction to separate repository
+* Future: External read-it-later service integrations
+* Future: Advanced observability and metrics endpoints
+
+## Recent Updates (August 2025)
+
+**Phase 6 Foundation Complete:**
+- Enhanced feed processing with comprehensive error handling
+- Source health monitoring with exponential backoff for failed feeds
+- Structured exception handling with detailed context preservation
+- Performance tracking and metrics collection
+- Improved console commands with progress reporting
+- Database optimization with strategic indexes
+- Comprehensive test coverage (119 tests passing)
+
+**API Maturity:**
+- Complete CRUD operations for all entities
+- Robust error handling and validation
+- Rate limiting and security measures
+- Full OPML import/export functionality
+- Comprehensive documentation and examples
 
 ---
 
-_These API + auth notes document the August 2025 milestone adding Phase 1 read-only endpoints, Sanctum integration, and summaries._
+_These notes document the comprehensive API implementation through Phase 3 (August 2025) including read endpoints, mutations, source/category management, OPML import/export, and Phase 6 foundation work with enhanced feed processing, error handling, and performance monitoring._
 
 ## License
 
