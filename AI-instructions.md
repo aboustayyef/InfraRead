@@ -38,10 +38,11 @@ Constraints & Preferences:
 - Prefer integrating with an existing 3rd‑party "read it later" ecosystem (e.g., Pocket / Readwise / Instapaper) rather than building a heavy proprietary read‑later silo. Internal flagging can exist but external export/integration is the strategic direction.
 - Maintain plugin architecture; future plugins should be API‑triggerable where meaningful.
 - Favor incremental, test‑backed extraction over big bang rewrite.
+- Queue driver: use Laravel's database queue driver (no Redis/Horizon required). Run a persistent queue worker via Supervisor/systemd; ensure `jobs` and `failed_jobs` tables exist.
 
 ---
 
-## Progress So Far (Phase 1 & 2 Complete)
+## Progress So Far (Phases 1–3 Complete)
 
 Backend API Foundations (Read / Derived Data - Phase 1):
 - Introduced versioned API namespace (`/api/v1`).
@@ -158,10 +159,8 @@ Goal: Parity for essential user actions via API.
 
 **📖 Documentation:** See `API-REFERENCE.md` for complete endpoint documentation
 
-### Phase 4: Enhanced Auth & Security
-- Audit log (DB table) for sensitive mutations (source creation, token creation, feed deletion).
-- Token expiration & revocation UI improvements (copy button, last used timestamp).
-- Enhanced rate limiting for summary generation and feed management operations.
+### Phase 4: Enhanced Auth & Security (Deferred)
+- Deferred for single-user project. See "Possible Future Improvements" below.
 
 ### Phase 5: Vue SPA Extraction (Separate Repository)
 - New standalone repo (e.g., `infraread-frontend`).
@@ -178,6 +177,7 @@ Goal: Parity for essential user actions via API.
 - Add indexes (e.g., posts(read, source_id, category_id, published_at), summaries(post_id)).
 - Implement exponential backoff for failing sources.
 - Hybrid processing model: cron for efficiency, jobs for responsiveness
+- Queue setup: database queue driver. Minimal ops: set `QUEUE_CONNECTION=database`, migrate `jobs`/`failed_jobs`, run a long-lived `queue:work` process (supervised) with reasonable timeout/tries.
 
 ### Phase 7: External Read-It-Later Integration (Optional Plugins)
 - Abstract “save” action: internal flag + dispatch integration job.
@@ -201,6 +201,24 @@ Goal: Parity for essential user actions via API.
 - Consistent error format (RFC 7807 style maybe) across endpoints.
 - Bulk operations performance tuning.
 - Caching layer (ETag / Last-Modified on GET endpoints) + conditional requests.
+
+---
+## Possible Future Improvements
+
+### Enhanced Auth & Security (Deferred)
+- Audit log (DB table) for sensitive mutations (source creation, token creation, feed deletion).
+  - Add audit_logs table (actor_id, action, subject_type/id, metadata JSON, ip, user_agent, occurred_at).
+  - Log events in an AuditLogger service via listeners (source create/update/delete, category CRUD, token create/revoke).
+  - Tests: rows inserted with correct metadata; idempotent/no duplicates on retries.
+- Token UX and safety
+  - Optional token expiration (expires_at); enforce in auth middleware; pruning job.
+  - Show last used timestamp; add copy button in UI; revoke with confirmation.
+  - Rate limit token operations per user.
+- Centralized rate limiting for management endpoints
+  - Named limiters for sources/categories/opml and summary generation; consistent error payloads.
+  - Tests for headers and throttling behavior.
+
+These are valuable for multi-user hardening and can be implemented later without breaking the public API.
 
 ---
 
@@ -233,11 +251,11 @@ Goal: Parity for essential user actions via API.
 ---
 
 ## Immediate Next Step (When Work Resumes)
-Start Phase 3:
-1. Design feed & category management endpoint contracts (request/response JSON + error shapes) & add to this file / OpenAPI draft.
-2. Implement Source CRUD (create, read, update, delete) with feed URL validation and normalization.
-3. Implement Category CRUD with post/source reassignment capabilities.
-4. Focus on feed discovery (auto-detect RSS/Atom URLs from webpage URLs) and validation patterns.
+Start Phase 6 foundations (Background Processing & Performance):
+1. Add source metrics fields (last_fetched_at, last_fetch_duration_ms, error_count, consecutive_failures, last_error_at, status) and DB indexes (e.g., posts(read, source_id, category_id, published_at)).
+2. Scaffold jobs (RefreshSourceJob, GenerateSummaryJob) with idempotency, retry, and exponential backoff; keep cron for regular batch updates.
+3. Expose read-only metrics via API and document in `API-REFERENCE.md`.
+4. Write tests for job dispatch, metrics updates, and backoff on repeated failures.
 
 Note: Simple two-state model: posts are either read (archived) or unread (inbox). No additional dismiss/archive states.
 Note: "Save for Later" functionality is handled client-side by integrating directly with external read-later services, not via API endpoints.
@@ -261,7 +279,7 @@ Note: Single-user application - all tokens have full access, no scope restrictio
 | Source/category CRUD via API | Done | Phase 3 - Full CRUD with 38 tests |
 | OPML Import/Export API | Done | Phase 3 - Complete migration functionality |
 | API Reference Documentation | Done | Complete endpoint documentation with examples |
-| Enhanced auth & audit logging | Pending | Phase 4 |
+| Enhanced auth & audit logging | Deferred | Moved to "Possible Future Improvements" |
 | Vue SPA extraction | Pending | Phase 5 |
 | Queue & ingestion optimization | Pending | Phase 6 |
 | External read-it-later integrations | Pending | Phase 7 |
@@ -274,7 +292,6 @@ Note: Single-user application - all tokens have full access, no scope restrictio
 ## Open Questions (To Clarify Later)
 - Bulk limits: Max posts allowed in a single mark-read operation?
 - Summary model retention: Regenerate strategy when original content updates?
-- Summary model retention: Regenerate strategy when original content updates?
 - Integration triggers: Immediate async job vs batched schedule for external read-later sync?
 
 ---
@@ -284,6 +301,7 @@ Note: Single-user application - all tokens have full access, no scope restrictio
 - When introducing breaking API changes, record deprecation timeline here first.
 - **📖 API Documentation:** Always update `API-REFERENCE.md` when adding new endpoints, changing request/response formats, or modifying authentication requirements.
 - **🧪 Developer Tools:** Keep `/api-tester` tool and `postman/infraread-phase1-api.postman_collection.json` updated with new endpoints for easy testing and integration.
+ - Queue worker: Ensure a persistent worker is running (database driver). Monitor logs and set sensible `--timeout` and `--tries`; without a worker, queued jobs will not run.
 
 ---
 ## AI Approach
@@ -317,6 +335,6 @@ When teaching queues and background jobs, use simple analogies and step-by-step 
 Provide context for why specific approaches are chosen, explain trade-offs, and highlight Laravel conventions and best practices throughout the implementation process.
 
 
-Last Updated: 2025-08-14
+Last Updated: 2025-08-15
 
 

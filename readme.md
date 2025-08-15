@@ -34,6 +34,7 @@ InfraRead provides a comprehensive REST API for all functionality. See **[API-RE
 
 *  [Same Requirements as Laravel 8](https://laravel.com/docs/5.5/installation#server-requirements)
 *  Ability to create Cron Jobs
+*  Queue worker for background jobs (database queue driver recommended). In production (Ubuntu), run a persistent systemd service; in macOS development, run `php artisan queue:work` in a terminal.
 
 ## Installation
 
@@ -47,6 +48,101 @@ InfraRead provides a comprehensive REST API for all functionality. See **[API-RE
 *  run ```php artisan db:seed```, this will populate your admin details in the database
 *  add this line to your Crontab: ```* * * * * php /path/to/your/site/artisan schedule:run >> /dev/null 2>&1```
 *  If you want to modify the js and css assets, also run: ```npm install```, and then ```npm run dev```
+
+On macOS (development) without cron, you can run the scheduler loop instead:
+
+```
+php artisan schedule:work
+```
+
+## Queue worker (systemd service)
+
+InfraRead uses Laravel's queue for background jobs (e.g., on‑demand feed refresh, summaries). With the database queue driver you don't need Redis/Horizon—just a long‑running worker.
+
+1) Create a systemd service (adjust paths, user, and env):
+
+File: `/etc/systemd/system/infraread-queue-worker.service`
+
+```
+[Unit]
+Description=Infraread Laravel Queue Worker
+After=network.target
+
+[Service]
+User=www-data
+Group=www-data
+WorkingDirectory=/var/www/infraread/current
+Environment=APP_ENV=production
+Environment=QUEUE_CONNECTION=database
+ExecStart=/usr/bin/php artisan queue:work --sleep=3 --tries=3 --timeout=120 --max-time=3600
+Restart=always
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
+```
+
+2) Enable and start the service:
+
+```
+sudo systemctl daemon-reload
+sudo systemctl enable --now infraread-queue-worker
+sudo systemctl status infraread-queue-worker
+```
+
+Notes
+- Ensure queue tables exist: `php artisan queue:table && php artisan migrate` (run once).
+- Tune `--timeout`, `--tries`, and `--sleep` based on workload.
+- Tail logs: `journalctl -u infraread-queue-worker -f`.
+- macOS/dev: you can simply run `php artisan queue:work` in a terminal; systemd isn’t available on macOS.
+
+### macOS (Herd) development
+
+For local development using Laravel Herd on macOS:
+
+1) Ensure `.env` contains `QUEUE_CONNECTION=database` and migrate the queue tables once:
+
+```
+php artisan queue:table
+php artisan migrate
+```
+
+2) Run the queue worker in a terminal tab:
+
+```
+php artisan queue:work --sleep=3 --tries=3 --timeout=120
+```
+
+3) Run the scheduler loop in another tab (instead of setting up cron locally):
+
+```
+php artisan schedule:work
+```
+
+Herd provides PHP and web serving on macOS; you don’t need systemd. Keep these two processes running while developing.
+
+### Environment variables (.env) for queues
+
+Minimal queue-related settings:
+
+```
+# Common
+QUEUE_CONNECTION=database
+
+# Optional: increase if your feed fetch/summarization can take longer
+# These are passed as CLI flags to queue:work; shown here for reference
+# WORKER_SLEEP=3
+# WORKER_TRIES=3
+# WORKER_TIMEOUT=120
+```
+
+Recommended worker flags
+- Ubuntu (systemd ExecStart): `queue:work --sleep=3 --tries=3 --timeout=120`
+- macOS dev (terminal): `queue:work --sleep=3 --tries=3 --timeout=120`
+
+Tune `--timeout` based on the slowest expected job (e.g., long feeds); avoid setting it too high to keep stuck jobs from blocking the worker.
 
 ## API (Phase 1)
 
