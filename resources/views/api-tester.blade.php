@@ -1,9 +1,7 @@
 @php($title = 'API Tester')
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">API Testing Interface</h2>
-    </x-slot>
+@extends('admin.layout')
 
+@section('content')
     <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
         <!-- Authentication Section -->
         <div class="bg-white shadow-sm rounded-lg p-6 mb-6">
@@ -101,7 +99,7 @@
                                         <input name="page" class="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" type="number" value="1" min="1">
                                     </div>
                                 </div>
-                                <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
                                     <span class="font-mono text-xs mr-2">GET</span> /api/v1/posts
                                 </button>
                             </form>
@@ -125,7 +123,7 @@
                                         <input name="include" class="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" placeholder="source,category">
                                     </div>
                                 </div>
-                                <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
                                     <span class="font-mono text-xs mr-2">GET</span> /api/v1/posts/:id
                                 </button>
                             </form>
@@ -270,7 +268,7 @@
                                         <input name="filter_category" class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" type="number" min="1">
                                     </div>
                                 </div>
-                                <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
                                     <span class="font-mono text-xs mr-2">GET</span> /api/v1/sources
                                 </button>
                             </form>
@@ -329,7 +327,7 @@
                                 </form>
                             </div>
 
-                            <div class="border border-gray-200 rounded-lg p-6">
+                                <div class="border border-gray-200 rounded-lg p-6">
                                 <h4 class="text-md font-semibold text-gray-900 mb-4">Delete Source</h4>
                                 <form id="form-delete-source" class="space-y-4">
                                     <div>
@@ -372,7 +370,7 @@
                         <div class="border border-gray-200 rounded-lg p-6">
                             <h3 class="text-lg font-semibold text-gray-900 mb-4">Get Categories</h3>
                             <form id="form-categories" class="space-y-4">
-                                <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
                                     <span class="font-mono text-xs mr-2">GET</span> /api/v1/categories
                                 </button>
                             </form>
@@ -472,7 +470,7 @@
                                         </select>
                                     </div>
                                 </div>
-                                <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-yellow-600 hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500">
+                                <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
                                     <span class="font-mono text-xs mr-2">GET</span> /api/v1/search
                                 </button>
                             </form>
@@ -488,7 +486,7 @@
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                                 <div class="space-y-4">
                                     <h4 class="text-md font-semibold text-gray-900">Export OPML</h4>
-                                    <button id="btn-export-opml" class="w-full inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                                    <button id="btn-export-opml" class="w-full inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
                                         <span class="font-mono text-xs mr-2">GET</span> Export OPML
                                     </button>
                                 </div>
@@ -571,7 +569,7 @@
                                         <label class="block text-sm font-medium text-gray-700 mb-1">Cache Key</label>
                                         <input name="cache_key" class="w-full border-gray-300 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500" placeholder="summary_post_123_3" required>
                                     </div>
-                                    <button type="submit" class="w-full inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-teal-600 hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500">
+                                    <button type="submit" class="w-full inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
                                         <span class="font-mono text-xs mr-2">GET</span> Check Status
                                     </button>
                                 </form>
@@ -580,7 +578,7 @@
                             <div class="border border-gray-200 rounded-lg p-6">
                                 <h4 class="text-md font-semibold text-gray-900 mb-4">Queue Status</h4>
                                 <div class="space-y-4">
-                                    <button id="btn-queue-status" class="w-full inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500">
+                                    <button id="btn-queue-status" class="w-full inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
                                         <span class="font-mono text-xs mr-2">GET</span> Queue Status
                                     </button>
                                 </div>
@@ -607,7 +605,7 @@
                                     <label class="block text-sm font-medium text-gray-700 mb-1">Source ID</label>
                                     <input name="source_id" class="w-full border-gray-300 rounded-md shadow-sm focus:ring-emerald-500 focus:border-emerald-500" type="number" min="1" required>
                                 </div>
-                                <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500">
+                                <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
                                     <span class="font-mono text-xs mr-2">GET</span> /api/v1/metrics/sources/{id}
                                 </button>
                             </form>
@@ -617,21 +615,21 @@
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                             <div class="border border-gray-200 rounded-lg p-6">
                                 <h4 class="text-md font-semibold text-gray-900 mb-4">System Stats</h4>
-                                <button id="btn-system-stats" class="w-full inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-cyan-600 hover:bg-cyan-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500">
+                                <button id="btn-system-stats" class="w-full inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
                                     <span class="font-mono text-xs mr-2">GET</span> System Stats
                                 </button>
                             </div>
 
                             <div class="border border-gray-200 rounded-lg p-6">
                                 <h4 class="text-md font-semibold text-gray-900 mb-4">Sources Health</h4>
-                                <button id="btn-sources-health" class="w-full inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-rose-600 hover:bg-rose-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500">
+                                <button id="btn-sources-health" class="w-full inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
                                     <span class="font-mono text-xs mr-2">GET</span> Sources Health
                                 </button>
                             </div>
 
                             <div class="border border-gray-200 rounded-lg p-6">
                                 <h4 class="text-md font-semibold text-gray-900 mb-4">Recent Activity</h4>
-                                <button id="btn-recent-activity" class="w-full inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-violet-600 hover:bg-violet-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500">
+                                <button id="btn-recent-activity" class="w-full inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
                                     <span class="font-mono text-xs mr-2">GET</span> Recent Activity
                                 </button>
                             </div>
@@ -997,4 +995,5 @@
             await apiRequest('GET', url, null, q('#metrics-output'), q('#metrics-url'));
         });
     </script>
-</x-app-layout>
+    </div>
+@endsection
