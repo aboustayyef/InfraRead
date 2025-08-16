@@ -485,12 +485,358 @@ curl -H "Authorization: Bearer YOUR_TOKEN" \
 
 ---
 
+## Jobs API
+
+The Jobs API allows you to trigger background processing tasks and monitor their status. All jobs are processed asynchronously using Laravel's queue system.
+
+### Refresh Source Job
+Triggers a background job to manually refresh posts from a specific RSS source.
+
+**Endpoint:** `POST /api/v1/jobs/sources/{source}/refresh`
+
+**Parameters:**
+- `source` (integer, required) - The source ID to refresh
+
+**Example Request:**
+```bash
+POST /api/v1/jobs/sources/1/refresh
+```
+
+**Example Response:**
+```json
+{
+  "message": "Source refresh job dispatched successfully",
+  "data": {
+    "source_id": 1,
+    "source_name": "Tech News",
+    "job_dispatched": true,
+    "estimated_completion": "2025-08-16T10:30:00Z"
+  }
+}
+```
+
+### Generate Summary Job
+Dispatches a job to generate an AI summary for a specific post.
+
+**Endpoint:** `POST /api/v1/jobs/posts/{post}/summary`
+
+**Parameters:**
+- `post` (integer, required) - The post ID to summarize
+- `sentences` (integer, optional) - Number of sentences for summary (default: 3, max: 10)
+
+**Example Request:**
+```bash
+POST /api/v1/jobs/posts/123/summary
+Content-Type: application/json
+
+{
+  "sentences": 5
+}
+```
+
+**Example Response:**
+```json
+{
+  "message": "Summary generation job dispatched successfully",
+  "data": {
+    "post_id": 123,
+    "cache_key": "summary_post_123_5",
+    "job_dispatched": true,
+    "estimated_completion": "2025-08-16T10:32:00Z",
+    "status_check_url": "/api/v1/jobs/summary-status/summary_post_123_5"
+  }
+}
+```
+
+### Summary Status
+Check the status of a summary generation job.
+
+**Endpoint:** `GET /api/v1/jobs/summary-status/{cacheKey}`
+
+**Parameters:**
+- `cacheKey` (string, required) - The cache key returned from generate summary job
+
+**Example Request:**
+```bash
+GET /api/v1/jobs/summary-status/summary_post_123_5
+```
+
+**Example Response (Processing):**
+```json
+{
+  "message": "Summary generation in progress",
+  "data": {
+    "status": "processing",
+    "cache_key": "summary_post_123_5",
+    "started_at": "2025-08-16T10:30:00Z"
+  }
+}
+```
+
+**Example Response (Completed):**
+```json
+{
+  "message": "Summary generation completed",
+  "data": {
+    "status": "completed",
+    "cache_key": "summary_post_123_5",
+    "summary": "This is the generated AI summary of the post content...",
+    "sentences": 5,
+    "completed_at": "2025-08-16T10:31:30Z"
+  }
+}
+```
+
+### Queue Status
+Get information about the job queue system status.
+
+**Endpoint:** `GET /api/v1/jobs/queue-status`
+
+**Example Request:**
+```bash
+GET /api/v1/jobs/queue-status
+```
+
+**Example Response:**
+```json
+{
+  "message": "Queue status retrieved successfully",
+  "data": {
+    "queues": {
+      "default": {
+        "pending_jobs": 5,
+        "failed_jobs": 0
+      },
+      "refresh": {
+        "pending_jobs": 2,
+        "failed_jobs": 1
+      }
+    },
+    "total_pending": 7,
+    "total_failed": 1,
+    "system_healthy": true,
+    "generated_at": "2025-08-16T10:30:00Z"
+  }
+}
+```
+
+---
+
+## Metrics API
+
+The Metrics API provides observability and monitoring capabilities for your RSS reader system. These endpoints help track performance, health, and system statistics.
+
+### Source Metrics
+Get detailed metrics for a specific RSS source.
+
+**Endpoint:** `GET /api/v1/metrics/sources/{source}`
+
+**Parameters:**
+- `source` (integer, required) - The source ID to get metrics for
+
+**Example Request:**
+```bash
+GET /api/v1/metrics/sources/1
+```
+
+**Example Response:**
+```json
+{
+  "message": "Source metrics retrieved successfully",
+  "data": {
+    "source_id": 1,
+    "source_name": "Tech News",
+    "source_url": "https://technews.com/feed.xml",
+    "metrics": {
+      "last_fetched_at": "2025-08-16T09:15:00Z",
+      "last_fetch_duration_ms": 1200,
+      "consecutive_failures": 0,
+      "status": "active",
+      "status_description": "Working normally",
+      "last_error_at": null,
+      "last_error_message": null,
+      "next_attempt_at": null,
+      "should_skip_backoff": false,
+      "posts_count": 150,
+      "unread_posts_count": 12,
+      "latest_post_date": "2025-08-16T08:30:00Z",
+      "is_healthy": true,
+      "is_failed": false
+    }
+  }
+}
+```
+
+### System Statistics
+Get comprehensive system-wide statistics and performance metrics.
+
+**Endpoint:** `GET /api/v1/metrics/system`
+
+**Example Request:**
+```bash
+GET /api/v1/metrics/system
+```
+
+**Example Response:**
+```json
+{
+  "message": "System processing statistics retrieved successfully",
+  "data": {
+    "sources": {
+      "total_sources": 15,
+      "active_sources": 14,
+      "healthy_sources": 12,
+      "warning_sources": 2,
+      "failed_sources": 0
+    },
+    "posts": {
+      "total_posts": 2540,
+      "unread_posts": 45,
+      "posts_today": 8,
+      "posts_this_week": 52,
+      "posts_this_month": 234
+    },
+    "categories": {
+      "total_categories": 5,
+      "categories_with_sources": 5
+    },
+    "performance": {
+      "sources_updated_today": 12,
+      "average_fetch_duration_ms": 1150,
+      "fastest_source_ms": 340,
+      "slowest_source_ms": 3200
+    },
+    "errors": {
+      "sources_with_errors": 2,
+      "total_consecutive_failures": 3,
+      "sources_in_backoff": 1
+    },
+    "generated_at": "2025-08-16T10:30:00Z",
+    "cache_duration": "5 minutes"
+  }
+}
+```
+
+### Sources Health Summary
+Get a health overview of all RSS sources, highlighting problematic ones.
+
+**Endpoint:** `GET /api/v1/metrics/sources-health`
+
+**Example Request:**
+```bash
+GET /api/v1/metrics/sources-health
+```
+
+**Example Response:**
+```json
+{
+  "message": "Sources health summary retrieved successfully",
+  "data": {
+    "summary": {
+      "total": 15,
+      "active": 14,
+      "inactive": 1,
+      "healthy": 12,
+      "warning": 2,
+      "failed": 0
+    },
+    "problematic_sources": [
+      {
+        "id": 7,
+        "name": "Slow Feed",
+        "status": "warning",
+        "consecutive_failures": 2,
+        "last_error_at": "2025-08-16T09:00:00Z",
+        "last_error_message": "Connection timeout",
+        "status_description": "Issues detected (2 recent failures)"
+      }
+    ],
+    "generated_at": "2025-08-16T10:30:00Z"
+  }
+}
+```
+
+### Recent Activity
+Get information about recent RSS processing activity.
+
+**Endpoint:** `GET /api/v1/metrics/recent-activity`
+
+**Example Request:**
+```bash
+GET /api/v1/metrics/recent-activity
+```
+
+**Example Response:**
+```json
+{
+  "message": "Recent processing activity retrieved successfully",
+  "data": {
+    "recent_posts_count": 28,
+    "recently_updated_sources": [
+      {
+        "source_id": 1,
+        "source_name": "Tech News",
+        "last_fetched_at": "2025-08-16T10:15:00Z",
+        "duration_ms": 890,
+        "status": "active",
+        "consecutive_failures": 0
+      }
+    ],
+    "time_range": "Last 24 hours",
+    "generated_at": "2025-08-16T10:30:00Z"
+  }
+}
+```
+
+---
+
+## Rate Limiting
+
+All API endpoints are subject to rate limiting:
+- **Default**: 60 requests per minute per user
+- **Jobs API**: 30 requests per minute per user (due to resource-intensive operations)
+- **Metrics API**: 120 requests per minute per user (read-only operations)
+
+Rate limit headers are included in all responses:
+- `X-RateLimit-Limit`: Total requests allowed
+- `X-RateLimit-Remaining`: Remaining requests
+- `X-RateLimit-Reset`: Unix timestamp when the rate limit resets
+
+---
+
+## Error Handling
+
+### HTTP Status Codes
+- `200` - Success
+- `201` - Created (for POST operations)
+- `202` - Accepted (for asynchronous job dispatch)
+- `400` - Bad Request (validation errors)
+- `401` - Unauthorized (missing or invalid token)
+- `403` - Forbidden (insufficient permissions)
+- `404` - Not Found
+- `422` - Unprocessable Entity (validation failed)
+- `429` - Too Many Requests (rate limited)
+- `500` - Internal Server Error
+
+### Error Response Format
+```json
+{
+  "message": "Error description",
+  "errors": {
+    "field_name": ["Specific validation error"]
+  }
+}
+```
+
+---
+
 ## Version History
 
 - **v1.0** - Initial API release with read operations and post management
 - **v1.1** - Added source and category management
 - **v1.2** - Added OPML import/export functionality
+- **v1.3** - Added Jobs API for background processing and Metrics API for observability
 
 ---
 
-Last Updated: August 14, 2025
+Last Updated: August 16, 2025

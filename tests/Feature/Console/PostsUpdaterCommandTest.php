@@ -75,6 +75,10 @@ class PostsUpdaterCommandTest extends TestCase
             'source_id' => $source->id
         ]);
     }
+
+    /** @test */
+    public function processes_source_with_valid_feed()
+    {
         $source = Source::factory()->create([
             'category_id' => $this->category->id,
             'url' => 'https://example.com/feed.xml',

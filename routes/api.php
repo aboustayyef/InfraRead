@@ -10,6 +10,8 @@ use App\Http\Controllers\Api\V1\BulkPostReadStatusController as V1BulkPostReadSt
 use App\Http\Controllers\Api\V1\MarkAllReadController as V1MarkAllReadController;
 use App\Http\Controllers\Api\V1\SourceManagementController as V1SourceManagementController;
 use App\Http\Controllers\Api\V1\OpmlController as V1OpmlController;
+use App\Http\Controllers\Api\V1\JobController as V1JobController;
+use App\Http\Controllers\Api\V1\MetricsController as V1MetricsController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -81,4 +83,20 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
 
     // Special endpoints
     Route::post('/posts/{post}/summary', V1PostSummaryController::class)->middleware('throttle:summaries');
+
+    // Job-based endpoints (Phase 6)
+    Route::prefix('jobs')->name('api.v1.jobs.')->group(function () {
+        Route::post('/sources/{source}/refresh', [V1JobController::class, 'refreshSource'])->name('refresh-source');
+        Route::post('/posts/{post}/summary', [V1JobController::class, 'generateSummary'])->name('generate-summary');
+        Route::get('/summary-status/{key}', [V1JobController::class, 'summaryStatus'])->name('summary-status');
+        Route::get('/queue-status', [V1JobController::class, 'queueStatus'])->name('queue-status');
+    });
+
+    // Metrics endpoints (Phase 6)
+    Route::prefix('metrics')->name('api.v1.metrics.')->group(function () {
+        Route::get('/sources/{source}', [V1MetricsController::class, 'sourceMetrics'])->name('source-metrics');
+        Route::get('/system', [V1MetricsController::class, 'systemStats'])->name('system-stats');
+        Route::get('/sources-health', [V1MetricsController::class, 'sourcesHealth'])->name('sources-health');
+        Route::get('/recent-activity', [V1MetricsController::class, 'recentActivity'])->name('recent-activity');
+    });
 });

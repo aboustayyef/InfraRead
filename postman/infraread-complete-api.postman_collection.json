@@ -1,9 +1,9 @@
 {
   "info": {
     "name": "Infraread Complete API",
-    "description": "Complete API collection for Infraread RSS Reader covering Phases 1, 2 & 3. Uses Sanctum Bearer token authentication.",
+    "description": "Complete API collection for Infraread RSS Reader covering Phases 1-6. Includes Posts, Sources, Categories, OPML, Jobs, and Metrics APIs. Uses Sanctum Bearer token authentication.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "version": "2.0.0"
+    "version": "3.0.0"
   },
   "variable": [
     {
@@ -434,6 +434,133 @@
                   "type": "text"
                 }
               ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Jobs API",
+      "item": [
+        {
+          "name": "Refresh Source Job",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Accept", "value": "application/json"}
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/jobs/sources/1/refresh",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "jobs", "sources", "1", "refresh"]
+            }
+          }
+        },
+        {
+          "name": "Generate Summary Job",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Accept", "value": "application/json"},
+              {"key": "Content-Type", "value": "application/json"}
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/jobs/posts/1/summary",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "jobs", "posts", "1", "summary"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sentences\": 3\n}"
+            }
+          }
+        },
+        {
+          "name": "Summary Status",
+          "request": {
+            "method": "GET",
+            "header": [
+              {"key": "Accept", "value": "application/json"}
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/jobs/summary-status/summary_post_1_3",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "jobs", "summary-status", "summary_post_1_3"]
+            }
+          }
+        },
+        {
+          "name": "Queue Status",
+          "request": {
+            "method": "GET",
+            "header": [
+              {"key": "Accept", "value": "application/json"}
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/jobs/queue-status",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "jobs", "queue-status"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Metrics API",
+      "item": [
+        {
+          "name": "Source Metrics",
+          "request": {
+            "method": "GET",
+            "header": [
+              {"key": "Accept", "value": "application/json"}
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/metrics/sources/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "metrics", "sources", "1"]
+            }
+          }
+        },
+        {
+          "name": "System Statistics",
+          "request": {
+            "method": "GET",
+            "header": [
+              {"key": "Accept", "value": "application/json"}
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/metrics/system",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "metrics", "system"]
+            }
+          }
+        },
+        {
+          "name": "Sources Health",
+          "request": {
+            "method": "GET",
+            "header": [
+              {"key": "Accept", "value": "application/json"}
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/metrics/sources-health",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "metrics", "sources-health"]
+            }
+          }
+        },
+        {
+          "name": "Recent Activity",
+          "request": {
+            "method": "GET",
+            "header": [
+              {"key": "Accept", "value": "application/json"}
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/metrics/recent-activity",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "metrics", "recent-activity"]
             }
           }
         }
