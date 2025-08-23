@@ -1,7 +1,13 @@
 # Objectives
 
 Refactor the existing monolithic Laravel RSS reader iPrinciples:
+- Backwards compatiPrinciples:
 - Backwards compatible API evolution (additive first, remove with deprecation windows).
+- Idempotent write operations where practical (e.g., marking read). 
+- Clear separation of concerns (no view logic in controllers used by API).
+- Lean internal "saved for later" (low friction) + optional external sync plugin.
+- **API Documentation Discipline**: Always update `API-REFERENCE.md` when creating, modifying, or removing API endpoints. Include examples, error responses, and version history updates.
+- **API Testing Discipline**: Always update `/api-tester` interface when API endpoints are added, changed, or removed to maintain comprehensive testing capability.PI evolution (additive first, remove with deprecation windows).
 - Idempotent write operations where practical (e.g., marking read). 
 - Clear separation of concerns (no view logi### Phase 7: External Read-It-Later Integration (Post-Migration)
 - Abstract "save" action: internal flag + dispatch integration job.
@@ -39,7 +45,8 @@ Single Laravel app handling:
 - **Migration Compatibility**: Support standard OPML format used by major RSS readers (Feedly, Inoreader, etc.)
 
 Constraints & Preferences:
-- No Docker for local dev (run natively on host macOS; keep setup simple: PHP + Composer + Node). 
+- No Docker for local dev (run natively on host macOS; keep setup simple: PHP + Composer + Node).
+- **Local Development Environment**: Uses Laravel Herd for local PHP server (no need to run `php artisan serve` or separate PHP server setup).
 - Prefer integrating with an existing 3rd‑party "read it later" ecosystem (e.g., Pocket / Readwise / Instapaper) rather than building a heavy proprietary read‑later silo. Internal flagging can exist but external export/integration is the strategic direction.
 - Maintain plugin architecture; future plugins should be API‑triggerable where meaningful.
 - Favor incremental, test‑backed extraction over big bang rewrite.
@@ -208,20 +215,22 @@ Goal: Parity for essential user actions via API.
 - **Reliability**: No complex session bridging, direct Sanctum token usage
 - **Maintainability**: Clean, focused codebase with clear separation of concerns
 
-**Phase 5B: Reader Interface Migration (`/app` domain)**
-- **App.vue data fetching**: Replace `/api/{which}` with `/api/v1/posts` filtering
-- **Read status updates**: Migrate `/api/posts/{id}` to `/api/v1/posts/{id}/read-status`
-- **Summary generation**: Replace `/summary/{post}` with `/api/v1/posts/{id}/summary`
-- **Bulk operations**: Implement mark-all-read using `/api/v1/posts/mark-all-read`
-- **Source switching**: Use `/api/v1/posts?filter[source]={id}` for source-specific views
+**Phase 5B: Reader Interface Migration (`/app` domain) ✅ COMPLETE**
+- ✅ **App.vue data fetching**: Replaced `/api/{which}` with `/api/v1/posts` filtering
+- ✅ **Read status updates**: Migrated `/api/posts/{id}` to `/api/v1/posts/{id}/read-status`
+- ✅ **Summary generation**: Replaced `/summary/{post}` with `/api/v1/posts/{id}/summary`
+- ✅ **Bulk operations**: Implemented mark-all-read using `/api/v1/posts/mark-all-read`
+- ✅ **Source switching**: Using `/api/v1/posts?filter[source]={id}` for source-specific views
+- ✅ **On-demand content loading**: PostResource conditional content inclusion for performance
+- ✅ **Crawl status system**: Migrated from file-based to cache-based API endpoint (`/api/v1/metrics/crawl-status`)
 
-**Phase 5C: Authentication System Migration**
+**Phase 5C: Authentication System Migration ✅ COMPLETE**
 - ✅ **Dual auth support**: Session auth for web + automatic API token generation
 - ✅ **Token management**: Auto-generate tokens for logged-in users with .env override option
 - ✅ **Frontend token handling**: Tokens passed via `window.Laravel.apiToken` in Blade template
 - ✅ **Error handling**: Clean 401 handling with token clearing, no complex retry loops
 
-**Phase 5D: Administration Interface Migration (`/admin` domain)**
+**Phase 5D: Administration Interface Migration (`/admin` domain) - NEXT PRIORITY**
 - **AdminSourceController**: Replace Eloquent calls with `/api/v1/sources` endpoints
 - **AdminCategoryController**: Migrate to `/api/v1/categories` endpoints  
 - **Livewire components**: Update SourceList and Muted to consume API
@@ -419,6 +428,8 @@ These are valuable for multi-user hardening and can be implemented later without
 - **🔄 Frontend API Migration**: Replace legacy `/api/` routes and direct database queries with V1 API calls in App.vue and admin interfaces
 - **🔐 Authentication Bridge**: Implement session-to-token conversion for seamless API authentication
 - **📱 API Client Standardization**: Create unified JavaScript HTTP client for consistent API interactions
+- **📚 API Documentation**: **CRITICAL - Update API-REFERENCE.md whenever new API endpoints are added, modified, or removed**
+- **🧪 API Tester Maintenance**: **CRITICAL - Update /api-tester interface whenever API endpoints are added, changed, or removed to maintain testing capability**
 - Refine test suite: isolate fast unit tests vs feature/API tests; add factories for tokens & sources.
 - Consolidate plugin lifecycle (pre-fetch vs post-fetch vs post-store hooks) with clear contracts.
 - Introduce DTO / API Resource normalization layer to reduce controller duplication.
@@ -426,7 +437,6 @@ These are valuable for multi-user hardening and can be implemented later without
 - Rate limiter strategy centralization (config-driven, per-user basis for summary generation).
 - Data retention / pruning policy (archiving old posts, summary regeneration rules).
 - **📬 Update Postman Collection**: Add Phase 5 migration endpoints and authentication examples
-- **🧪 Enhance API Tester**: Validate V1 API compatibility with frontend migration requirements
 
 ---
 
@@ -450,19 +460,21 @@ These are valuable for multi-user hardening and can be implemented later without
 Continue Phase 5 (Frontend API Migration):
 1. ✅ **API Client Foundation**: Unified JavaScript HTTP client (`resources/js/api/client.js`) complete
 2. ✅ **Authentication Bridge**: Simplified token system (Laravel-generated → .env override) complete
-3. **Reader Interface Migration**: Replace App.vue legacy API calls with V1 endpoints
+3. ✅ **Reader Interface Migration**: App.vue fully migrated to V1 API endpoints with on-demand content loading
 4. **Admin Interface Migration**: Convert admin controllers and Livewire components to API consumption
 5. **Legacy Route Elimination**: Remove direct database queries from web routes
 6. **Error Handling & UX**: Implement proper API error handling and user feedback
 
-**Implementation Priority**: Start with Reader Interface (App.vue) since API client foundation is complete and most API coverage exists.
+**Implementation Priority**: Continue with Phase 5D (Admin Interface Migration) since Phase 5B reader interface migration is complete.
 
-**Current Status:** Phase 5A complete. API client foundation implemented with flexible token management (.env → auto-generated → localStorage), comprehensive error handling, and clean authentication architecture. Ready to begin App.vue migration to V1 API endpoints.
+**Current Status:** Phase 5A-5C complete. Reader interface (App.vue) successfully migrated to V1 API with cache-based crawl status, on-demand content loading, and all CRUD operations using API endpoints. Ready to begin admin interface migration (Phase 5D).
 
 **Key Architecture Decisions:**
 - Simplified token approach: Laravel generates/injects tokens, no complex session bridging
 - Priority token system: .env override for production stability, auto-generation for development
 - Clean error handling: No retry loops, clear 401 responses, user-friendly error messages
+- Cache-based crawl status: Improved performance over file-based approach with API-driven frontend
+- On-demand content loading: PostResource conditional content inclusion for optimized performance
 - Comprehensive API client: All V1 endpoints implemented with proper TypeScript-like structure
 
 Note: Simple two-state model: posts are either read (archived) or unread (inbox). No additional dismiss/archive states.

@@ -8,6 +8,7 @@ use App\Exceptions\FeedProcessing\FeedProcessingException;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 
 class PostsUpdater extends Command
@@ -172,8 +173,8 @@ class PostsUpdater extends Command
         $totalDuration = microtime(true) - $overallStartTime;
         $this->displayProcessingSummary($stats, $totalDuration);
 
-        // Update last successful crawl timestamp
-        Storage::disk('local')->put('LastSuccessfulCrawl.txt', now()->toISOString());
+        // Update last successful crawl timestamp using cache
+        Cache::forever('last_successful_crawl', now());
 
         // Log summary for monitoring
         Log::info('Feed processing completed', [

@@ -612,7 +612,7 @@
                         </div>
 
                         <!-- System Metrics -->
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
                             <div class="border border-gray-200 rounded-lg p-6">
                                 <h4 class="text-md font-semibold text-gray-900 mb-4">System Stats</h4>
                                 <button id="btn-system-stats" class="w-full inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
@@ -631,6 +631,13 @@
                                 <h4 class="text-md font-semibold text-gray-900 mb-4">Recent Activity</h4>
                                 <button id="btn-recent-activity" class="w-full inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
                                     <span class="font-mono text-xs mr-2">GET</span> Recent Activity
+                                </button>
+                            </div>
+
+                            <div class="border border-gray-200 rounded-lg p-6">
+                                <h4 class="text-md font-semibold text-gray-900 mb-4">Crawl Status</h4>
+                                <button id="btn-crawl-status" class="w-full inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+                                    <span class="font-mono text-xs mr-2">GET</span> Crawl Status
                                 </button>
                             </div>
                         </div>
@@ -992,6 +999,11 @@
 
         q('#btn-recent-activity').addEventListener('click', async () => {
             const url = '/api/v1/metrics/recent-activity';
+            await apiRequest('GET', url, null, q('#metrics-output'), q('#metrics-url'));
+        });
+
+        q('#btn-crawl-status').addEventListener('click', async () => {
+            const url = '/api/v1/metrics/crawl-status';
             await apiRequest('GET', url, null, q('#metrics-output'), q('#metrics-url'));
         });
     </script>

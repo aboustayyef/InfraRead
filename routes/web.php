@@ -32,8 +32,6 @@ require __DIR__.'/onboarding.php';
 
 // Launch App
 Route::get('/app', function () {
-    $last_successful_crawl = Post::getLastSuccesfulCrawl();
-
     // Use token from .env if available, otherwise generate a new one
     $token = env('INFRAREAD_API_TOKEN');
 
@@ -44,7 +42,6 @@ Route::get('/app', function () {
     }
 
     return view('home')->with([
-        'last_successful_crawl' => $last_successful_crawl,
         'api_token' => $token
     ]);
 })->middleware('auth')->name('dashboard'); // added name for navigation

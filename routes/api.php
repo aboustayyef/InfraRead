@@ -100,6 +100,7 @@ Route::prefix('v1')->group(function () {
         Route::get('/system', [V1MetricsController::class, 'systemStats'])->name('system-stats');
         Route::get('/sources-health', [V1MetricsController::class, 'sourcesHealth'])->name('sources-health');
         Route::get('/recent-activity', [V1MetricsController::class, 'recentActivity'])->name('recent-activity');
+        Route::get('/crawl-status', [V1MetricsController::class, 'crawlStatus'])->name('crawl-status');
     });
     }); // End of auth:sanctum middleware group
 }); // End of v1 prefix group

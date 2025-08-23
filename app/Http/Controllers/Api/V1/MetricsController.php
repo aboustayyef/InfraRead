@@ -233,4 +233,76 @@ class MetricsController extends Controller
             'cache_duration' => '5 minutes'
         ];
     }
+
+    /**
+     * Get overall system crawl status and health
+     *
+     * This endpoint provides the same information as the legacy file-based
+     * crawl warning system, but via API. It checks when the last successful
+     * overall crawl completed and provides warning status if it's been too long.
+     *
+     * @return JsonResponse
+     */
+    public function crawlStatus(): JsonResponse
+    {
+        return response()->json([
+            'message' => 'System crawl status retrieved successfully',
+            'data' => $this->getCrawlStatusData()
+        ]);
+    }
+
+    /**
+     * Get crawl status data (now using cache instead of file)
+     */
+    private function getCrawlStatusData(): array
+    {
+        try {
+            $lastCrawl = Cache::get('last_successful_crawl');
+
+            if (!$lastCrawl) {
+                return [
+                    'status' => 'no_data',
+                    'message' => 'No information available about the last crawl. The system may not have run a full crawl cycle yet since switching to the new tracking system.',
+                    'last_crawl_at' => null,
+                    'minutes_ago' => null,
+                    'threshold_minutes' => 80,
+                    'needs_attention' => false,
+                    'human_readable' => 'No crawl data available'
+                ];
+            }
+
+            // Convert to Carbon if it's a string (for backwards compatibility)
+            if (is_string($lastCrawl)) {
+                $lastCrawl = Carbon::parse($lastCrawl);
+            }
+
+            $minutesAgo = $lastCrawl->diffInMinutes();
+            $thresholdMinutes = 80;
+
+            $status = $minutesAgo > $thresholdMinutes ? 'warning' : 'ok';
+            $needsAttention = $minutesAgo > $thresholdMinutes;
+
+            return [
+                'status' => $status,
+                'message' => $needsAttention
+                    ? "Warning: Last crawl was {$lastCrawl->diffForHumans()}"
+                    : "Last crawl was {$lastCrawl->diffForHumans()}",
+                'last_crawl_at' => $lastCrawl->toISOString(),
+                'minutes_ago' => $minutesAgo,
+                'threshold_minutes' => $thresholdMinutes,
+                'needs_attention' => $needsAttention,
+                'human_readable' => $lastCrawl->diffForHumans()
+            ];
+
+        } catch (\Exception $e) {
+            return [
+                'status' => 'error',
+                'message' => 'Error reading crawl status: ' . $e->getMessage(),
+                'last_crawl_at' => null,
+                'minutes_ago' => null,
+                'threshold_minutes' => 80,
+                'needs_attention' => true
+            ];
+        }
+    }
 }

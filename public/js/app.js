@@ -4143,6 +4143,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _partials_ui_LoadingSkeleton_vue__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./partials/ui/LoadingSkeleton.vue */ "./resources/js/components/partials/ui/LoadingSkeleton.vue");
 /* harmony import */ var _partials_ui_UndoButton_vue__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./partials/ui/UndoButton.vue */ "./resources/js/components/partials/ui/UndoButton.vue");
 /* harmony import */ var _partials_ui_SettingsIcon_vue__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./partials/ui/SettingsIcon.vue */ "./resources/js/components/partials/ui/SettingsIcon.vue");
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
+function _defineProperty(obj, key, value) { key = _toPropertyKey(key); if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+function _toPropertyKey(arg) { var key = _toPrimitive(arg, "string"); return _typeof(key) === "symbol" ? key : String(key); }
+function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input === null) return input; var prim = input[Symbol.toPrimitive]; if (prim !== undefined) { var res = prim.call(input, hint || "default"); if (_typeof(res) !== "object") return res; throw new TypeError("@@toPrimitive must return a primitive value."); } return (hint === "string" ? String : Number)(input); }
+function _regeneratorRuntime() { "use strict"; /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */ _regeneratorRuntime = function _regeneratorRuntime() { return e; }; var t, e = {}, r = Object.prototype, n = r.hasOwnProperty, o = Object.defineProperty || function (t, e, r) { t[e] = r.value; }, i = "function" == typeof Symbol ? Symbol : {}, a = i.iterator || "@@iterator", c = i.asyncIterator || "@@asyncIterator", u = i.toStringTag || "@@toStringTag"; function define(t, e, r) { return Object.defineProperty(t, e, { value: r, enumerable: !0, configurable: !0, writable: !0 }), t[e]; } try { define({}, ""); } catch (t) { define = function define(t, e, r) { return t[e] = r; }; } function wrap(t, e, r, n) { var i = e && e.prototype instanceof Generator ? e : Generator, a = Object.create(i.prototype), c = new Context(n || []); return o(a, "_invoke", { value: makeInvokeMethod(t, r, c) }), a; } function tryCatch(t, e, r) { try { return { type: "normal", arg: t.call(e, r) }; } catch (t) { return { type: "throw", arg: t }; } } e.wrap = wrap; var h = "suspendedStart", l = "suspendedYield", f = "executing", s = "completed", y = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} var p = {}; define(p, a, function () { return this; }); var d = Object.getPrototypeOf, v = d && d(d(values([]))); v && v !== r && n.call(v, a) && (p = v); var g = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(p); function defineIteratorMethods(t) { ["next", "throw", "return"].forEach(function (e) { define(t, e, function (t) { return this._invoke(e, t); }); }); } function AsyncIterator(t, e) { function invoke(r, o, i, a) { var c = tryCatch(t[r], t, o); if ("throw" !== c.type) { var u = c.arg, h = u.value; return h && "object" == _typeof(h) && n.call(h, "__await") ? e.resolve(h.__await).then(function (t) { invoke("next", t, i, a); }, function (t) { invoke("throw", t, i, a); }) : e.resolve(h).then(function (t) { u.value = t, i(u); }, function (t) { return invoke("throw", t, i, a); }); } a(c.arg); } var r; o(this, "_invoke", { value: function value(t, n) { function callInvokeWithMethodAndArg() { return new e(function (e, r) { invoke(t, n, e, r); }); } return r = r ? r.then(callInvokeWithMethodAndArg, callInvokeWithMethodAndArg) : callInvokeWithMethodAndArg(); } }); } function makeInvokeMethod(e, r, n) { var o = h; return function (i, a) { if (o === f) throw new Error("Generator is already running"); if (o === s) { if ("throw" === i) throw a; return { value: t, done: !0 }; } for (n.method = i, n.arg = a;;) { var c = n.delegate; if (c) { var u = maybeInvokeDelegate(c, n); if (u) { if (u === y) continue; return u; } } if ("next" === n.method) n.sent = n._sent = n.arg;else if ("throw" === n.method) { if (o === h) throw o = s, n.arg; n.dispatchException(n.arg); } else "return" === n.method && n.abrupt("return", n.arg); o = f; var p = tryCatch(e, r, n); if ("normal" === p.type) { if (o = n.done ? s : l, p.arg === y) continue; return { value: p.arg, done: n.done }; } "throw" === p.type && (o = s, n.method = "throw", n.arg = p.arg); } }; } function maybeInvokeDelegate(e, r) { var n = r.method, o = e.iterator[n]; if (o === t) return r.delegate = null, "throw" === n && e.iterator["return"] && (r.method = "return", r.arg = t, maybeInvokeDelegate(e, r), "throw" === r.method) || "return" !== n && (r.method = "throw", r.arg = new TypeError("The iterator does not provide a '" + n + "' method")), y; var i = tryCatch(o, e.iterator, r.arg); if ("throw" === i.type) return r.method = "throw", r.arg = i.arg, r.delegate = null, y; var a = i.arg; return a ? a.done ? (r[e.resultName] = a.value, r.next = e.nextLoc, "return" !== r.method && (r.method = "next", r.arg = t), r.delegate = null, y) : a : (r.method = "throw", r.arg = new TypeError("iterator result is not an object"), r.delegate = null, y); } function pushTryEntry(t) { var e = { tryLoc: t[0] }; 1 in t && (e.catchLoc = t[1]), 2 in t && (e.finallyLoc = t[2], e.afterLoc = t[3]), this.tryEntries.push(e); } function resetTryEntry(t) { var e = t.completion || {}; e.type = "normal", delete e.arg, t.completion = e; } function Context(t) { this.tryEntries = [{ tryLoc: "root" }], t.forEach(pushTryEntry, this), this.reset(!0); } function values(e) { if (e || "" === e) { var r = e[a]; if (r) return r.call(e); if ("function" == typeof e.next) return e; if (!isNaN(e.length)) { var o = -1, i = function next() { for (; ++o < e.length;) if (n.call(e, o)) return next.value = e[o], next.done = !1, next; return next.value = t, next.done = !0, next; }; return i.next = i; } } throw new TypeError(_typeof(e) + " is not iterable"); } return GeneratorFunction.prototype = GeneratorFunctionPrototype, o(g, "constructor", { value: GeneratorFunctionPrototype, configurable: !0 }), o(GeneratorFunctionPrototype, "constructor", { value: GeneratorFunction, configurable: !0 }), GeneratorFunction.displayName = define(GeneratorFunctionPrototype, u, "GeneratorFunction"), e.isGeneratorFunction = function (t) { var e = "function" == typeof t && t.constructor; return !!e && (e === GeneratorFunction || "GeneratorFunction" === (e.displayName || e.name)); }, e.mark = function (t) { return Object.setPrototypeOf ? Object.setPrototypeOf(t, GeneratorFunctionPrototype) : (t.__proto__ = GeneratorFunctionPrototype, define(t, u, "GeneratorFunction")), t.prototype = Object.create(g), t; }, e.awrap = function (t) { return { __await: t }; }, defineIteratorMethods(AsyncIterator.prototype), define(AsyncIterator.prototype, c, function () { return this; }), e.AsyncIterator = AsyncIterator, e.async = function (t, r, n, o, i) { void 0 === i && (i = Promise); var a = new AsyncIterator(wrap(t, r, n, o), i); return e.isGeneratorFunction(r) ? a : a.next().then(function (t) { return t.done ? t.value : a.next(); }); }, defineIteratorMethods(g), define(g, u, "Generator"), define(g, a, function () { return this; }), define(g, "toString", function () { return "[object Generator]"; }), e.keys = function (t) { var e = Object(t), r = []; for (var n in e) r.push(n); return r.reverse(), function next() { for (; r.length;) { var t = r.pop(); if (t in e) return next.value = t, next.done = !1, next; } return next.done = !0, next; }; }, e.values = values, Context.prototype = { constructor: Context, reset: function reset(e) { if (this.prev = 0, this.next = 0, this.sent = this._sent = t, this.done = !1, this.delegate = null, this.method = "next", this.arg = t, this.tryEntries.forEach(resetTryEntry), !e) for (var r in this) "t" === r.charAt(0) && n.call(this, r) && !isNaN(+r.slice(1)) && (this[r] = t); }, stop: function stop() { this.done = !0; var t = this.tryEntries[0].completion; if ("throw" === t.type) throw t.arg; return this.rval; }, dispatchException: function dispatchException(e) { if (this.done) throw e; var r = this; function handle(n, o) { return a.type = "throw", a.arg = e, r.next = n, o && (r.method = "next", r.arg = t), !!o; } for (var o = this.tryEntries.length - 1; o >= 0; --o) { var i = this.tryEntries[o], a = i.completion; if ("root" === i.tryLoc) return handle("end"); if (i.tryLoc <= this.prev) { var c = n.call(i, "catchLoc"), u = n.call(i, "finallyLoc"); if (c && u) { if (this.prev < i.catchLoc) return handle(i.catchLoc, !0); if (this.prev < i.finallyLoc) return handle(i.finallyLoc); } else if (c) { if (this.prev < i.catchLoc) return handle(i.catchLoc, !0); } else { if (!u) throw new Error("try statement without catch or finally"); if (this.prev < i.finallyLoc) return handle(i.finallyLoc); } } } }, abrupt: function abrupt(t, e) { for (var r = this.tryEntries.length - 1; r >= 0; --r) { var o = this.tryEntries[r]; if (o.tryLoc <= this.prev && n.call(o, "finallyLoc") && this.prev < o.finallyLoc) { var i = o; break; } } i && ("break" === t || "continue" === t) && i.tryLoc <= e && e <= i.finallyLoc && (i = null); var a = i ? i.completion : {}; return a.type = t, a.arg = e, i ? (this.method = "next", this.next = i.finallyLoc, y) : this.complete(a); }, complete: function complete(t, e) { if ("throw" === t.type) throw t.arg; return "break" === t.type || "continue" === t.type ? this.next = t.arg : "return" === t.type ? (this.rval = this.arg = t.arg, this.method = "return", this.next = "end") : "normal" === t.type && e && (this.next = e), y; }, finish: function finish(t) { for (var e = this.tryEntries.length - 1; e >= 0; --e) { var r = this.tryEntries[e]; if (r.finallyLoc === t) return this.complete(r.completion, r.afterLoc), resetTryEntry(r), y; } }, "catch": function _catch(t) { for (var e = this.tryEntries.length - 1; e >= 0; --e) { var r = this.tryEntries[e]; if (r.tryLoc === t) { var n = r.completion; if ("throw" === n.type) { var o = n.arg; resetTryEntry(r); } return o; } } throw new Error("illegal catch attempt"); }, delegateYield: function delegateYield(e, r, n) { return this.delegate = { iterator: values(e), resultName: r, nextLoc: n }, "next" === this.method && (this.arg = t), y; } }, e; }
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 // Import Keyboard Shortcuts
 
 
@@ -4161,7 +4170,8 @@ __webpack_require__.r(__webpack_exports__);
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ["refreshinterval", "last_successful_crawl"],
+  props: ["refreshinterval"],
+  // Removed last_successful_crawl prop - now fetched via API
   components: {
     Post: _Post_vue__WEBPACK_IMPORTED_MODULE_1__["default"],
     PostItem: _PostItem_vue__WEBPACK_IMPORTED_MODULE_2__["default"],
@@ -4177,7 +4187,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   data: function data() {
     return {
-      debug: true,
+      debug: false,
       // Temporarily enable for API testing
       posts_loaded: false,
       last_successful_crawl_data: {},
@@ -4205,7 +4215,7 @@ __webpack_require__.r(__webpack_exports__);
   created: function created() {
     var _this = this;
     this.fetch_posts_from_server();
-    this.last_successful_crawl_data = JSON.parse(this.last_successful_crawl);
+    this.fetch_crawl_status(); // Use API instead of prop
     window.keys_entered = "";
     window.shortcutTimer = null; // Timer for handling multi-digit shortcuts
 
@@ -4287,13 +4297,106 @@ __webpack_require__.r(__webpack_exports__);
     handleSummary: function handleSummary(summary) {
       this.displayed_summary = summary;
     },
-    fetch_posts_from_server: function fetch_posts_from_server() {
-      var _this2 = this;
-      axios.get("/api/" + this.which_posts).then(function (res) {
-        _this2.posts = res.data;
-        _this2.posts_loaded = true;
-      });
-    },
+    fetch_posts_from_server: function () {
+      var _fetch_posts_from_server = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
+        var filters, response;
+        return _regeneratorRuntime().wrap(function _callee$(_context) {
+          while (1) switch (_context.prev = _context.next) {
+            case 0:
+              _context.prev = 0;
+              console.log('📡 Fetching posts using V1 API...', {
+                which_posts: this.which_posts,
+                which_source: this.which_source
+              });
+
+              // Build API filters based on current view
+              filters = {
+                include: 'source,category'
+              }; // Handle source-specific filtering
+              if (this.which_source !== 'all') {
+                filters.source = this.which_source;
+              }
+
+              // Always fetch unread posts (matching legacy behavior)
+              filters.read = false;
+              _context.next = 7;
+              return window.api.getPosts(filters);
+            case 7:
+              response = _context.sent;
+              // Handle the new API response format (with pagination)
+              if (response.data) {
+                this.posts = response.data;
+              } else {
+                // Fallback for direct array response
+                this.posts = response;
+              }
+              this.posts_loaded = true;
+              console.log('✅ Posts loaded via V1 API:', this.posts.length, 'posts');
+              _context.next = 18;
+              break;
+            case 13:
+              _context.prev = 13;
+              _context.t0 = _context["catch"](0);
+              console.error('❌ Failed to fetch posts via V1 API:', _context.t0);
+              this.show_notification('warning', 'Failed to load posts: ' + _context.t0.getUserMessage(), 5000);
+              this.posts_loaded = true; // Don't stay in loading state
+            case 18:
+            case "end":
+              return _context.stop();
+          }
+        }, _callee, this, [[0, 13]]);
+      }));
+      function fetch_posts_from_server() {
+        return _fetch_posts_from_server.apply(this, arguments);
+      }
+      return fetch_posts_from_server;
+    }(),
+    fetch_crawl_status: function () {
+      var _fetch_crawl_status = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
+        var response;
+        return _regeneratorRuntime().wrap(function _callee2$(_context2) {
+          while (1) switch (_context2.prev = _context2.next) {
+            case 0:
+              _context2.prev = 0;
+              console.log('📊 Fetching crawl status via V1 API...');
+              _context2.next = 4;
+              return window.api.getCrawlStatus();
+            case 4:
+              response = _context2.sent;
+              // Transform API response to match legacy format
+              this.last_successful_crawl_data = {
+                status: response.data.status,
+                // 'ok', 'warning', or 'error'
+                message: response.data.message,
+                last_crawl_at: response.data.last_crawl_at,
+                minutes_ago: response.data.minutes_ago,
+                needs_attention: response.data.needs_attention
+              };
+              console.log('✅ Crawl status loaded:', this.last_successful_crawl_data);
+              _context2.next = 13;
+              break;
+            case 9:
+              _context2.prev = 9;
+              _context2.t0 = _context2["catch"](0);
+              console.error('❌ Failed to fetch crawl status:', _context2.t0);
+
+              // Fallback to show error status
+              this.last_successful_crawl_data = {
+                status: 'error',
+                message: 'Unable to check crawl status: ' + _context2.t0.getUserMessage(),
+                needs_attention: true
+              };
+            case 13:
+            case "end":
+              return _context2.stop();
+          }
+        }, _callee2, this, [[0, 9]]);
+      }));
+      function fetch_crawl_status() {
+        return _fetch_crawl_status.apply(this, arguments);
+      }
+      return fetch_crawl_status;
+    }(),
     reset_keys_entered: function reset_keys_entered() {
       // This function clears the keys entered if they're not relevant
       var k = window.keys_entered;
@@ -4313,48 +4416,112 @@ __webpack_require__.r(__webpack_exports__);
     switch_source: function switch_source(which) {
       var details = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
       var name = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+      console.log('🔄 Switching source view:', {
+        which: which,
+        details: details,
+        name: name
+      });
       if (which == "all") {
         this.reset_to_all();
       } else {
-        this.which_posts = which + "/" + details;
-        this.which_source = details;
+        // For V1 API, we use the source ID directly for filtering
+        this.which_posts = which + "/" + details; // Keep for UI display logic
+        this.which_source = details; // This will be used in API filtering
         this.source_name = name;
       }
       this.fetch_posts_from_server();
     },
-    display_post: function display_post(p) {
-      this.external_links_shortcuts = false;
-      this.displayed_post = p;
-      this.displayed_summary = null;
-      // Timeout the animation then set as read
-    },
+    display_post: function () {
+      var _display_post = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3(p) {
+        var response, fullPost;
+        return _regeneratorRuntime().wrap(function _callee3$(_context3) {
+          while (1) switch (_context3.prev = _context3.next) {
+            case 0:
+              console.log('📖 Opening post, fetching full content on-demand:', p.id);
+              this.external_links_shortcuts = false;
+              this.displayed_summary = null;
 
-    mark_post_as_read: function mark_post_as_read(p) {
-      var _this3 = this;
-      // update locally
-      p.read = 1;
-      this.posts_marked_as_read.push(p);
-      // update on the server
-      axios.patch("/api/posts/" + p.id, {
-        read: 1
-      })
-      // If server update works, don't report anything
-      .then(function (res) {})
-      // If there's a problem, undo mark as read
-      ["catch"](function (res) {
-        p.read = 0;
-        _this3.posts_marked_as_read.pop();
-        _this3.show_notification("warning", "Cannot contact server", 2000);
-      });
-    },
+              // Show the post immediately with available data
+              this.displayed_post = _objectSpread(_objectSpread({}, p), {}, {
+                content: '<div class="text-center p-8"><div class="animate-spin inline-block w-6 h-6 border-2 border-current border-t-transparent text-gray-400 rounded-full"></div><p class="mt-2 text-gray-500">Loading article content...</p></div>'
+              });
+              _context3.prev = 4;
+              // Fetch the full post with content using the V1 API show endpoint
+              console.log('🔄 Fetching full content via API...');
+              _context3.next = 8;
+              return window.api.getPost(p.id, 'source,category');
+            case 8:
+              response = _context3.sent;
+              fullPost = response.data || response; // Update with the full post data including content
+              this.displayed_post = fullPost;
+              console.log('✅ Full post content loaded:', fullPost.title);
+              _context3.next = 18;
+              break;
+            case 14:
+              _context3.prev = 14;
+              _context3.t0 = _context3["catch"](4);
+              console.error('❌ Failed to fetch full post content:', _context3.t0);
+
+              // Show error in content area
+              this.displayed_post = _objectSpread(_objectSpread({}, p), {}, {
+                content: "<div class=\"text-center p-8 text-red-600\">\n                        <p>\u26A0\uFE0F Failed to load article content</p>\n                        <p class=\"text-sm mt-2\">".concat(_context3.t0.getUserMessage(), "</p>\n                        <a href=\"").concat(p.url, "\" target=\"_blank\" class=\"text-blue-600 underline mt-4 inline-block\">Read on original site \u2192</a>\n                    </div>")
+              });
+            case 18:
+            case "end":
+              return _context3.stop();
+          }
+        }, _callee3, this, [[4, 14]]);
+      }));
+      function display_post(_x) {
+        return _display_post.apply(this, arguments);
+      }
+      return display_post;
+    }(),
+    mark_post_as_read: function () {
+      var _mark_post_as_read = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4(p) {
+        return _regeneratorRuntime().wrap(function _callee4$(_context4) {
+          while (1) switch (_context4.prev = _context4.next) {
+            case 0:
+              console.log('📝 Marking post as read via V1 API:', p.id);
+
+              // Update locally first (optimistic update)
+              p.read = 1;
+              this.posts_marked_as_read.push(p);
+              _context4.prev = 3;
+              _context4.next = 6;
+              return window.api.markPostRead(p.id, true);
+            case 6:
+              console.log('✅ Post marked as read on server:', p.id);
+              _context4.next = 15;
+              break;
+            case 9:
+              _context4.prev = 9;
+              _context4.t0 = _context4["catch"](3);
+              console.error('❌ Failed to mark post as read:', _context4.t0);
+
+              // Revert the optimistic update
+              p.read = 0;
+              this.posts_marked_as_read.pop();
+              this.show_notification("warning", "Cannot contact server: " + _context4.t0.getUserMessage(), 3000);
+            case 15:
+            case "end":
+              return _context4.stop();
+          }
+        }, _callee4, this, [[3, 9]]);
+      }));
+      function mark_post_as_read(_x2) {
+        return _mark_post_as_read.apply(this, arguments);
+      }
+      return mark_post_as_read;
+    }(),
     show_notification: function show_notification(kind, content, time) {
-      var _this4 = this;
+      var _this2 = this;
       console.log("showing notification");
       this.notification.kind = kind;
       this.notification.message = content;
       this.notification.displayed = true;
       setTimeout(function () {
-        _this4.notification.displayed = false;
+        _this2.notification.displayed = false;
       }, time);
     },
     exit_post: function exit_post(p) {
@@ -4371,13 +4538,13 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     turn_on_external_links_shortcuts: function turn_on_external_links_shortcuts() {
-      var _this5 = this;
+      var _this3 = this;
       var shortcut_style = "mr-1 text-gray-700 px-2 bg-yellow-200 text-grey-800";
       var shortcut = 0;
       document.querySelectorAll("#post-content a").forEach(function (link, i) {
         var html = "<span class=\"externallink ".concat(shortcut_style, "\">").concat(shortcut, "</span>");
         link.insertAdjacentHTML("beforeend", html);
-        _this5.external_links.push(link.getAttribute("href"));
+        _this3.external_links.push(link.getAttribute("href"));
         shortcut++;
       });
       this.external_links_shortcuts = true;
@@ -4387,30 +4554,53 @@ __webpack_require__.r(__webpack_exports__);
       this.external_links_shortcuts = false;
       this.external_links = [];
     },
-    undo: function undo() {
-      var _this6 = this;
-      if (this.undoable) {
-        // mark last post in list as unread
-        var last_post_marked_as_read = this.posts_marked_as_read[this.posts_marked_as_read.length - 1];
-        last_post_marked_as_read.read = 0;
-        // update on server
-        axios.patch("/api/posts/" + last_post_marked_as_read.id, {
-          read: 0
-        })
-        // If server update works, update list of posts marked as read
-        .then(function (res) {
-          _this6.posts_marked_as_read.pop();
-        })
-        // If there's a problem, undo mark as read
-        ["catch"](function (res) {
-          last_post_marked_as_read.read = 1;
-          _this6.show_notification("warning", "Cannot contact server", 2000);
-        });
-        return true;
-      } else {
-        return false;
+    undo: function () {
+      var _undo = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee5() {
+        var last_post_marked_as_read;
+        return _regeneratorRuntime().wrap(function _callee5$(_context5) {
+          while (1) switch (_context5.prev = _context5.next) {
+            case 0:
+              if (!this.undoable) {
+                _context5.next = 19;
+                break;
+              }
+              console.log('↩️ Undoing last read action via V1 API');
+
+              // Get the last post marked as read
+              last_post_marked_as_read = this.posts_marked_as_read[this.posts_marked_as_read.length - 1]; // Update locally first (optimistic update)
+              last_post_marked_as_read.read = 0;
+              _context5.prev = 4;
+              _context5.next = 7;
+              return window.api.markPostRead(last_post_marked_as_read.id, false);
+            case 7:
+              // If server update works, update list of posts marked as read
+              this.posts_marked_as_read.pop();
+              console.log('✅ Undo successful for post:', last_post_marked_as_read.id);
+              _context5.next = 16;
+              break;
+            case 11:
+              _context5.prev = 11;
+              _context5.t0 = _context5["catch"](4);
+              console.error('❌ Failed to undo read status:', _context5.t0);
+
+              // Revert the optimistic update
+              last_post_marked_as_read.read = 1;
+              this.show_notification("warning", "Cannot contact server: " + _context5.t0.getUserMessage(), 3000);
+            case 16:
+              return _context5.abrupt("return", true);
+            case 19:
+              return _context5.abrupt("return", false);
+            case 20:
+            case "end":
+              return _context5.stop();
+          }
+        }, _callee5, this, [[4, 11]]);
+      }));
+      function undo() {
+        return _undo.apply(this, arguments);
       }
-    }
+      return undo;
+    }()
   }
 });
 
@@ -4543,6 +4733,10 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function _regeneratorRuntime() { "use strict"; /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */ _regeneratorRuntime = function _regeneratorRuntime() { return e; }; var t, e = {}, r = Object.prototype, n = r.hasOwnProperty, o = Object.defineProperty || function (t, e, r) { t[e] = r.value; }, i = "function" == typeof Symbol ? Symbol : {}, a = i.iterator || "@@iterator", c = i.asyncIterator || "@@asyncIterator", u = i.toStringTag || "@@toStringTag"; function define(t, e, r) { return Object.defineProperty(t, e, { value: r, enumerable: !0, configurable: !0, writable: !0 }), t[e]; } try { define({}, ""); } catch (t) { define = function define(t, e, r) { return t[e] = r; }; } function wrap(t, e, r, n) { var i = e && e.prototype instanceof Generator ? e : Generator, a = Object.create(i.prototype), c = new Context(n || []); return o(a, "_invoke", { value: makeInvokeMethod(t, r, c) }), a; } function tryCatch(t, e, r) { try { return { type: "normal", arg: t.call(e, r) }; } catch (t) { return { type: "throw", arg: t }; } } e.wrap = wrap; var h = "suspendedStart", l = "suspendedYield", f = "executing", s = "completed", y = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} var p = {}; define(p, a, function () { return this; }); var d = Object.getPrototypeOf, v = d && d(d(values([]))); v && v !== r && n.call(v, a) && (p = v); var g = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(p); function defineIteratorMethods(t) { ["next", "throw", "return"].forEach(function (e) { define(t, e, function (t) { return this._invoke(e, t); }); }); } function AsyncIterator(t, e) { function invoke(r, o, i, a) { var c = tryCatch(t[r], t, o); if ("throw" !== c.type) { var u = c.arg, h = u.value; return h && "object" == _typeof(h) && n.call(h, "__await") ? e.resolve(h.__await).then(function (t) { invoke("next", t, i, a); }, function (t) { invoke("throw", t, i, a); }) : e.resolve(h).then(function (t) { u.value = t, i(u); }, function (t) { return invoke("throw", t, i, a); }); } a(c.arg); } var r; o(this, "_invoke", { value: function value(t, n) { function callInvokeWithMethodAndArg() { return new e(function (e, r) { invoke(t, n, e, r); }); } return r = r ? r.then(callInvokeWithMethodAndArg, callInvokeWithMethodAndArg) : callInvokeWithMethodAndArg(); } }); } function makeInvokeMethod(e, r, n) { var o = h; return function (i, a) { if (o === f) throw new Error("Generator is already running"); if (o === s) { if ("throw" === i) throw a; return { value: t, done: !0 }; } for (n.method = i, n.arg = a;;) { var c = n.delegate; if (c) { var u = maybeInvokeDelegate(c, n); if (u) { if (u === y) continue; return u; } } if ("next" === n.method) n.sent = n._sent = n.arg;else if ("throw" === n.method) { if (o === h) throw o = s, n.arg; n.dispatchException(n.arg); } else "return" === n.method && n.abrupt("return", n.arg); o = f; var p = tryCatch(e, r, n); if ("normal" === p.type) { if (o = n.done ? s : l, p.arg === y) continue; return { value: p.arg, done: n.done }; } "throw" === p.type && (o = s, n.method = "throw", n.arg = p.arg); } }; } function maybeInvokeDelegate(e, r) { var n = r.method, o = e.iterator[n]; if (o === t) return r.delegate = null, "throw" === n && e.iterator["return"] && (r.method = "return", r.arg = t, maybeInvokeDelegate(e, r), "throw" === r.method) || "return" !== n && (r.method = "throw", r.arg = new TypeError("The iterator does not provide a '" + n + "' method")), y; var i = tryCatch(o, e.iterator, r.arg); if ("throw" === i.type) return r.method = "throw", r.arg = i.arg, r.delegate = null, y; var a = i.arg; return a ? a.done ? (r[e.resultName] = a.value, r.next = e.nextLoc, "return" !== r.method && (r.method = "next", r.arg = t), r.delegate = null, y) : a : (r.method = "throw", r.arg = new TypeError("iterator result is not an object"), r.delegate = null, y); } function pushTryEntry(t) { var e = { tryLoc: t[0] }; 1 in t && (e.catchLoc = t[1]), 2 in t && (e.finallyLoc = t[2], e.afterLoc = t[3]), this.tryEntries.push(e); } function resetTryEntry(t) { var e = t.completion || {}; e.type = "normal", delete e.arg, t.completion = e; } function Context(t) { this.tryEntries = [{ tryLoc: "root" }], t.forEach(pushTryEntry, this), this.reset(!0); } function values(e) { if (e || "" === e) { var r = e[a]; if (r) return r.call(e); if ("function" == typeof e.next) return e; if (!isNaN(e.length)) { var o = -1, i = function next() { for (; ++o < e.length;) if (n.call(e, o)) return next.value = e[o], next.done = !1, next; return next.value = t, next.done = !0, next; }; return i.next = i; } } throw new TypeError(_typeof(e) + " is not iterable"); } return GeneratorFunction.prototype = GeneratorFunctionPrototype, o(g, "constructor", { value: GeneratorFunctionPrototype, configurable: !0 }), o(GeneratorFunctionPrototype, "constructor", { value: GeneratorFunction, configurable: !0 }), GeneratorFunction.displayName = define(GeneratorFunctionPrototype, u, "GeneratorFunction"), e.isGeneratorFunction = function (t) { var e = "function" == typeof t && t.constructor; return !!e && (e === GeneratorFunction || "GeneratorFunction" === (e.displayName || e.name)); }, e.mark = function (t) { return Object.setPrototypeOf ? Object.setPrototypeOf(t, GeneratorFunctionPrototype) : (t.__proto__ = GeneratorFunctionPrototype, define(t, u, "GeneratorFunction")), t.prototype = Object.create(g), t; }, e.awrap = function (t) { return { __await: t }; }, defineIteratorMethods(AsyncIterator.prototype), define(AsyncIterator.prototype, c, function () { return this; }), e.AsyncIterator = AsyncIterator, e.async = function (t, r, n, o, i) { void 0 === i && (i = Promise); var a = new AsyncIterator(wrap(t, r, n, o), i); return e.isGeneratorFunction(r) ? a : a.next().then(function (t) { return t.done ? t.value : a.next(); }); }, defineIteratorMethods(g), define(g, u, "Generator"), define(g, a, function () { return this; }), define(g, "toString", function () { return "[object Generator]"; }), e.keys = function (t) { var e = Object(t), r = []; for (var n in e) r.push(n); return r.reverse(), function next() { for (; r.length;) { var t = r.pop(); if (t in e) return next.value = t, next.done = !1, next; } return next.done = !0, next; }; }, e.values = values, Context.prototype = { constructor: Context, reset: function reset(e) { if (this.prev = 0, this.next = 0, this.sent = this._sent = t, this.done = !1, this.delegate = null, this.method = "next", this.arg = t, this.tryEntries.forEach(resetTryEntry), !e) for (var r in this) "t" === r.charAt(0) && n.call(this, r) && !isNaN(+r.slice(1)) && (this[r] = t); }, stop: function stop() { this.done = !0; var t = this.tryEntries[0].completion; if ("throw" === t.type) throw t.arg; return this.rval; }, dispatchException: function dispatchException(e) { if (this.done) throw e; var r = this; function handle(n, o) { return a.type = "throw", a.arg = e, r.next = n, o && (r.method = "next", r.arg = t), !!o; } for (var o = this.tryEntries.length - 1; o >= 0; --o) { var i = this.tryEntries[o], a = i.completion; if ("root" === i.tryLoc) return handle("end"); if (i.tryLoc <= this.prev) { var c = n.call(i, "catchLoc"), u = n.call(i, "finallyLoc"); if (c && u) { if (this.prev < i.catchLoc) return handle(i.catchLoc, !0); if (this.prev < i.finallyLoc) return handle(i.finallyLoc); } else if (c) { if (this.prev < i.catchLoc) return handle(i.catchLoc, !0); } else { if (!u) throw new Error("try statement without catch or finally"); if (this.prev < i.finallyLoc) return handle(i.finallyLoc); } } } }, abrupt: function abrupt(t, e) { for (var r = this.tryEntries.length - 1; r >= 0; --r) { var o = this.tryEntries[r]; if (o.tryLoc <= this.prev && n.call(o, "finallyLoc") && this.prev < o.finallyLoc) { var i = o; break; } } i && ("break" === t || "continue" === t) && i.tryLoc <= e && e <= i.finallyLoc && (i = null); var a = i ? i.completion : {}; return a.type = t, a.arg = e, i ? (this.method = "next", this.next = i.finallyLoc, y) : this.complete(a); }, complete: function complete(t, e) { if ("throw" === t.type) throw t.arg; return "break" === t.type || "continue" === t.type ? this.next = t.arg : "return" === t.type ? (this.rval = this.arg = t.arg, this.method = "return", this.next = "end") : "normal" === t.type && e && (this.next = e), y; }, finish: function finish(t) { for (var e = this.tryEntries.length - 1; e >= 0; --e) { var r = this.tryEntries[e]; if (r.finallyLoc === t) return this.complete(r.completion, r.afterLoc), resetTryEntry(r), y; } }, "catch": function _catch(t) { for (var e = this.tryEntries.length - 1; e >= 0; --e) { var r = this.tryEntries[e]; if (r.tryLoc === t) { var n = r.completion; if ("throw" === n.type) { var o = n.arg; resetTryEntry(r); } return o; } } throw new Error("illegal catch attempt"); }, delegateYield: function delegateYield(e, r, n) { return this.delegate = { iterator: values(e), resultName: r, nextLoc: n }, "next" === this.method && (this.arg = t), y; } }, e; }
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ["post"],
   data: function data() {
@@ -4563,26 +4757,67 @@ __webpack_require__.r(__webpack_exports__);
         this.summarize();
       }
     },
-    summarize: function summarize() {
-      var _this2 = this;
-      this.status = "summarizing";
-      this.$emit("summarized", "summarizing");
-      axios.get("/summary/" + this.post).then(function (res) {
-        if (res.data.summary) {
-          _this2.status = "summarize";
-          _this2.summary = res.data.summary;
-          _this2.$emit("summarized", _this2.summary);
-          setTimeout(function () {
-            _this2.status = "summarize";
-          }, 1000);
-        }
-      })["catch"](function (res) {
-        _this2.status = "error";
-        setTimeout(function () {
-          _this2.status = "summarize";
-        }, 1000);
-      });
-    }
+    summarize: function () {
+      var _summarize = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
+        var _this2 = this;
+        var response;
+        return _regeneratorRuntime().wrap(function _callee$(_context) {
+          while (1) switch (_context.prev = _context.next) {
+            case 0:
+              console.log('🤖 Generating summary via V1 API for post:', this.post);
+              this.status = "summarizing";
+              this.$emit("summarized", "summarizing");
+              _context.prev = 3;
+              _context.next = 6;
+              return window.api.generateSummary(this.post, 3);
+            case 6:
+              response = _context.sent;
+              if (!(response.data && response.data.summary)) {
+                _context.next = 15;
+                break;
+              }
+              this.status = "summarized";
+              this.summary = response.data.summary;
+              this.$emit("summarized", this.summary);
+              console.log('✅ Summary generated successfully');
+
+              // Reset to normal state after showing checkmark
+              setTimeout(function () {
+                _this2.status = "summarize";
+              }, 2000);
+              _context.next = 16;
+              break;
+            case 15:
+              throw new Error('No summary in response');
+            case 16:
+              _context.next = 24;
+              break;
+            case 18:
+              _context.prev = 18;
+              _context.t0 = _context["catch"](3);
+              console.error('❌ Failed to generate summary:', _context.t0);
+              this.status = "error";
+
+              // Show error notification if we have access to a notification system
+              if (this.$parent && this.$parent.show_notification) {
+                this.$parent.show_notification('warning', 'Failed to generate summary: ' + _context.t0.getUserMessage(), 3000);
+              }
+
+              // Reset to normal state after showing error
+              setTimeout(function () {
+                _this2.status = "summarize";
+              }, 2000);
+            case 24:
+            case "end":
+              return _context.stop();
+          }
+        }, _callee, this, [[3, 18]]);
+      }));
+      function summarize() {
+        return _summarize.apply(this, arguments);
+      }
+      return summarize;
+    }()
   }
 });
 
@@ -4771,7 +5006,7 @@ var render = function render() {
         return _vm.reset_to_all();
       }
     }
-  }, [_vm._v("\n                ×\n            ")])])]) : _vm._e(), _vm._v(" "), _vm.last_successful_crawl_data.status == "warning" ? _c("Message", [_vm._v("\n        " + _vm._s(_vm.last_successful_crawl_data.message) + "\n    ")]) : _vm._e(), _vm._v(" "), _vm.number_of_unread_posts < 1 ? _c("div", {
+  }, [_vm._v("\n                ×\n            ")])])]) : _vm._e(), _vm._v(" "), _vm.last_successful_crawl_data.status == "warning" || _vm.last_successful_crawl_data.status == "no_data" || _vm.last_successful_crawl_data.status == "error" ? _c("Message", [_vm._v("\n        " + _vm._s(_vm.last_successful_crawl_data.message) + "\n    ")]) : _vm._e(), _vm._v(" "), _vm.number_of_unread_posts < 1 ? _c("div", {
     staticClass: "container max-w-md mx-auto"
   }, [_c("InboxZero")], 1) : _vm._e(), _vm._v(" "), _c("ul", _vm._l(_vm.unread_posts, function (post, index) {
     return _c("li", {
@@ -36176,11 +36411,11 @@ function _toPropertyKey(arg) { var key = _toPrimitive(arg, "string"); return _ty
 function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input === null) return input; var prim = input[Symbol.toPrimitive]; if (prim !== undefined) { var res = prim.call(input, hint || "default"); if (_typeof(res) !== "object") return res; throw new TypeError("@@toPrimitive must return a primitive value."); } return (hint === "string" ? String : Number)(input); }
 /**
  * Infraread API Client
- * 
+ *
  * Unified HTTP client for interacting with the Infraread API.
  * Handles authentication, error handling, retry logic, and provides
  * a clean interface for all API operations.
- * 
+ *
  * Teaching Note: This client abstracts away the complexity of HTTP requests
  * and provides a consistent interface for the frontend. It handles:
  * - Authentication (both session and token-based)
@@ -37112,6 +37347,119 @@ var InfrareadAPI = /*#__PURE__*/function () {
         return _importOpml.apply(this, arguments);
       }
       return importOpml;
+    }()
+    /**
+     * Metrics API
+     */
+  }, {
+    key: "getCrawlStatus",
+    value: function () {
+      var _getCrawlStatus = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee29() {
+        return _regeneratorRuntime().wrap(function _callee29$(_context29) {
+          while (1) switch (_context29.prev = _context29.next) {
+            case 0:
+              _context29.next = 2;
+              return this.request('GET', '/metrics/crawl-status');
+            case 2:
+              return _context29.abrupt("return", _context29.sent);
+            case 3:
+            case "end":
+              return _context29.stop();
+          }
+        }, _callee29, this);
+      }));
+      function getCrawlStatus() {
+        return _getCrawlStatus.apply(this, arguments);
+      }
+      return getCrawlStatus;
+    }()
+  }, {
+    key: "getSystemStats",
+    value: function () {
+      var _getSystemStats = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee30() {
+        return _regeneratorRuntime().wrap(function _callee30$(_context30) {
+          while (1) switch (_context30.prev = _context30.next) {
+            case 0:
+              _context30.next = 2;
+              return this.request('GET', '/metrics/system');
+            case 2:
+              return _context30.abrupt("return", _context30.sent);
+            case 3:
+            case "end":
+              return _context30.stop();
+          }
+        }, _callee30, this);
+      }));
+      function getSystemStats() {
+        return _getSystemStats.apply(this, arguments);
+      }
+      return getSystemStats;
+    }()
+  }, {
+    key: "getSourcesHealth",
+    value: function () {
+      var _getSourcesHealth = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee31() {
+        return _regeneratorRuntime().wrap(function _callee31$(_context31) {
+          while (1) switch (_context31.prev = _context31.next) {
+            case 0:
+              _context31.next = 2;
+              return this.request('GET', '/metrics/sources-health');
+            case 2:
+              return _context31.abrupt("return", _context31.sent);
+            case 3:
+            case "end":
+              return _context31.stop();
+          }
+        }, _callee31, this);
+      }));
+      function getSourcesHealth() {
+        return _getSourcesHealth.apply(this, arguments);
+      }
+      return getSourcesHealth;
+    }()
+  }, {
+    key: "getRecentActivity",
+    value: function () {
+      var _getRecentActivity = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee32() {
+        return _regeneratorRuntime().wrap(function _callee32$(_context32) {
+          while (1) switch (_context32.prev = _context32.next) {
+            case 0:
+              _context32.next = 2;
+              return this.request('GET', '/metrics/recent-activity');
+            case 2:
+              return _context32.abrupt("return", _context32.sent);
+            case 3:
+            case "end":
+              return _context32.stop();
+          }
+        }, _callee32, this);
+      }));
+      function getRecentActivity() {
+        return _getRecentActivity.apply(this, arguments);
+      }
+      return getRecentActivity;
+    }()
+  }, {
+    key: "getSourceMetrics",
+    value: function () {
+      var _getSourceMetrics = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee33(sourceId) {
+        return _regeneratorRuntime().wrap(function _callee33$(_context33) {
+          while (1) switch (_context33.prev = _context33.next) {
+            case 0:
+              _context33.next = 2;
+              return this.request('GET', "/metrics/sources/".concat(sourceId));
+            case 2:
+              return _context33.abrupt("return", _context33.sent);
+            case 3:
+            case "end":
+              return _context33.stop();
+          }
+        }, _callee33, this);
+      }));
+      function getSourceMetrics(_x25) {
+        return _getSourceMetrics.apply(this, arguments);
+      }
+      return getSourceMetrics;
     }()
   }]);
   return InfrareadAPI;

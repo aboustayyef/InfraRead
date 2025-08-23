@@ -332,6 +332,29 @@ class InfrareadAPI {
             headers: {} // Let browser set Content-Type for FormData
         });
     }
+
+    /**
+     * Metrics API
+     */
+    async getCrawlStatus() {
+        return await this.request('GET', '/metrics/crawl-status');
+    }
+
+    async getSystemStats() {
+        return await this.request('GET', '/metrics/system');
+    }
+
+    async getSourcesHealth() {
+        return await this.request('GET', '/metrics/sources-health');
+    }
+
+    async getRecentActivity() {
+        return await this.request('GET', '/metrics/recent-activity');
+    }
+
+    async getSourceMetrics(sourceId) {
+        return await this.request('GET', `/metrics/sources/${sourceId}`);
+    }
 }
 
 /**

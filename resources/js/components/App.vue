@@ -78,7 +78,7 @@
         </div>
 
         <!-- Crawl Warning Message if last crawl was long ago -->
-        <Message v-if="last_successful_crawl_data.status == 'warning'">
+        <Message v-if="last_successful_crawl_data.status == 'warning' || last_successful_crawl_data.status == 'no_data' || last_successful_crawl_data.status == 'error'">
             {{ last_successful_crawl_data.message }}
         </Message>
 
@@ -138,7 +138,7 @@ import UndoButton from "./partials/ui/UndoButton.vue";
 import SettingsIcon from "./partials/ui/SettingsIcon.vue";
 
 export default {
-    props: ["refreshinterval", "last_successful_crawl"],
+    props: ["refreshinterval"], // Removed last_successful_crawl prop - now fetched via API
     components: {
         Post,
         PostItem,
@@ -154,7 +154,7 @@ export default {
     },
     data() {
         return {
-            debug: true, // Temporarily enable for API testing
+            debug:false, // Temporarily enable for API testing
             posts_loaded: false,
             last_successful_crawl_data: {},
             posts: {},
@@ -180,9 +180,7 @@ export default {
     },
     created() {
         this.fetch_posts_from_server();
-        this.last_successful_crawl_data = JSON.parse(
-            this.last_successful_crawl
-        );
+        this.fetch_crawl_status(); // Use API instead of prop
         window.keys_entered = "";
         window.shortcutTimer = null; // Timer for handling multi-digit shortcuts
 
@@ -277,11 +275,69 @@ export default {
         handleSummary(summary) {
             this.displayed_summary = summary;
         },
-        fetch_posts_from_server: function () {
-            axios.get("/api/" + this.which_posts).then((res) => {
-                this.posts = res.data;
+        fetch_posts_from_server: async function () {
+            try {
+                console.log('📡 Fetching posts using V1 API...', {
+                    which_posts: this.which_posts,
+                    which_source: this.which_source
+                });
+
+                // Build API filters based on current view
+                const filters = { include: 'source,category' };
+
+                // Handle source-specific filtering
+                if (this.which_source !== 'all') {
+                    filters.source = this.which_source;
+                }
+
+                // Always fetch unread posts (matching legacy behavior)
+                filters.read = false;
+
+                const response = await window.api.getPosts(filters);
+
+                // Handle the new API response format (with pagination)
+                if (response.data) {
+                    this.posts = response.data;
+                } else {
+                    // Fallback for direct array response
+                    this.posts = response;
+                }
+
                 this.posts_loaded = true;
-            });
+                console.log('✅ Posts loaded via V1 API:', this.posts.length, 'posts');
+
+            } catch (error) {
+                console.error('❌ Failed to fetch posts via V1 API:', error);
+                this.show_notification('warning', 'Failed to load posts: ' + error.getUserMessage(), 5000);
+                this.posts_loaded = true; // Don't stay in loading state
+            }
+        },
+        fetch_crawl_status: async function() {
+            try {
+                console.log('📊 Fetching crawl status via V1 API...');
+                const response = await window.api.getCrawlStatus();
+
+                // Transform API response to match legacy format
+                this.last_successful_crawl_data = {
+                    status: response.data.status, // 'ok', 'warning', or 'error'
+                    message: response.data.message,
+                    last_crawl_at: response.data.last_crawl_at,
+                    minutes_ago: response.data.minutes_ago,
+                    needs_attention: response.data.needs_attention
+                };
+
+                console.log('✅ Crawl status loaded:', this.last_successful_crawl_data);
+
+            } catch (error) {
+                console.error('❌ Failed to fetch crawl status:', error);
+
+                // Fallback to show error status
+                this.last_successful_crawl_data = {
+                    status: 'error',
+                    message: 'Unable to check crawl status: ' + error.getUserMessage(),
+                    needs_attention: true
+                };
+            }
         },
         reset_keys_entered: function () {
             // This function clears the keys entered if they're not relevant
@@ -300,40 +356,75 @@ export default {
             this.fetch_posts_from_server();
         },
         switch_source: function (which, details = null, name = null) {
+            console.log('🔄 Switching source view:', { which, details, name });
+
             if (which == "all") {
                 this.reset_to_all();
             } else {
-                this.which_posts = which + "/" + details;
-                this.which_source = details;
+                // For V1 API, we use the source ID directly for filtering
+                this.which_posts = which + "/" + details; // Keep for UI display logic
+                this.which_source = details; // This will be used in API filtering
                 this.source_name = name;
             }
             this.fetch_posts_from_server();
         },
-        display_post: function (p) {
+        display_post: async function (p) {
+            console.log('📖 Opening post, fetching full content on-demand:', p.id);
             this.external_links_shortcuts = false;
-            this.displayed_post = p;
             this.displayed_summary = null;
-            // Timeout the animation then set as read
+
+            // Show the post immediately with available data
+            this.displayed_post = { ...p, content: '<div class="text-center p-8"><div class="animate-spin inline-block w-6 h-6 border-2 border-current border-t-transparent text-gray-400 rounded-full"></div><p class="mt-2 text-gray-500">Loading article content...</p></div>' };
+
+            try {
+                // Fetch the full post with content using the V1 API show endpoint
+                console.log('🔄 Fetching full content via API...');
+                const response = await window.api.getPost(p.id, 'source,category');
+                const fullPost = response.data || response;
+
+                // Update with the full post data including content
+                this.displayed_post = fullPost;
+                console.log('✅ Full post content loaded:', fullPost.title);
+
+            } catch (error) {
+                console.error('❌ Failed to fetch full post content:', error);
+
+                // Show error in content area
+                this.displayed_post = {
+                    ...p,
+                    content: `<div class="text-center p-8 text-red-600">
+                        <p>⚠️ Failed to load article content</p>
+                        <p class="text-sm mt-2">${error.getUserMessage()}</p>
+                        <a href="${p.url}" target="_blank" class="text-blue-600 underline mt-4 inline-block">Read on original site →</a>
+                    </div>`
+                };
+            }
         },
-        mark_post_as_read: function (p) {
-            // update locally
+        mark_post_as_read: async function (p) {
+            console.log('📝 Marking post as read via V1 API:', p.id);
+
+            // Update locally first (optimistic update)
             p.read = 1;
             this.posts_marked_as_read.push(p);
-            // update on the server
-            axios
-                .patch("/api/posts/" + p.id, { read: 1 })
-                // If server update works, don't report anything
-                .then((res) => {})
-                // If there's a problem, undo mark as read
-                .catch((res) => {
-                    p.read = 0;
-                    this.posts_marked_as_read.pop();
-                    this.show_notification(
-                        "warning",
-                        "Cannot contact server",
-                        2000
-                    );
-                });
+
+            try {
+                // Update on the server using V1 API
+                await window.api.markPostRead(p.id, true);
+                console.log('✅ Post marked as read on server:', p.id);
+
+            } catch (error) {
+                console.error('❌ Failed to mark post as read:', error);
+
+                // Revert the optimistic update
+                p.read = 0;
+                this.posts_marked_as_read.pop();
+
+                this.show_notification(
+                    "warning",
+                    "Cannot contact server: " + error.getUserMessage(),
+                    3000
+                );
+            }
         },
         show_notification(kind, content, time) {
             console.log("showing notification");
@@ -380,32 +471,39 @@ export default {
             this.external_links = [];
         },
 
-        undo() {
+        undo: async function() {
             if (this.undoable) {
-                // mark last post in list as unread
+                console.log('↩️ Undoing last read action via V1 API');
+
+                // Get the last post marked as read
                 let last_post_marked_as_read =
                     this.posts_marked_as_read[
                         this.posts_marked_as_read.length - 1
                     ];
+
+                // Update locally first (optimistic update)
                 last_post_marked_as_read.read = 0;
-                // update on server
-                axios
-                    .patch("/api/posts/" + last_post_marked_as_read.id, {
-                        read: 0,
-                    })
+
+                try {
+                    // Update on server using V1 API
+                    await window.api.markPostRead(last_post_marked_as_read.id, false);
+
                     // If server update works, update list of posts marked as read
-                    .then((res) => {
-                        this.posts_marked_as_read.pop();
-                    })
-                    // If there's a problem, undo mark as read
-                    .catch((res) => {
-                        last_post_marked_as_read.read = 1;
-                        this.show_notification(
-                            "warning",
-                            "Cannot contact server",
-                            2000
-                        );
-                    });
+                    this.posts_marked_as_read.pop();
+                    console.log('✅ Undo successful for post:', last_post_marked_as_read.id);
+
+                } catch (error) {
+                    console.error('❌ Failed to undo read status:', error);
+
+                    // Revert the optimistic update
+                    last_post_marked_as_read.read = 1;
+
+                    this.show_notification(
+                        "warning",
+                        "Cannot contact server: " + error.getUserMessage(),
+                        3000
+                    );
+                }
                 return true;
             } else {
                 return false;

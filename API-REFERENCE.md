@@ -788,6 +788,57 @@ GET /api/v1/metrics/recent-activity
 }
 ```
 
+### Crawl Status
+Get information about the last successful crawl and system health for display on the frontend.
+
+**Endpoint:** `GET /api/v1/metrics/crawl-status`
+
+**Example Request:**
+```bash
+GET /api/v1/metrics/crawl-status
+```
+
+**Example Response:**
+```json
+{
+  "message": "Crawl status retrieved successfully",
+  "data": {
+    "last_successful_crawl": "2025-08-23T09:15:30Z",
+    "minutes_since_last_crawl": 45,
+    "is_recent": true,
+    "warning_threshold_minutes": 120,
+    "should_show_warning": false,
+    "human_readable": "45 minutes ago",
+    "status": "healthy"
+  }
+}
+```
+
+**Response Fields:**
+- `last_successful_crawl` - ISO timestamp of the most recent successful crawl
+- `minutes_since_last_crawl` - Minutes elapsed since last successful crawl
+- `is_recent` - Boolean indicating if crawl is within acceptable timeframe
+- `warning_threshold_minutes` - System threshold for showing warnings (default: 120 minutes)
+- `should_show_warning` - Boolean indicating if frontend should display warning
+- `human_readable` - User-friendly time description
+- `status` - Overall status: "ok", "warning", "no_data", or "error"
+
+**Example Response (No Data):**
+```json
+{
+  "message": "Crawl status retrieved successfully",
+  "data": {
+    "status": "no_data",
+    "message": "No information available about the last crawl. The system may not have run a full crawl cycle yet since switching to the new tracking system.",
+    "last_crawl_at": null,
+    "minutes_ago": null,
+    "threshold_minutes": 80,
+    "needs_attention": false,
+    "human_readable": "No crawl data available"
+  }
+}
+```
+
 ---
 
 ## Rate Limiting
@@ -836,6 +887,7 @@ Rate limit headers are included in all responses:
 - **v1.1** - Added source and category management
 - **v1.2** - Added OPML import/export functionality
 - **v1.3** - Added Jobs API for background processing and Metrics API for observability
+- **v1.4** - Added crawl status endpoint for frontend health monitoring
 
 ---
 
