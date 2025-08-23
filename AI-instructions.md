@@ -3,7 +3,12 @@
 Refactor the existing monolithic Laravel RSS reader iPrinciples:
 - Backwards compatible API evolution (additive first, remove with deprecation windows).
 - Idempotent write operations where practical (e.g., marking read). 
-- Clear separation of concerns (no view logic in controllers used by API).
+- Clear separation of concerns (no view logi### Phase 7: External Read-It-Later Integration (Post-Migration)
+- Abstract "save" action: internal flag + dispatch integration job.
+- Pluggable connectors (Pocket, Instapaper, Readwise Reader) with per-user credentials.
+- Outbound retry & failure queue; user-visible sync status.
+- Provide webhook/event format for third-party consumers (e.g., post_saved).
+- **Prerequisites**: Complete Phase 5 frontend migration to validate API and provide testing client.controllers used by API).
 - Simple two-state post model: read (archived) or unread (inbox) - no additional states needed.
 - Client-side integration with external read-later services rather than internal storage. cleanly separated system:
 
@@ -162,17 +167,117 @@ Goal: Parity for essential user actions via API.
 ### Phase 4: Enhanced Auth & Security (Deferred)
 - Deferred for single-user project. See "Possible Future Improvements" below.
 
-### Phase 5: Vue SPA Extraction (Separate Repository)
-- New standalone repo (e.g., `infraread-frontend`).
-- Auth: Personal access token flow & local storage handling.
-- Feature parity checklist (reading list, keyboard shortcuts, filtering, quick bulk mark read).
-- API client abstraction + offline optimistic UI for read/unread toggles.
-- Incremental rollout: behind feature flag; keep legacy UI until parity reached.
+### Phase 5: Frontend API Migration (In-Place Refactor)
+**Objective:** Convert existing Vue frontend to consume the API instead of direct database calls, while maintaining current functionality and UX.
 
-### Phase 6: Background Processing & Performance ✅ FOUNDATION COMPLETE
-**Objective:** Enhance existing feed processing with improved error handling, metrics tracking, and performance monitoring while preserving the proven cron-based batch processing approach.
+#### Frontend Audit Findings:
 
-#### ✅ Completed Foundation Work:
+**Current Architecture:**
+- **Mixed approach**: Session auth + direct DB queries + some legacy API calls
+- **Two main domains**: `/app` (reader interface) and `/admin` (administration)
+- **Vue.js frontend**: Main `App.vue` component with child components (Post, PostItem, SummarizeButton, etc.)
+- **Livewire components**: Admin functionality (SourceList, Muted)
+- **Multiple API layers**: Legacy routes in `infraread_api.php` + new V1 API
+
+**Critical Issues Identified:**
+1. **Inconsistent API usage**: App.vue mixes old legacy APIs with direct routes
+2. **Authentication gap**: Frontend uses session auth, API uses Sanctum tokens
+3. **Missing API coverage**: Some admin functionality lacks V1 API endpoints
+4. **Legacy route dependencies**: Direct database queries in web routes
+
+#### Migration Strategy:
+
+**Phase 5A: API Client Foundation ✅ COMPLETE**
+- ✅ **Unified JavaScript API client** (`resources/js/api/client.js`) with comprehensive error handling
+- ✅ **Simplified authentication system**: Laravel generates Sanctum tokens, passes via `window.Laravel.apiToken`
+- ✅ **Flexible token management**: Priority system (.env token → auto-generated → localStorage fallback)
+- ✅ **HTTP request standardization**: Retry logic, error boundaries, consistent authentication headers
+- ✅ **API client test component**: Real-time validation of API connectivity and authentication
+- ✅ **Clean codebase**: Removed complex session-to-token bridging, simplified architecture
+
+**Implementation Highlights:**
+- **Token Priority System**: `INFRAREAD_API_TOKEN` from .env → auto-generated per page load → localStorage fallback
+- **InfrareadAPI Class**: Complete HTTP client with authentication, retries, error handling, and all V1 endpoints
+- **Blade Integration**: Token injection via `window.Laravel.apiToken` for seamless frontend access
+- **Error Handling**: Custom `APIError` class with user-friendly messages and structured error data
+- **Developer Experience**: Console logging, authentication status display, comprehensive API testing interface
+
+**Architecture Benefits:**
+- **Performance**: .env tokens eliminate repeated generation overhead
+- **Flexibility**: Supports both development (auto-generation) and production (stable tokens) workflows
+- **Reliability**: No complex session bridging, direct Sanctum token usage
+- **Maintainability**: Clean, focused codebase with clear separation of concerns
+
+**Phase 5B: Reader Interface Migration (`/app` domain)**
+- **App.vue data fetching**: Replace `/api/{which}` with `/api/v1/posts` filtering
+- **Read status updates**: Migrate `/api/posts/{id}` to `/api/v1/posts/{id}/read-status`
+- **Summary generation**: Replace `/summary/{post}` with `/api/v1/posts/{id}/summary`
+- **Bulk operations**: Implement mark-all-read using `/api/v1/posts/mark-all-read`
+- **Source switching**: Use `/api/v1/posts?filter[source]={id}` for source-specific views
+
+**Phase 5C: Authentication System Migration**
+- ✅ **Dual auth support**: Session auth for web + automatic API token generation
+- ✅ **Token management**: Auto-generate tokens for logged-in users with .env override option
+- ✅ **Frontend token handling**: Tokens passed via `window.Laravel.apiToken` in Blade template
+- ✅ **Error handling**: Clean 401 handling with token clearing, no complex retry loops
+
+**Phase 5D: Administration Interface Migration (`/admin` domain)**
+- **AdminSourceController**: Replace Eloquent calls with `/api/v1/sources` endpoints
+- **AdminCategoryController**: Migrate to `/api/v1/categories` endpoints  
+- **Livewire components**: Update SourceList and Muted to consume API
+- **Token management UI**: Already implemented, validate API integration
+
+#### Specific Database Interactions to Replace:
+
+**Reader Interface (Vue Components):**
+```javascript
+// BEFORE (legacy)
+axios.get("/api/" + this.which_posts)
+axios.patch("/api/posts/" + p.id, { read: 1 })
+axios.get("/summary/" + this.post)
+
+// AFTER (V1 API)
+this.api.getPosts({ filter: { read: false, source: sourceId } })
+this.api.markPostRead(postId, true)
+this.api.generateSummary(postId, sentences)
+```
+
+**Admin Interface (Controllers):**
+```php
+// BEFORE (direct Eloquent)
+Source::with('Category')->get()
+$source->update($request->except(['_token']))
+Category::all()
+
+// AFTER (HTTP API calls)
+$this->apiClient->get('/sources?include=category')
+$this->apiClient->put("/sources/{$id}", $data)
+$this->apiClient->get('/categories')
+```
+
+**Legacy Routes to Eliminate:**
+- `/api/{which}/{details?}` → Replace with `/api/v1/posts` filtering
+- `/markallread` → Use `/api/v1/posts/mark-all-read`
+- `/summary/{post}` → Use `/api/v1/posts/{id}/summary`
+- Direct model queries in routes → HTTP API calls
+
+#### Implementation Priority:
+1. **Start with Reader Interface** (App.vue) - most API coverage exists, immediate validation
+2. **API Client Foundation** - reusable HTTP client with auth handling
+3. **Authentication Bridge** - session-to-token conversion for seamless migration
+4. **Admin Interface** - more complex, requires additional API endpoint coverage
+
+#### Benefits of In-Place Migration:
+- **API Validation**: Real usage immediately reveals API gaps and performance issues
+- **Risk Reduction**: Incremental migration with immediate feedback
+- **UX Preservation**: Maintains existing user experience during transition
+- **Foundation Building**: Creates perfect testing ground for external integrations (Phase 7)
+- **Performance Testing**: Real user interactions reveal optimization needs
+
+### Phase 6: Background Processing & Performance ✅ COMPLETE
+**Objective:** Enhanced feed processing with improved error handling, metrics tracking, performance monitoring, and comprehensive background job system.
+
+#### ✅ Completed Work:
 
 **Enhanced Feed Processing Architecture**
 - **Source Health Metrics**: Added comprehensive tracking fields (last_fetched_at, last_fetch_duration_ms, consecutive_failures, last_error_at, last_error_message, status)
@@ -245,13 +350,15 @@ Goal: Parity for essential user actions via API.
 - Performance tracking enables data-driven optimization decisions
 - **Plugin System**: Structured configuration and comprehensive error handling ready for API-triggered operations
 
-**Next Steps (Phase 6 Continuation):**
-- Implement Laravel jobs for user-triggered scenarios (feed validation, manual refresh)
-- Add read-only metrics API endpoints for monitoring and debugging
-- Create queue-based AI summary generation with proper job handling
-- Expand testing to include job dispatch and queue worker scenarios
+**Laravel Jobs Implementation:**
+- **RefreshSourceJob**: Complete background job for manual source refresh with proper retry logic
+- **GenerateSummaryJob**: Full AI summary generation job with caching and status tracking  
+- **JobController API**: Endpoints for job dispatch (`POST /api/v1/jobs/sources/{id}/refresh`, `POST /api/v1/jobs/posts/{id}/summary`)
+- **Status Monitoring**: Cache-based status tracking (`GET /api/v1/jobs/summary/{cache_key}/status`, `GET /api/v1/jobs/queue/status`)
+- **Queue Configuration**: Separate queues ('refresh', 'summaries'), exponential backoff, proper timeouts
+- **Comprehensive Testing**: 47+ unit tests covering all job scenarios, error handling, retry logic, and cache management
 
-**Total Foundation Tests: 47 unit tests (all passing)**
+**Total Phase 6 Tests: 47+ unit tests (all passing)**
 
 **Teaching Notes:**
 This foundation work demonstrates several key Laravel concepts:
@@ -309,14 +416,17 @@ These are valuable for multi-user hardening and can be implemented later without
 ---
 
 ## Cross-Cutting Tasks & Technical Debt To Address
+- **🔄 Frontend API Migration**: Replace legacy `/api/` routes and direct database queries with V1 API calls in App.vue and admin interfaces
+- **🔐 Authentication Bridge**: Implement session-to-token conversion for seamless API authentication
+- **📱 API Client Standardization**: Create unified JavaScript HTTP client for consistent API interactions
 - Refine test suite: isolate fast unit tests vs feature/API tests; add factories for tokens & sources.
 - Consolidate plugin lifecycle (pre-fetch vs post-fetch vs post-store hooks) with clear contracts.
 - Introduce DTO / API Resource normalization layer to reduce controller duplication.
 - Define serialization policy (fields whitelist, sparse fieldsets via `?fields[posts]=id,title,...`).
 - Rate limiter strategy centralization (config-driven, per-user basis for summary generation).
 - Data retention / pruning policy (archiving old posts, summary regeneration rules).
-- **📬 Update Postman Collection:** Current collection (`postman/infraread-phase1-api.postman_collection.json`) is outdated - needs Phase 2 & 3 endpoints, Sanctum auth, and proper variable setup.
-- **🧪 Enhance API Tester:** Add new Phase 2 & 3 endpoints to `/api-tester` interface for manual testing.
+- **📬 Update Postman Collection**: Add Phase 5 migration endpoints and authentication examples
+- **🧪 Enhance API Tester**: Validate V1 API compatibility with frontend migration requirements
 
 ---
 
@@ -337,15 +447,23 @@ These are valuable for multi-user hardening and can be implemented later without
 ---
 
 ## Immediate Next Step (When Work Resumes)
-Continue Phase 6 (Background Processing & Performance):
-1. ✅ Enhanced feed processing foundation with metrics, error handling, and exponential backoff
-2. **Next:** Implement Laravel jobs for user-triggered scenarios (RefreshSourceJob, GenerateSummaryJob) with proper queue handling
-3. Add read-only metrics API endpoints (GET /api/v1/sources/{id}/metrics, GET /api/v1/system/processing-stats)
-4. Create feature tests for job dispatch and console command improvements
-5. Update API documentation with new metrics endpoints
-6. Set up database queue driver and worker process instructions
+Continue Phase 5 (Frontend API Migration):
+1. ✅ **API Client Foundation**: Unified JavaScript HTTP client (`resources/js/api/client.js`) complete
+2. ✅ **Authentication Bridge**: Simplified token system (Laravel-generated → .env override) complete
+3. **Reader Interface Migration**: Replace App.vue legacy API calls with V1 endpoints
+4. **Admin Interface Migration**: Convert admin controllers and Livewire components to API consumption
+5. **Legacy Route Elimination**: Remove direct database queries from web routes
+6. **Error Handling & UX**: Implement proper API error handling and user feedback
 
-**Current Status:** Phase 6 foundation complete with 47 passing unit tests, including comprehensive plugin system overhaul. Ready to implement job-based processing for user-triggered actions while keeping proven cron-based batch processing for regular feed updates.
+**Implementation Priority**: Start with Reader Interface (App.vue) since API client foundation is complete and most API coverage exists.
+
+**Current Status:** Phase 5A complete. API client foundation implemented with flexible token management (.env → auto-generated → localStorage), comprehensive error handling, and clean authentication architecture. Ready to begin App.vue migration to V1 API endpoints.
+
+**Key Architecture Decisions:**
+- Simplified token approach: Laravel generates/injects tokens, no complex session bridging
+- Priority token system: .env override for production stability, auto-generation for development
+- Clean error handling: No retry loops, clear 401 responses, user-friendly error messages
+- Comprehensive API client: All V1 endpoints implemented with proper TypeScript-like structure
 
 Note: Simple two-state model: posts are either read (archived) or unread (inbox). No additional dismiss/archive states.
 Note: "Save for Later" functionality is handled client-side by integrating directly with external read-later services, not via API endpoints.
@@ -370,8 +488,9 @@ Note: Single-user application - all tokens have full access, no scope restrictio
 | OPML Import/Export API | Done | Phase 3 - Complete migration functionality |
 | API Reference Documentation | Done | Complete endpoint documentation with examples |
 | Enhanced auth & audit logging | Deferred | Moved to "Possible Future Improvements" |
-| Vue SPA extraction | Pending | Phase 5 |
-| Queue & ingestion optimization | In Progress | Phase 6 foundation complete: metrics, error handling, exponential backoff, plugin system overhaul |
+| API Client Foundation (Phase 5A) | Done | Unified JS client, simplified auth, token management |
+| Vue SPA extraction | In Progress | Phase 5B-D: Reader interface migration next |
+| Queue & ingestion optimization | Done | Phase 6 complete: background jobs, metrics, error handling, plugin system, comprehensive job testing |
 | External read-it-later integrations | Pending | Phase 7 |
 | Observability & metrics | Pending | Phase 8 |
 | OpenAPI & public docs | Pending | Phase 9 |
@@ -425,6 +544,6 @@ When teaching queues and background jobs, use simple analogies and step-by-step 
 Provide context for why specific approaches are chosen, explain trade-offs, and highlight Laravel conventions and best practices throughout the implementation process.
 
 
-Last Updated: 2025-08-15 (Phase 6 Foundation Complete)
+Last Updated: 2025-08-23 (Phase 5A Complete - API Client Foundation)
 
 

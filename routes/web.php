@@ -33,7 +33,20 @@ require __DIR__.'/onboarding.php';
 // Launch App
 Route::get('/app', function () {
     $last_successful_crawl = Post::getLastSuccesfulCrawl();
-    return view('home')->with('last_successful_crawl', $last_successful_crawl);
+
+    // Use token from .env if available, otherwise generate a new one
+    $token = env('INFRAREAD_API_TOKEN');
+
+    if (!$token) {
+        // Fallback: Generate API token for the current user
+        $user = auth()->user();
+        $token = $user->createToken('spa-token')->plainTextToken;
+    }
+
+    return view('home')->with([
+        'last_successful_crawl' => $last_successful_crawl,
+        'api_token' => $token
+    ]);
 })->middleware('auth')->name('dashboard'); // added name for navigation
 
 // NOTE: API V1 routes now live exclusively in routes/api.php protected by Sanctum (auth:sanctum).

@@ -51,7 +51,9 @@ Route::get('v2_readlaterservice', function () {
 });
 
 // API V1 - sanctum protected
-Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
+Route::prefix('v1')->group(function () {
+    // Protected API endpoints
+    Route::middleware('auth:sanctum')->group(function () {
     // Read endpoints
     Route::get('/posts', [V1PostController::class, 'index']);
     Route::get('/posts/{post}', [V1PostController::class, 'show']);
@@ -99,4 +101,5 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
         Route::get('/sources-health', [V1MetricsController::class, 'sourcesHealth'])->name('sources-health');
         Route::get('/recent-activity', [V1MetricsController::class, 'recentActivity'])->name('recent-activity');
     });
-});
+    }); // End of auth:sanctum middleware group
+}); // End of v1 prefix group

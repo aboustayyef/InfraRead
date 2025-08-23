@@ -18,6 +18,9 @@
             >
         </div>
 
+        <!-- API Client Test (Phase 5A) -->
+        <api-client-test v-if="this.debug == true"></api-client-test>
+
         <!-- Loading Indicator -->
         <div v-cloak v-if="(posts_loaded == false)">
             <div>
@@ -151,7 +154,7 @@ export default {
     },
     data() {
         return {
-            debug: false,
+            debug: true, // Temporarily enable for API testing
             posts_loaded: false,
             last_successful_crawl_data: {},
             posts: {},
