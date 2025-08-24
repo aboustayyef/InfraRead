@@ -655,14 +655,15 @@
     </div>
 
     <script>
-        const q = s => document.querySelector(s);
-        const qa = s => document.querySelectorAll(s);
-        const fmt = o => JSON.stringify(o, null, 2);
+        document.addEventListener('DOMContentLoaded', function() {
+            const q = s => document.querySelector(s);
+            const qa = s => document.querySelectorAll(s);
+            const fmt = o => JSON.stringify(o, null, 2);
 
-        let authToken = '';
+            let authToken = '';
 
-        // Tab functionality
-        qa('.api-tab').forEach(tab => {
+            // Tab functionality
+            qa('.api-tab').forEach(tab => {
             tab.addEventListener('click', (e) => {
                 e.preventDefault();
                 const tabName = tab.dataset.tab;
@@ -1006,6 +1007,8 @@
             const url = '/api/v1/metrics/crawl-status';
             await apiRequest('GET', url, null, q('#metrics-output'), q('#metrics-url'));
         });
+
+        }); // End DOMContentLoaded
     </script>
     </div>
 @endsection

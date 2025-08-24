@@ -8,6 +8,14 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
+    {{-- Transfer Variables from PHP to Js --}}
+    <script>
+        window.Laravel = {
+            csrfToken: '{{ csrf_token() }}',
+            apiToken: '{{ $api_token ?? '' }}'
+        }
+    </script>
+
     <title>InfraRead</title>
 
     <!-- Styles -->
@@ -15,7 +23,6 @@
     <link href="{{ mix('css/app.css') }}" rel="stylesheet">
     @livewireStyles
     @livewireScripts
-    <script src="{{ mix('js/admin.js') }}"></script>
 </head>
 <body>
     <style>
@@ -39,6 +46,7 @@
     </div>
 
     <!-- Scripts -->
+    <script src="{{ mix('js/app.js') }}"></script>
     <!-- Extra Scripts -->
     @yield('extra_scripts')
 

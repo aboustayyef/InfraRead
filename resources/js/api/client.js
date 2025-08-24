@@ -308,6 +308,36 @@ class InfrareadAPI {
     }
 
     /**
+     * URL Analysis API
+     */
+    async analyzeUrl(url) {
+        const params = new URLSearchParams({ url });
+        // Note: This endpoint is not in the v1 namespace yet, so we use absolute path
+        const fullUrl = `/api/urlanalyze?${params.toString()}`;
+
+        const headers = {
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        };
+
+        if (this.token) {
+            headers['Authorization'] = `Bearer ${this.token}`;
+        }
+
+        const response = await fetch(fullUrl, {
+            method: 'GET',
+            headers,
+            credentials: 'include'
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+
+        return await response.json();
+    }
+
+    /**
      * OPML API
      */
     async exportOpml() {

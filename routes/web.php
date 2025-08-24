@@ -3,6 +3,7 @@
 use App\Http\Controllers\AdminCategoryController;
 use App\Http\Controllers\AdminSourceController;
 use App\Http\Controllers\AdminMutedController;
+use App\Http\Controllers\VueAdminController;
 use App\Http\Controllers\PocketSetupController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\PostsByCategoryController;
@@ -67,6 +68,12 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::get('token', [\App\Http\Controllers\AdminTokenController::class, 'show'])->name('admin.token.show');
     Route::post('token', [\App\Http\Controllers\AdminTokenController::class, 'store'])->name('admin.token.store');
     Route::delete('token', [\App\Http\Controllers\AdminTokenController::class, 'destroy'])->name('admin.token.destroy');
+});
+
+// New Vue.js Admin Interface (API-based)
+Route::prefix('app/admin')->middleware('auth')->group(function () {
+    Route::get('/sources', [VueAdminController::class, 'sources'])->name('vue.admin.sources');
+    Route::get('/categories', [VueAdminController::class, 'categories'])->name('vue.admin.categories');
 });
 
 // Mark all as read

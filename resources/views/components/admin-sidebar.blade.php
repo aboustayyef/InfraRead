@@ -39,6 +39,22 @@
                 <!-- API Section Divider -->
                 <li class="border-t border-gray-300 mt-4 pt-4">
                     <div class="pl-4 pb-2">
+                        <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Vue Admin (Beta)</span>
+                    </div>
+                </li>
+
+                <li class="hover:bg-primary hover:text-white @if (request()->is('app/admin/sources')) bg-gray-200 @endif">
+                    <a href="/app/admin/sources" class="w-full pl-4 py-2 block">
+                        <div class="flex space-x-4">
+                            <x-ui.sources-icon classes="text-gray-400" />
+                            <div>Sources (Vue)</div>
+                        </div>
+                    </a>
+                </li>
+
+                <!-- API Section Divider -->
+                <li class="border-t border-gray-300 mt-4 pt-4">
+                    <div class="pl-4 pb-2">
                         <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider">API</span>
                     </div>
                 </li>
