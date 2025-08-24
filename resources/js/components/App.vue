@@ -249,7 +249,10 @@ export default {
         },
         unread_posts: function () {
             if (Object.keys(this.posts).length > 0) {
-                return this.posts.filter((post) => !post.read == 1);
+                return this.posts.filter((post) => {
+                    // Handle both boolean true and numeric 1 for read status
+                    return post.read !== true && post.read !== 1;
+                });
             }
         },
         number_of_unread_posts: function () {
@@ -401,8 +404,6 @@ export default {
             }
         },
         mark_post_as_read: async function (p) {
-            console.log('📝 Marking post as read via V1 API:', p.id);
-
             // Update locally first (optimistic update)
             p.read = 1;
             this.posts_marked_as_read.push(p);
@@ -410,12 +411,11 @@ export default {
             try {
                 // Update on the server using V1 API
                 await window.api.markPostRead(p.id, true);
-                console.log('✅ Post marked as read on server:', p.id);
 
             } catch (error) {
                 console.error('❌ Failed to mark post as read:', error);
 
-                // Revert the optimistic update
+                // Revert the optimistic update (same as old version)
                 p.read = 0;
                 this.posts_marked_as_read.pop();
 
@@ -436,7 +436,15 @@ export default {
             }, time);
         },
         exit_post: function (p) {
-            this.mark_post_as_read(p);
+            // Find the actual post in the posts array (not the displayed_post object)
+            const postInArray = this.posts.find(post => post.id === p.id);
+            if (postInArray) {
+                this.mark_post_as_read(postInArray);
+            } else {
+                // Fallback to the passed post object
+                this.mark_post_as_read(p);
+            }
+
             this.displayed_post = {};
             this.external_links = [];
         },
