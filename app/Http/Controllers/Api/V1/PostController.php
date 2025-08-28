@@ -30,7 +30,7 @@ class PostController extends Controller
         if (isset($filters['category'])) {
             $query->where('category_id', (int) $filters['category']);
         }
-        $sort = $request->query('sort', '-posted_at');
+        $sort = $request->query('sort', 'posted_at');
         if ($sort === 'posted_at') {
             $query->orderBy('posted_at', 'asc');
         } else {
