@@ -30,7 +30,15 @@ class SourceFactory extends Factory
             'fetcher_source'    => $this->faker->url,
             'active'            => 1,
             'why_deactivated'   => null,
-            'category_id'       => 1 //default
+            'category_id'       => 1, //default
+
+            // New metric fields with defaults
+            'last_fetched_at'   => null,
+            'last_fetch_duration_ms' => null,
+            'consecutive_failures' => 0,
+            'last_error_at'     => null,
+            'last_error_message' => null,
+            'status'            => 'active'
         ];
     }
 }

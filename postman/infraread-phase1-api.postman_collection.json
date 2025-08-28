@@ -1,0 +1,113 @@
+{
+  "info": {
+    "name": "Infraread Phase 1 API",
+    "description": "Read-only endpoints for posts, sources, categories (Phase 1). Uses session auth (login) against local dev domain.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "version": "1.0.0"
+  },
+  "item": [
+    {
+      "name": "Auth - Login",
+      "request": {
+        "method": "POST",
+        "header": [
+          {"key": "Accept", "value": "application/json"},
+          {"key": "Content-Type", "value": "application/json"}
+        ],
+        "url": {"raw": "{{base_url}}/login", "host": ["{{base_url}}"], "path": ["login"]},
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"your-user@example.com\",\n  \"password\": \"password\"\n}"
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Posts - List",
+      "request": {
+        "method": "GET",
+        "header": [ {"key": "Accept", "value": "application/json"} ],
+        "url": {
+          "raw": "{{base_url}}/api/v1/posts?include=source,category&filter[read]=0&sort=-posted_at&page.size=20",
+          "host": ["{{base_url}}"],
+          "path": ["api","v1","posts"],
+          "query": [
+            {"key": "include", "value": "source,category"},
+            {"key": "filter[read]", "value": "0"},
+            {"key": "sort", "value": "-posted_at"},
+            {"key": "page.size", "value": "20"}
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Posts - Show",
+      "request": {
+        "method": "GET",
+        "header": [ {"key": "Accept", "value": "application/json"} ],
+        "url": {"raw": "{{base_url}}/api/v1/posts/1?include=source,category", "host": ["{{base_url}}"], "path": ["api","v1","posts","1"], "query": [{"key": "include", "value": "source,category"}]}
+      },
+      "response": []
+    },
+    {
+      "name": "Sources - List",
+      "request": {
+        "method": "GET",
+        "header": [ {"key": "Accept", "value": "application/json"} ],
+        "url": {"raw": "{{base_url}}/api/v1/sources?include=category", "host": ["{{base_url}}"], "path": ["api","v1","sources"], "query": [{"key": "include", "value": "category"}]}
+      },
+      "response": []
+    },
+    {
+      "name": "Sources - Show",
+      "request": {
+        "method": "GET",
+        "header": [ {"key": "Accept", "value": "application/json"} ],
+        "url": {"raw": "{{base_url}}/api/v1/sources/1?include=category", "host": ["{{base_url}}"], "path": ["api","v1","sources","1"], "query": [{"key": "include", "value": "category"}]}
+      },
+      "response": []
+    },
+    {
+      "name": "Categories - List",
+      "request": {
+        "method": "GET",
+        "header": [ {"key": "Accept", "value": "application/json"} ],
+        "url": {"raw": "{{base_url}}/api/v1/categories", "host": ["{{base_url}}"], "path": ["api","v1","categories"]}
+      },
+      "response": []
+    },
+    {
+      "name": "Categories - Show",
+      "request": {
+        "method": "GET",
+        "header": [ {"key": "Accept", "value": "application/json"} ],
+        "url": {"raw": "{{base_url}}/api/v1/categories/1", "host": ["{{base_url}}"], "path": ["api","v1","categories","1"]}
+      },
+      "response": []
+    },
+    {
+      "name": "Post - Summary (fresh)",
+      "request": {
+        "method": "POST",
+        "header": [ {"key": "Accept", "value": "application/json"}, {"key": "Content-Type", "value": "application/json"} ],
+        "url": {"raw": "{{base_url}}/api/v1/posts/1/summary", "host": ["{{base_url}}"], "path": ["api","v1","posts","1","summary"]},
+        "body": {"mode": "raw", "raw": "{\n  \"sentences\": 2\n}"}
+      },
+      "response": []
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {"type": "text/javascript", "exec": ["// You can add common pre-request scripts here"]}
+    },
+    {
+      "listen": "test",
+      "script": {"type": "text/javascript", "exec": ["// You can add common tests here"]}
+    }
+  ],
+  "variable": [
+    {"key": "base_url", "value": "http://infraread.test"}
+  ]
+}

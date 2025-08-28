@@ -1,0 +1,570 @@
+{
+  "info": {
+    "name": "Infraread Complete API",
+    "description": "Complete API collection for Infraread RSS Reader covering Phases 1-6. Includes Posts, Sources, Categories, OPML, Jobs, and Metrics APIs. Uses Sanctum Bearer token authentication.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "version": "3.0.0"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000",
+      "description": "Base URL for your Infraread instance"
+    },
+    {
+      "key": "bearer_token",
+      "value": "YOUR_TOKEN_HERE",
+      "description": "Your Sanctum personal access token"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearer_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "item": [
+    {
+      "name": "Posts API",
+      "item": [
+        {
+          "name": "List Posts",
+          "request": {
+            "method": "GET",
+            "header": [
+              {"key": "Accept", "value": "application/json"}
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/posts?include=source,category&page=1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "posts"],
+              "query": [
+                {"key": "include", "value": "source,category"},
+                {"key": "source_id", "value": "", "disabled": true},
+                {"key": "category_id", "value": "", "disabled": true},
+                {"key": "page", "value": "1"}
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Single Post",
+          "request": {
+            "method": "GET",
+            "header": [
+              {"key": "Accept", "value": "application/json"}
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/posts/1?include=source,category",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "posts", "1"],
+              "query": [
+                {"key": "include", "value": "source,category"}
+              ]
+            }
+          }
+        },
+        {
+          "name": "Mark Post Read/Unread",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {"key": "Accept", "value": "application/json"},
+              {"key": "Content-Type", "value": "application/json"}
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/posts/1/read-status",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "posts", "1", "read-status"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"read\": true\n}"
+            }
+          }
+        },
+        {
+          "name": "Bulk Mark Posts Read/Unread",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {"key": "Accept", "value": "application/json"},
+              {"key": "Content-Type", "value": "application/json"}
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/posts/bulk-read-status",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "posts", "bulk-read-status"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"post_ids\": [1, 2, 3, 4, 5],\n  \"read\": true\n}"
+            }
+          }
+        },
+        {
+          "name": "Mark All Posts Read/Unread",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {"key": "Accept", "value": "application/json"},
+              {"key": "Content-Type", "value": "application/json"}
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/posts/mark-all-read",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "posts", "mark-all-read"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"read\": true,\n  \"source_id\": 1,\n  \"category_id\": 2,\n  \"before_date\": \"2025-08-14\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Generate Post Summary",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Accept", "value": "application/json"},
+              {"key": "Content-Type", "value": "application/json"}
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/posts/1/summary",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "posts", "1", "summary"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sentences\": 2\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Sources API",
+      "item": [
+        {
+          "name": "List Sources",
+          "request": {
+            "method": "GET",
+            "header": [
+              {"key": "Accept", "value": "application/json"}
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/sources?include=category",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "sources"],
+              "query": [
+                {"key": "include", "value": "category"}
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Single Source",
+          "request": {
+            "method": "GET",
+            "header": [
+              {"key": "Accept", "value": "application/json"}
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/sources/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "sources", "1"]
+            }
+          }
+        },
+        {
+          "name": "Create Source",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Accept", "value": "application/json"},
+              {"key": "Content-Type", "value": "application/json"}
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/sources",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "sources"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"url\": \"https://techcrunch.com/feed/\",\n  \"category_id\": 1,\n  \"name\": \"TechCrunch\",\n  \"description\": \"Technology news and analysis\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Update Source",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {"key": "Accept", "value": "application/json"},
+              {"key": "Content-Type", "value": "application/json"}
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/sources/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "sources", "1"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Updated Source Name\",\n  \"description\": \"Updated description\",\n  \"category_id\": 2\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete Source",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {"key": "Accept", "value": "application/json"}
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/sources/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "sources", "1"]
+            }
+          }
+        },
+        {
+          "name": "Refresh Source Posts",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Accept", "value": "application/json"},
+              {"key": "Content-Type", "value": "application/json"}
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/sources/1/refresh",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "sources", "1", "refresh"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Categories API",
+      "item": [
+        {
+          "name": "List Categories",
+          "request": {
+            "method": "GET",
+            "header": [
+              {"key": "Accept", "value": "application/json"}
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/categories",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "categories"]
+            }
+          }
+        },
+        {
+          "name": "Get Single Category",
+          "request": {
+            "method": "GET",
+            "header": [
+              {"key": "Accept", "value": "application/json"}
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/categories/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "categories", "1"]
+            }
+          }
+        },
+        {
+          "name": "Create Category",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Accept", "value": "application/json"},
+              {"key": "Content-Type", "value": "application/json"}
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/categories",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "categories"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"description\": \"Technology News\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Update Category",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {"key": "Accept", "value": "application/json"},
+              {"key": "Content-Type", "value": "application/json"}
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/categories/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "categories", "1"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"description\": \"Updated Category Name\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete Category",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {"key": "Accept", "value": "application/json"}
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/categories/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "categories", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "OPML API",
+      "item": [
+        {
+          "name": "Export OPML",
+          "request": {
+            "method": "GET",
+            "header": [
+              {"key": "Accept", "value": "application/json"}
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/export-opml",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "export-opml"]
+            }
+          }
+        },
+        {
+          "name": "Preview OPML Import",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Accept", "value": "application/json"}
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/preview-opml",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "preview-opml"]
+            },
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "opml",
+                  "type": "file",
+                  "src": "/path/to/your/feeds.opml"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Import OPML (Replace Mode)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Accept", "value": "application/json"}
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/import-opml",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "import-opml"]
+            },
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "opml",
+                  "type": "file",
+                  "src": "/path/to/your/feeds.opml"
+                },
+                {
+                  "key": "mode",
+                  "value": "replace",
+                  "type": "text"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Import OPML (Merge Mode)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Accept", "value": "application/json"}
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/import-opml",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "import-opml"]
+            },
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "opml",
+                  "type": "file",
+                  "src": "/path/to/your/feeds.opml"
+                },
+                {
+                  "key": "mode",
+                  "value": "merge",
+                  "type": "text"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Jobs API",
+      "item": [
+        {
+          "name": "Refresh Source Job",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Accept", "value": "application/json"}
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/jobs/sources/1/refresh",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "jobs", "sources", "1", "refresh"]
+            }
+          }
+        },
+        {
+          "name": "Generate Summary Job",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Accept", "value": "application/json"},
+              {"key": "Content-Type", "value": "application/json"}
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/jobs/posts/1/summary",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "jobs", "posts", "1", "summary"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sentences\": 3\n}"
+            }
+          }
+        },
+        {
+          "name": "Summary Status",
+          "request": {
+            "method": "GET",
+            "header": [
+              {"key": "Accept", "value": "application/json"}
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/jobs/summary-status/summary_post_1_3",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "jobs", "summary-status", "summary_post_1_3"]
+            }
+          }
+        },
+        {
+          "name": "Queue Status",
+          "request": {
+            "method": "GET",
+            "header": [
+              {"key": "Accept", "value": "application/json"}
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/jobs/queue-status",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "jobs", "queue-status"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Metrics API",
+      "item": [
+        {
+          "name": "Source Metrics",
+          "request": {
+            "method": "GET",
+            "header": [
+              {"key": "Accept", "value": "application/json"}
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/metrics/sources/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "metrics", "sources", "1"]
+            }
+          }
+        },
+        {
+          "name": "System Statistics",
+          "request": {
+            "method": "GET",
+            "header": [
+              {"key": "Accept", "value": "application/json"}
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/metrics/system",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "metrics", "system"]
+            }
+          }
+        },
+        {
+          "name": "Sources Health",
+          "request": {
+            "method": "GET",
+            "header": [
+              {"key": "Accept", "value": "application/json"}
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/metrics/sources-health",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "metrics", "sources-health"]
+            }
+          }
+        },
+        {
+          "name": "Recent Activity",
+          "request": {
+            "method": "GET",
+            "header": [
+              {"key": "Accept", "value": "application/json"}
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/metrics/recent-activity",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "metrics", "recent-activity"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

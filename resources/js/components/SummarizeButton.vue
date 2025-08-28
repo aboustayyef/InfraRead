@@ -98,27 +98,42 @@ export default {
                 this.summarize();
             }
         },
-        summarize() {
+        summarize: async function() {
+            console.log('🤖 Generating summary via V1 API for post:', this.post);
             this.status = "summarizing";
             this.$emit("summarized", "summarizing");
-            axios
-                .get("/summary/" + this.post)
-                .then((res) => {
-                    if (res.data.summary) {
-                        this.status = "summarize";
-                        this.summary = res.data.summary;
-                        this.$emit("summarized", this.summary);
-                        setTimeout(() => {
-                            this.status = "summarize";
-                        }, 1000);
-                    }
-                })
-                .catch((res) => {
-                    this.status = "error";
+
+            try {
+                const response = await window.api.generateSummary(this.post, 3); // 3 sentences by default
+
+                if (response.data && response.data.summary) {
+                    this.status = "summarized";
+                    this.summary = response.data.summary;
+                    this.$emit("summarized", this.summary);
+                    console.log('✅ Summary generated successfully');
+
+                    // Reset to normal state after showing checkmark
                     setTimeout(() => {
                         this.status = "summarize";
-                    }, 1000);
-                });
+                    }, 2000);
+                } else {
+                    throw new Error('No summary in response');
+                }
+
+            } catch (error) {
+                console.error('❌ Failed to generate summary:', error);
+                this.status = "error";
+
+                // Show error notification if we have access to a notification system
+                if (this.$parent && this.$parent.show_notification) {
+                    this.$parent.show_notification('warning', 'Failed to generate summary: ' + error.getUserMessage(), 3000);
+                }
+
+                // Reset to normal state after showing error
+                setTimeout(() => {
+                    this.status = "summarize";
+                }, 2000);
+            }
         },
     },
 };

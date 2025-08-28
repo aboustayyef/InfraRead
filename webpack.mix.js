@@ -11,9 +11,14 @@ const mix = require('laravel-mix');
  |
  */
 
-mix.browserSync({proxy: "http://infraread.test", browser: 'Firefox Developer Edition' }).js('resources/js/app.js', 'public/js').postCss('resources/css/app.css', 'public/css', [
-    require('postcss-import'),
-    require('tailwindcss'),
-    require('autoprefixer'),
-]);
+mix.browserSync({proxy: "http://infraread.test", browser: 'Firefox Developer Edition' })
+   .js('resources/js/app.js', 'public/js')
+   .postCss('resources/css/app.css', 'public/css', [
+        require('postcss-import'),
+        require('tailwindcss'),
+        require('autoprefixer'),
+    ])
+   .options({
+        processCssUrls: false
+   });
 mix.js('resources/js/admin.js', 'public/js').version();

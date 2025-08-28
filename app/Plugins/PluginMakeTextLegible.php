@@ -19,18 +19,20 @@ use App\Models\Post;
 
 class PluginMakeTextLegible implements PluginInterface
 {
-    private $post;
+    private Post $post;
+    private array $options;
 
-    public function __construct(Post $post)
+    public function __construct(Post $post, array $options = [])
     {
         $this->post = $post;
+        $this->options = array_merge($this->getDefaultOptions(), $options);
     }
 
-    public function handle()
+    public function handle(): bool
     {
         // All plugin's logic should be inside the try() function
         try {
-            $max_length_of_paragraph = 120; // number of words allowed in first paragraph.
+            $max_length_of_paragraph = $this->options['max_paragraph_length'] ?? 120;
 
             // Isolate content from comments and sharing button fluff;
             $parts = explode('<p></p>', $this->post->content);
@@ -40,9 +42,18 @@ class PluginMakeTextLegible implements PluginInterface
             $content = str_replace("\n", '', $content);
             $content = str_replace("\r", '', $content);
 
+            // Remove ads if configured
+            if ($this->options['remove_ads']) {
+                $content = $this->removeAds($content);
+            }
+
+            // Clean formatting if configured
+            if ($this->options['clean_formatting']) {
+                $content = $this->cleanFormatting($content);
+            }
+
             // Divide into short sentences
-            // $phrases = $this->breakLongText($content, 130, $max_length_of_paragraph);
-            $cleaned_content = $this->breakLongText($content, 300);
+            $cleaned_content = $this->breakLongText($content, $this->options['min_letters_count']);
 
             $this->post->content = $cleaned_content;
             $this->post->save();
@@ -51,6 +62,74 @@ class PluginMakeTextLegible implements PluginInterface
         } catch (\Exception $e) {
             return false;
         }
+    }
+
+    public function getMetadata(): array
+    {
+        return [
+            'name' => 'Make Text Legible',
+            'description' => 'Cleans up text formatting and breaks long paragraphs into readable chunks',
+            'version' => '2.0.0',
+            'author' => 'InfraRead',
+            'modifies' => ['content'],
+            'options' => [
+                'min_letters_count' => [
+                    'type' => 'integer',
+                    'default' => 300,
+                    'description' => 'Minimum letters before breaking paragraph'
+                ],
+                'max_paragraph_length' => [
+                    'type' => 'integer',
+                    'default' => 120,
+                    'description' => 'Maximum words in first paragraph'
+                ],
+                'remove_ads' => [
+                    'type' => 'boolean',
+                    'default' => true,
+                    'description' => 'Remove advertising content'
+                ],
+                'clean_formatting' => [
+                    'type' => 'boolean',
+                    'default' => true,
+                    'description' => 'Clean up HTML formatting'
+                ]
+            ]
+        ];
+    }
+
+    private function getDefaultOptions(): array
+    {
+        return [
+            'min_letters_count' => 300,
+            'max_paragraph_length' => 120,
+            'remove_ads' => true,
+            'clean_formatting' => true
+        ];
+    }
+
+    private function removeAds(string $content): string
+    {
+        // Remove common ad patterns
+        $adPatterns = [
+            '/<div[^>]*class="[^"]*ad[^"]*"[^>]*>.*?<\/div>/is',
+            '/<div[^>]*id="[^"]*ad[^"]*"[^>]*>.*?<\/div>/is',
+            '/<!--.*?ad.*?-->/is'
+        ];
+
+        foreach ($adPatterns as $pattern) {
+            $content = preg_replace($pattern, '', $content);
+        }
+
+        return $content;
+    }
+
+    private function cleanFormatting(string $content): string
+    {
+        // Remove unnecessary styling and classes
+        $content = preg_replace('/style="[^"]*"/i', '', $content);
+        $content = preg_replace('/class="[^"]*"/i', '', $content);
+
+        return $content;
     }
 
     function breakLongText($text, $minLettersCount = 350)

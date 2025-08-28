@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 
@@ -22,6 +21,16 @@ class Post extends Model
         'updated_at',
         'deleted_at',
         'posted_at',
+    ];
+
+    /**
+     * The attributes that should be cast to native types.
+     *
+     * This tells Laravel to automatically convert database values
+     * to proper PHP types when retrieving and setting.
+     */
+    protected $casts = [
+        'read' => 'boolean',
     ];
 
     public function summary($numSentences = 2)
@@ -247,28 +256,101 @@ EOT;
         }
     }
 
-    public function markMutedPhrasesAsRead()
-    {
-        // Get List of Muted Phrases
-        $jsonString = Storage::disk('local')->get("muted_phrases.json");
-        $list_of_phrases = json_decode($jsonString, true); // Converts to an array
-        if (Str::contains($this->title, $list_of_phrases)) {
-            $this->read = 1;
-        }
-    }
+    /**
+     * Apply plugins to this post with comprehensive error handling.
+     *
+     * This method processes all configured plugins for the post's source,
+     * applying them in sequence while capturing detailed error information.
+     * Plugin failures are logged but don't prevent other plugins from running.
+     *
+     * @throws \App\Exceptions\FeedProcessing\PluginException If critical plugin failure occurs
+     */
     public function applyPlugins()
     {
-        // Get list of Plugins for this Post from Plugins kernel
-        $all_plugins = (new Kernel())->get();
+        // Get list of plugins for this post from plugins kernel
+        $kernel = new \App\Plugins\Kernel();
+        $allPlugins = $kernel->getPluginsForSource($this->source);
 
-        // If this post's source has plugins, apply them
-        if (isset($all_plugins[$this->source->shortname()])) {
-            $applicable_plugins = $all_plugins[$this->source->shortname()];
+        if (empty($allPlugins)) {
+            return; // No plugins configured for this source
+        }
 
-            foreach ($applicable_plugins as $plugin) {
-                $className = 'App\Plugins\Plugin' . $plugin;
-                (new $className($this))->handle();
+        $successfulPlugins = [];
+        $failedPlugins = [];
+
+        foreach ($allPlugins as $pluginConfig) {
+            $pluginName = $pluginConfig['name'];
+            $pluginOptions = $pluginConfig['options'] ?? [];
+
+            try {
+                $this->executePlugin($pluginName, $pluginOptions);
+                $successfulPlugins[] = $pluginName;
+
+            } catch (\Exception $e) {
+                $failedPlugins[] = [
+                    'name' => $pluginName,
+                    'error' => $e->getMessage(),
+                    'options' => $pluginOptions
+                ];
+
+                // Create structured plugin exception with context
+                $pluginException = \App\Exceptions\FeedProcessing\PluginException::executionError(
+                    $this->source,
+                    $pluginName,
+                    $e->getMessage(),
+                    $this->id
+                );
+
+                // Log the plugin failure but continue processing other plugins
+                \Log::warning('Plugin execution failed', [
+                    'exception' => $pluginException->getMessage(),
+                    'context' => $pluginException->getContext(),
+                    'plugin_name' => $pluginName,
+                    'post_id' => $this->id
+                ]);
             }
+        }
+
+        // Log summary of plugin processing
+        if (!empty($successfulPlugins) || !empty($failedPlugins)) {
+            \Log::info('Plugin processing completed for post', [
+                'post_id' => $this->id,
+                'source_id' => $this->source->id,
+                'successful_plugins' => $successfulPlugins,
+                'failed_plugins' => count($failedPlugins),
+                'total_plugins' => count($allPlugins)
+            ]);
+        }
+    }
+
+    /**
+     * Execute a single plugin with the given options.
+     *
+     * @param string $pluginName Name of the plugin class (without Plugin prefix)
+     * @param array $options Plugin configuration options
+     * @throws \Exception If plugin execution fails
+     */
+    private function executePlugin(string $pluginName, array $options = []): void
+    {
+        $className = 'App\\Plugins\\Plugin' . $pluginName;
+
+        // Check if plugin class exists
+        if (!class_exists($className)) {
+            throw new \Exception("Plugin class {$className} not found");
+        }
+
+        // Check if plugin implements the required interface
+        if (!is_subclass_of($className, \App\Plugins\PluginInterface::class)) {
+            throw new \Exception("Plugin {$pluginName} must implement PluginInterface");
+        }
+
+        // Create plugin instance and execute
+        $plugin = new $className($this, $options);
+        $result = $plugin->handle();
+
+        // Check if plugin execution was successful
+        if ($result === false) {
+            throw new \Exception("Plugin {$pluginName} returned false, indicating execution failure");
         }
     }
 }

@@ -9,7 +9,12 @@
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
         {{-- Transfer Variables from PHP to Js --}}
-        <script>window.Laravel = { csrfToken: '{{ csrf_token() }}' }</script>
+        <script>
+            window.Laravel = {
+                csrfToken: '{{ csrf_token() }}',
+                apiToken: '{{ $api_token }}'
+            }
+        </script>
         <link rel="stylesheet" type="text/css" href="{{mix('/css/app.css')}}">
         <link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -30,8 +35,7 @@
     <body>
         <div id="app" v-cloak>
             <app
-                refreshInterval="{!! config('infraread.refresh_interval') !!}"
-                last_successful_crawl="{{$last_successful_crawl}}" >
+                refreshInterval="{!! config('infraread.refresh_interval') !!}" >
             </app>
         </div>
         <script src="{{ mix('/js/app.js') }}"></script>
