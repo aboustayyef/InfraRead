@@ -35,8 +35,18 @@ class VueAdminController extends Controller
      */
     public function categories()
     {
+        // Use token from .env if available, otherwise generate a new one
+        $token = env('INFRAREAD_API_TOKEN');
+
+        if (!$token) {
+            // Fallback: Generate API token for the current user
+            $user = auth()->user();
+            $token = $user->createToken('admin-spa-token')->plainTextToken;
+        }
+
         return view('admin.vue-categories', [
-            'title' => 'Categories Management'
+            'title' => 'Categories Management',
+            'api_token' => $token
         ]);
     }
 }

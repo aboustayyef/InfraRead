@@ -19,6 +19,7 @@ window.api = api;
 Vue.component('app', require('./components/App.vue').default);
 Vue.component('api-client-test', require('./components/ApiClientTest.vue').default);
 Vue.component('admin-sources', require('./components/AdminSources.vue').default);
+Vue.component('admin-categories', require('./components/AdminCategories.vue').default);
 
 const app = new Vue({
     el: '#app'

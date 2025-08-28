@@ -42,24 +42,50 @@ class Kernel
      */
     public function getPluginsForSource(Source $source): array
     {
-        // Try new configuration format first
+        $plugins = [];
+
+        // Add global plugins first (these apply to all sources)
+        $plugins = array_merge($plugins, $this->getGlobalPlugins());
+
+        // Try new configuration format for source-specific plugins
         $newConfig = $this->getNewPluginConfiguration();
         $sourceKey = $this->generateSourceKey($source);
 
         if (isset($newConfig[$sourceKey])) {
-            return $newConfig[$sourceKey];
+            $plugins = array_merge($plugins, $newConfig[$sourceKey]);
+        } else {
+            // Fall back to legacy configuration for existing sources
+            $legacyConfig = $this->get();
+            $legacyKey = $source->shortname();
+
+            if (isset($legacyConfig[$legacyKey])) {
+                // Convert legacy format to new format
+                $plugins = array_merge($plugins, $this->convertLegacyToNew($legacyConfig[$legacyKey]));
+            }
         }
 
-        // Fall back to legacy configuration for existing sources
-        $legacyConfig = $this->get();
-        $legacyKey = $source->shortname();
+        return $plugins;
+    }
 
-        if (isset($legacyConfig[$legacyKey])) {
-            // Convert legacy format to new format
-            return $this->convertLegacyToNew($legacyConfig[$legacyKey]);
-        }
-
-        return []; // No plugins configured for this source
+    /**
+     * Get global plugins that apply to all sources.
+     *
+     * These plugins run for every source and post, regardless of source configuration.
+     * Useful for system-wide functionality like muted phrases, spam filtering, etc.
+     *
+     * @return array Array of global plugin configurations
+     */
+    private function getGlobalPlugins(): array
+    {
+        return [
+            [
+                'name' => 'GlobalMutedPhrases',
+                'options' => [
+                    'case_sensitive' => false,
+                    'log_matches' => false
+                ]
+            ]
+        ];
     }
 
     /**

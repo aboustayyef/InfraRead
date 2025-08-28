@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 
@@ -257,15 +256,6 @@ EOT;
         }
     }
 
-    public function markMutedPhrasesAsRead()
-    {
-        // Get List of Muted Phrases
-        $jsonString = Storage::disk('local')->get("muted_phrases.json");
-        $list_of_phrases = json_decode($jsonString, true); // Converts to an array
-        if (Str::contains($this->title, $list_of_phrases)) {
-            $this->read = 1;
-        }
-    }
     /**
      * Apply plugins to this post with comprehensive error handling.
      *

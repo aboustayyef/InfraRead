@@ -26,15 +26,6 @@
                         </div>
                     </a>
                 </li>
-                <li
-                    class="hover:bg-primary hover:text-white @if (request()->routeIs('admin.muted.index')) bg-gray-200 @endif">
-                    <a href="/admin/muted" class="w-full pl-4 py-2 block">
-                        <div class="flex space-x-4">
-                            <x-ui.mute-icon classes="text-gray-400" />
-                            <div>Muted Phrases</div>
-                        </div>
-                    </a>
-                </li>
 
                 <!-- API Section Divider -->
                 <li class="border-t border-gray-300 mt-4 pt-4">
@@ -48,6 +39,15 @@
                         <div class="flex space-x-4">
                             <x-ui.sources-icon classes="text-gray-400" />
                             <div>Sources (Vue)</div>
+                        </div>
+                    </a>
+                </li>
+
+                <li class="hover:bg-primary hover:text-white @if (request()->is('app/admin/categories')) bg-gray-200 @endif">
+                    <a href="/app/admin/categories" class="w-full pl-4 py-2 block">
+                        <div class="flex space-x-4">
+                            <x-ui.categories-icon classes="text-gray-400" />
+                            <div>Categories (Vue)</div>
                         </div>
                     </a>
                 </li>

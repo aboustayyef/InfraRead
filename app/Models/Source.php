@@ -231,8 +231,7 @@ class Source extends Model
 
                 // Apply plugins with enhanced error handling
                 try {
-                    $post->applyPlugins();
-                    $post->markMutedPhrasesAsRead();
+                    $post->applyPlugins(); // This now includes global muted phrases handling
                     $post->save();
                     $processedCount++;
                 } catch (\App\Exceptions\FeedProcessing\PluginException $e) {
