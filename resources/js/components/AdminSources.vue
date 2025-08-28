@@ -154,15 +154,26 @@
                         </div>
 
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Website or Feed URL</label>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Website URL</label>
                             <input
                                 v-model="sourceForm.url"
                                 type="url"
                                 class="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
                                 placeholder="https://example.com"
+                            >
+                            <p class="text-xs text-gray-500 mt-1">The main website URL (optional)</p>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">RSS Feed URL</label>
+                            <input
+                                v-model="sourceForm.rss_url"
+                                type="url"
+                                class="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+                                placeholder="https://example.com/feed.xml"
                                 required
                             >
-                            <p class="text-xs text-gray-500 mt-1">Website URL (preferred) or direct RSS feed URL</p>
+                            <p class="text-xs text-gray-500 mt-1">The actual RSS/Atom feed URL (required)</p>
                         </div>
 
                         <div>
@@ -237,6 +248,7 @@ export default {
                 id: null,
                 name: '',
                 url: '',
+                rss_url: '',
                 description: '',
                 category_id: ''
             }
@@ -297,7 +309,8 @@ export default {
             this.sourceForm = {
                 id: source.id,
                 name: source.name,
-                url: source.rss_url,
+                url: source.url || '',
+                rss_url: source.rss_url || '',
                 description: source.description,
                 category_id: source.category ? source.category.id : ''
             };
@@ -309,11 +322,18 @@ export default {
             this.modalError = null; // Clear previous modal errors
 
             try {
+                // Transform the form data to match API expectations
+                const apiData = {
+                    ...this.sourceForm,
+                    fetcher_source: this.sourceForm.rss_url,
+                };
+                delete apiData.rss_url; // Remove the frontend field name
+
                 if (this.showCreateModal) {
-                    await window.api.createSource(this.sourceForm);
+                    await window.api.createSource(apiData);
                     this.showSuccessMessage('Source created successfully!');
                 } else {
-                    await window.api.updateSource(this.sourceForm.id, this.sourceForm);
+                    await window.api.updateSource(this.sourceForm.id, apiData);
                     this.showSuccessMessage('Source updated successfully!');
                 }
 
@@ -411,8 +431,10 @@ export default {
                 // Populate the form with discovered data
                 if (response.result) {
                     this.sourceForm.name = response.result.title || '';
-                    // Send the original website URL to the API, not the RSS feed URL
+                    // Set the website URL to the original URL entered
                     this.sourceForm.url = this.websiteUrl;
+                    // Set the RSS feed URL to the discovered feed
+                    this.sourceForm.rss_url = response.result.rss || '';
                     this.sourceForm.description = response.result.description || '';
                 }
 
@@ -436,6 +458,7 @@ export default {
                 id: null,
                 name: '',
                 url: '',
+                rss_url: '',
                 description: '',
                 category_id: ''
             };
