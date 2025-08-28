@@ -230,11 +230,16 @@ Goal: Parity for essential user actions via API.
 - ✅ **Frontend token handling**: Tokens passed via `window.Laravel.apiToken` in Blade template
 - ✅ **Error handling**: Clean 401 handling with token clearing, no complex retry loops
 
-**Phase 5D: Administration Interface Migration (`/admin` domain) - NEXT PRIORITY**
-- **AdminSourceController**: Replace Eloquent calls with `/api/v1/sources` endpoints
-- **AdminCategoryController**: Migrate to `/api/v1/categories` endpoints  
-- **Livewire components**: Update SourceList and Muted to consume API
-- **Token management UI**: Already implemented, validate API integration
+**Phase 5D: Administration Interface Migration (`/admin` domain) ✅ COMPLETE**
+- ✅ **Vue Admin Sources Interface**: Complete `AdminSources.vue` component with separated URL fields (website URL vs RSS feed URL)
+- ✅ **Vue Admin Categories Interface**: Full CRUD `AdminCategories.vue` component for category management
+- ✅ **Critical Bug Fix**: Resolved URL field mapping mismatch between frontend (conflated fields) and backend (separate url/fetcher_source fields)
+- ✅ **Plugin-Based Muted Phrases**: Converted from Livewire/JSON file approach to `PluginGlobalMutedPhrases.php` with hard-coded configuration
+- ✅ **Enhanced Plugin Kernel**: Added global plugins support that apply to all sources automatically
+- ✅ **Admin Sidebar Updates**: Added Categories (Vue) link, removed legacy muted phrases admin link
+- ✅ **Cross-Component Integration**: Added "Manage Categories" link in Sources form with window focus refresh
+- ✅ **VueAdminController**: Enhanced with proper API token handling for both sources and categories endpoints
+- ✅ **Comprehensive Vue Components**: Complete admin interface with modals, validation, error handling, and success messages
 
 #### Specific Database Interactions to Replace:
 
@@ -461,13 +466,40 @@ Continue Phase 5 (Frontend API Migration):
 1. ✅ **API Client Foundation**: Unified JavaScript HTTP client (`resources/js/api/client.js`) complete
 2. ✅ **Authentication Bridge**: Simplified token system (Laravel-generated → .env override) complete
 3. ✅ **Reader Interface Migration**: App.vue fully migrated to V1 API endpoints with on-demand content loading
-4. **Admin Interface Migration**: Convert admin controllers and Livewire components to API consumption
-5. **Legacy Route Elimination**: Remove direct database queries from web routes
-6. **Error Handling & UX**: Implement proper API error handling and user feedback
+4. ✅ **Admin Interface Migration**: Complete Vue.js admin components (AdminSources.vue, AdminCategories.vue) with API consumption
+5. **Legacy Route Elimination**: Remove direct database queries from web routes and cleanup unused Livewire components
+6. **Error Handling & UX**: Implement proper API error handling and user feedback (mostly complete)
 
-**Implementation Priority**: Continue with Phase 5D (Admin Interface Migration) since Phase 5B reader interface migration is complete.
+**Major Architectural Achievements (Phase 5D):**
 
-**Current Status:** Phase 5A-5C complete. Reader interface (App.vue) successfully migrated to V1 API with cache-based crawl status, on-demand content loading, and all CRUD operations using API endpoints. Ready to begin admin interface migration (Phase 5D).
+**Vue.js Admin Interface Completion**
+- **AdminSources.vue**: Complete replacement for Livewire SourceList component with separated URL fields architecture
+- **AdminCategories.vue**: Full CRUD category management replacing admin controller direct queries
+- **Critical Data Model Fix**: Resolved URL field conflation where Vue frontend combined `url` (website) and `fetcher_source` (RSS feed) fields that were separate in database schema
+- **Cross-Component UX**: Added "Manage Categories" link in Sources form with automatic category refresh on window focus
+- **Modal-Based UI**: Professional admin interface with validation, error handling, loading states, and success messaging
+
+**Plugin Architecture Revolution**
+- **PluginGlobalMutedPhrases.php**: Converted muted phrases from Livewire + JSON file approach to plugin-based system with hard-coded configuration
+- **Enhanced Plugin Kernel**: Added `getGlobalPlugins()` method for plugins that apply to all sources automatically
+- **Unified Plugin Processing**: Single `applyPlugins()` call now handles both source-specific and global plugins seamlessly
+- **Simplified Management**: Muted phrases now managed directly in code, eliminating file dependencies and UI complexity
+- **Legacy Cleanup**: Removed `markMutedPhrasesAsRead()` method from Post model and Storage imports
+
+**Frontend Architecture Modernization**
+- **API-Only Data Flow**: All admin components now consume V1 API endpoints exclusively, no direct database queries
+- **Consistent Error Handling**: Unified error boundaries and user feedback across all Vue components
+- **Token Integration**: Seamless API authentication via `window.Laravel.apiToken` injection
+- **Component Reusability**: Established patterns for future Vue component development
+
+**Database Schema Integrity**
+- **URL Field Separation**: Fixed critical mismatch where frontend conflated `url` (website) and `fetcher_source` (RSS URL) fields
+- **Plugin Processing**: Moved from file-based to database-driven muted phrases processing via global plugins
+- **Performance Optimization**: Eliminated unnecessary file I/O operations in favor of in-memory plugin configuration
+
+**Implementation Priority**: Begin Phase 5E (Legacy Route Elimination) since Phase 5A-5D is complete. Focus on removing unused Livewire components and direct database route handlers.
+
+**Current Status:** Phase 5A-5D complete. Both reader interface (App.vue) and admin interface (AdminSources.vue, AdminCategories.vue) successfully migrated to Vue.js components consuming V1 API. Muted phrases converted from Livewire to plugin-based system. Plugin architecture enhanced with global plugins capability. Ready to begin final cleanup and legacy route elimination (Phase 5E).
 
 **Key Architecture Decisions:**
 - Simplified token approach: Laravel generates/injects tokens, no complex session bridging
@@ -476,6 +508,10 @@ Continue Phase 5 (Frontend API Migration):
 - Cache-based crawl status: Improved performance over file-based approach with API-driven frontend
 - On-demand content loading: PostResource conditional content inclusion for optimized performance
 - Comprehensive API client: All V1 endpoints implemented with proper TypeScript-like structure
+- **Vue Admin Components**: Complete Vue.js admin interface replacing Livewire components
+- **Plugin-Based Muted Phrases**: Hard-coded configuration via `PluginGlobalMutedPhrases.php` instead of file-based approach
+- **Global Plugin Architecture**: Plugin Kernel enhanced to support plugins that apply to all sources automatically
+- **Separated URL Fields**: Fixed critical data model mismatch between frontend and backend URL field handling
 
 Note: Simple two-state model: posts are either read (archived) or unread (inbox). No additional dismiss/archive states.
 Note: "Save for Later" functionality is handled client-side by integrating directly with external read-later services, not via API endpoints.
@@ -501,7 +537,9 @@ Note: Single-user application - all tokens have full access, no scope restrictio
 | API Reference Documentation | Done | Complete endpoint documentation with examples |
 | Enhanced auth & audit logging | Deferred | Moved to "Possible Future Improvements" |
 | API Client Foundation (Phase 5A) | Done | Unified JS client, simplified auth, token management |
-| Vue SPA extraction | In Progress | Phase 5B-D: Reader interface migration next |
+| Reader Interface Migration (Phase 5B-5C) | Done | App.vue fully migrated to V1 API endpoints |
+| Admin Interface Migration (Phase 5D) | Done | Complete Vue.js admin components with API consumption |
+| Vue SPA preparation | Done | Phase 5A-5D: All frontend components API-ready for extraction |
 | Queue & ingestion optimization | Done | Phase 6 complete: background jobs, metrics, error handling, plugin system, comprehensive job testing |
 | External read-it-later integrations | Pending | Phase 7 |
 | Observability & metrics | Pending | Phase 8 |
@@ -556,6 +594,6 @@ When teaching queues and background jobs, use simple analogies and step-by-step 
 Provide context for why specific approaches are chosen, explain trade-offs, and highlight Laravel conventions and best practices throughout the implementation process.
 
 
-Last Updated: 2025-08-23 (Phase 5A Complete - API Client Foundation)
+Last Updated: 2025-08-28 (Phase 5D Complete - Vue Admin Interface Migration with Plugin-Based Muted Phrases)
 
 
