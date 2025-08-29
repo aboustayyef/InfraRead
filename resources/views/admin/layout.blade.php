@@ -21,8 +21,6 @@
     <!-- Styles -->
     <link href="https://fonts.googleapis.com/css?family=Bebas+Neue|Catamaran:400,600&display=swap" rel="stylesheet">
     <link href="{{ mix('css/app.css') }}" rel="stylesheet">
-    @livewireStyles
-    @livewireScripts
 </head>
 <body>
     <style>

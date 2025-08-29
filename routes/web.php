@@ -1,16 +1,8 @@
 <?php
 
-use App\Http\Controllers\AdminCategoryController;
-use App\Http\Controllers\AdminSourceController;
-use App\Http\Controllers\AdminMutedController;
 use App\Http\Controllers\VueAdminController;
 use App\Http\Controllers\PocketSetupController;
-use App\Http\Controllers\PostController;
-use App\Http\Controllers\PostsByCategoryController;
-use App\Http\Controllers\PostsBySourceController;
 use App\Http\Controllers\ReadlaterController;
-use App\Http\Controllers\RefreshPostsController;
-use App\Http\Controllers\UrlAnalysisController;
 use App\Http\Controllers\Api\V1\PostController as V1PostController;
 use App\Http\Controllers\Api\V1\SourceController as V1SourceController;
 use App\Http\Controllers\Api\V1\CategoryController as V1CategoryController;
@@ -24,9 +16,6 @@ use Illuminate\Support\Facades\Route;
 
 // Authorisation Routes Using the Laravel Breeze package
 require __DIR__.'/auth.php';
-
-// Ajax API for app and getting posts
-require __DIR__.'/infraread_api.php';
 
 // Onboarding
 require __DIR__.'/onboarding.php';
@@ -50,34 +39,23 @@ Route::get('/app', function () {
 // NOTE: API V1 routes now live exclusively in routes/api.php protected by Sanctum (auth:sanctum).
 // The previous duplicate group has been removed to allow Bearer token authentication to function.
 
-// get summary
-Route::get('/summary/{post}', function(Post $post) {
-   return response()->json(['summary' => $post->summary()]);
-})->middleware('auth');
-
 // Temporary API Tester
 Route::get('/api-tester', function() { return view('api-tester'); })->middleware('auth');
 
-// Administration
+// Administration (Vue-based)
 Route::prefix('admin')->middleware('auth')->group(function () {
-    Route::get('/', function () { return redirect('/admin/source'); });
-    Route::resource('source', AdminSourceController::class, ['as' => 'admin'])->except('show');
-    Route::resource('category', AdminCategoryController::class, ['as' => 'admin'])->except('show');
-    Route::resource('muted', AdminMutedController::class, ['as' => 'admin']);
+    Route::get('/', function () { return redirect('/app/admin/sources'); });
     // Simple token management UI
     Route::get('token', [\App\Http\Controllers\AdminTokenController::class, 'show'])->name('admin.token.show');
     Route::post('token', [\App\Http\Controllers\AdminTokenController::class, 'store'])->name('admin.token.store');
     Route::delete('token', [\App\Http\Controllers\AdminTokenController::class, 'destroy'])->name('admin.token.destroy');
 });
 
-// New Vue.js Admin Interface (API-based)
+// Vue.js Admin Interface (Primary)
 Route::prefix('app/admin')->middleware('auth')->group(function () {
     Route::get('/sources', [VueAdminController::class, 'sources'])->name('vue.admin.sources');
     Route::get('/categories', [VueAdminController::class, 'categories'])->name('vue.admin.categories');
 });
-
-// Mark all as read
-Route::get('/markallread', function () { Post::where('read', 0)->update(['read' => 1]); return redirect('/app'); });
 
 // Saving for later
 Route::get('/app/readlater', [ReadlaterController::class, 'index'])->middleware('auth');

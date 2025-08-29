@@ -8,46 +8,19 @@
 
             {{-- Sources - Categories --}}
             <ul class="mt-4">
-                <li
-                    class="hover:bg-primary hover:text-white @if (request()->routeIs('admin.source.index')) bg-gray-200 @endif">
-                    <a href="/admin/source" class="w-full pl-4 py-2 block">
+                <li class="hover:bg-primary hover:text-white @if (request()->is('app/admin/sources')) bg-gray-200 @endif">
+                    <a href="/app/admin/sources" class="w-full pl-4 py-2 block">
                         <div class="flex space-x-4">
                             <x-ui.sources-icon classes="text-gray-400" />
                             <div>Sources</div>
                         </div>
                     </a>
                 </li>
-                <li
-                    class="hover:bg-primary hover:text-white @if (request()->routeIs('admin.category.index')) bg-gray-200 @endif">
-                    <a href="/admin/category" class="w-full pl-4 py-2 block">
-                        <div class="flex space-x-4">
-                            <x-ui.categories-icon classes="text-gray-400" />
-                            <div>Categories</div>
-                        </div>
-                    </a>
-                </li>
-
-                <!-- API Section Divider -->
-                <li class="border-t border-gray-300 mt-4 pt-4">
-                    <div class="pl-4 pb-2">
-                        <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Vue Admin (Beta)</span>
-                    </div>
-                </li>
-
-                <li class="hover:bg-primary hover:text-white @if (request()->is('app/admin/sources')) bg-gray-200 @endif">
-                    <a href="/app/admin/sources" class="w-full pl-4 py-2 block">
-                        <div class="flex space-x-4">
-                            <x-ui.sources-icon classes="text-gray-400" />
-                            <div>Sources (Vue)</div>
-                        </div>
-                    </a>
-                </li>
-
                 <li class="hover:bg-primary hover:text-white @if (request()->is('app/admin/categories')) bg-gray-200 @endif">
                     <a href="/app/admin/categories" class="w-full pl-4 py-2 block">
                         <div class="flex space-x-4">
                             <x-ui.categories-icon classes="text-gray-400" />
-                            <div>Categories (Vue)</div>
+                            <div>Categories</div>
                         </div>
                     </a>
                 </li>

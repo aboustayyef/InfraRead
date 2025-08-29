@@ -269,24 +269,18 @@ $this->apiClient->put("/sources/{$id}", $data)
 $this->apiClient->get('/categories')
 ```
 
-**Legacy Routes to Eliminate:**
-- `/api/{which}/{details?}` → Replace with `/api/v1/posts` filtering
-- `/markallread` → Use `/api/v1/posts/mark-all-read`
-- `/summary/{post}` → Use `/api/v1/posts/{id}/summary`
-- Direct model queries in routes → HTTP API calls
+### Phase 5E: Legacy Route Elimination ✅ COMPLETE
+- ✅ **Removed Livewire Components**: Deleted `Muted.php` and `SourceList.php` Livewire components
+- ✅ **Removed Legacy Views**: Deleted all legacy admin views (`muted.blade.php`, `source/index.blade.php`, etc.)
+- ✅ **Cleaned Up Routes**: Removed legacy routes from `web.php` (`/markallread`, `/summary/{post}`, old admin routes)
+- ✅ **Removed Legacy API**: Deleted `routes/infraread_api.php` with old direct database query endpoints
+- ✅ **Updated Admin Sidebar**: Removed "Vue Admin (Beta)" labels, made Vue admin the primary interface
+- ✅ **Cleaned Up Layout**: Removed `@livewireStyles` and `@livewireScripts` from admin layout
+- ✅ **Removed Unused Controllers**: Deleted legacy controllers (`AdminSourceController`, `AdminMutedController`, etc.)
+- ✅ **Cleared Caches**: Cleared Laravel view, config, and route caches to remove old component references
+- ✅ **Complete Cleanup**: All legacy code removed, Vue admin is now the sole admin interface
 
-#### Implementation Priority:
-1. **Start with Reader Interface** (App.vue) - most API coverage exists, immediate validation
-2. **API Client Foundation** - reusable HTTP client with auth handling
-3. **Authentication Bridge** - session-to-token conversion for seamless migration
-4. **Admin Interface** - more complex, requires additional API endpoint coverage
-
-#### Benefits of In-Place Migration:
-- **API Validation**: Real usage immediately reveals API gaps and performance issues
-- **Risk Reduction**: Incremental migration with immediate feedback
-- **UX Preservation**: Maintains existing user experience during transition
-- **Foundation Building**: Creates perfect testing ground for external integrations (Phase 7)
-- **Performance Testing**: Real user interactions reveal optimization needs
+**Migration Complete**: InfraRead is now a clean, API-first application with Vue.js admin interface!
 
 ### Phase 6: Background Processing & Performance ✅ COMPLETE
 **Objective:** Enhanced feed processing with improved error handling, metrics tracking, performance monitoring, and comprehensive background job system.
@@ -499,7 +493,7 @@ Continue Phase 5 (Frontend API Migration):
 
 **Implementation Priority**: Begin Phase 5E (Legacy Route Elimination) since Phase 5A-5D is complete. Focus on removing unused Livewire components and direct database route handlers.
 
-**Current Status:** Phase 5A-5D complete. Both reader interface (App.vue) and admin interface (AdminSources.vue, AdminCategories.vue) successfully migrated to Vue.js components consuming V1 API. Muted phrases converted from Livewire to plugin-based system. Plugin architecture enhanced with global plugins capability. Ready to begin final cleanup and legacy route elimination (Phase 5E).
+**Current Status:** Phase 5E complete. Complete migration to API-first architecture with Vue.js admin interface. All legacy Livewire components and routes removed. Ready for Phase 7 (External integrations) or production deployment.
 
 **Key Architecture Decisions:**
 - Simplified token approach: Laravel generates/injects tokens, no complex session bridging
@@ -539,7 +533,8 @@ Note: Single-user application - all tokens have full access, no scope restrictio
 | API Client Foundation (Phase 5A) | Done | Unified JS client, simplified auth, token management |
 | Reader Interface Migration (Phase 5B-5C) | Done | App.vue fully migrated to V1 API endpoints |
 | Admin Interface Migration (Phase 5D) | Done | Complete Vue.js admin components with API consumption |
-| Vue SPA preparation | Done | Phase 5A-5D: All frontend components API-ready for extraction |
+| Legacy Route Elimination (Phase 5E) | Done | All Livewire components and legacy routes removed |
+| Vue SPA preparation | Done | Phase 5A-5E: All frontend components API-ready for extraction |
 | Queue & ingestion optimization | Done | Phase 6 complete: background jobs, metrics, error handling, plugin system, comprehensive job testing |
 | External read-it-later integrations | Pending | Phase 7 |
 | Observability & metrics | Pending | Phase 8 |
@@ -594,6 +589,6 @@ When teaching queues and background jobs, use simple analogies and step-by-step 
 Provide context for why specific approaches are chosen, explain trade-offs, and highlight Laravel conventions and best practices throughout the implementation process.
 
 
-Last Updated: 2025-08-28 (Phase 5D Complete - Vue Admin Interface Migration with Plugin-Based Muted Phrases)
+Last Updated: 2025-08-29 (Phase 5E Complete - Legacy Route Elimination & Final Cleanup)
 
 
