@@ -377,7 +377,22 @@ export default {
             this.displayed_summary = null;
 
             // Show the post immediately with available data
-            this.displayed_post = { ...p, content: '<div class="text-center p-8"><div class="animate-spin inline-block w-6 h-6 border-2 border-current border-t-transparent text-gray-400 rounded-full"></div><p class="mt-2 text-gray-500">Loading article content...</p></div>' };
+            this.displayed_post = {
+                ...p,
+                content: `<div class="w-full mt-2 md:mt-4">
+                        <div class="mt-8 md:mt-0 space-y-4">
+                            <div class="h-3 md:h-4 bg-gray-100 rounded animate-pulse w-5/6"></div>
+                            <div class="h-3 md:h-4 bg-gray-100 rounded animate-pulse w-4/6"></div>
+                            <div class="h-3 md:h-4 bg-gray-100 rounded animate-pulse w-3/4"></div>
+                            <div class="h-3 md:h-4 bg-gray-100 rounded animate-pulse w-2/3"></div>
+                            <div class="h-3 md:h-4 bg-gray-100 rounded animate-pulse w-3/4"></div>
+                            <div class="h-3 mt-2 md:h-4 bg-gray-100 rounded animate-pulse w-4/6"></div>
+                            <div class="h-3 md:h-4 bg-gray-100 rounded animate-pulse w-3/4"></div>
+                            <div class="h-3 md:h-4 bg-gray-100 rounded animate-pulse w-2/3"></div>
+                            <div class="h-3 md:h-4 bg-gray-100 rounded animate-pulse w-3/4"></div>
+                        </div>
+                    </div>`
+            };
 
             try {
                 // Fetch the full post with content using the V1 API show endpoint
