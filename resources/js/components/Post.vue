@@ -46,9 +46,11 @@
         </div>
         <div
           id="post-content"
+          v-if="!isLoading"
           v-html="post.content"
           class="text-xl font-light leading-loose text-gray-900 content break-words"
         ></div>
+        <PostContentSkeleton v-else />
       </div>
     </div>
     <div class="fixed flex bottom-4 left-4 space-x-4">
@@ -85,10 +87,11 @@
 import SaveLaterButton from "./SaveLaterButton.vue";
 import SummarizeButton from "./SummarizeButton.vue";
 import LoadingIndicator from "./partials/ui/LoadingIndicator.vue";
+import PostContentSkeleton from "./partials/ui/PostContentSkeleton.vue";
 
 export default {
-  props: ["post", "summary"],
-  components: { SaveLaterButton, SummarizeButton, LoadingIndicator },
+  props: ["post", "summary", "isLoading"],
+  components: { SaveLaterButton, SummarizeButton, LoadingIndicator, PostContentSkeleton },
   methods: {
     handleSummary: function (summary) {
       this.$emit("summary-ready", summary);

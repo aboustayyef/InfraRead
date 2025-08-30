@@ -109,6 +109,7 @@
         <post
             :post="displayed_post"
             :summary="displayed_summary"
+            :is-loading="isLoadingPost"
             v-on:exit-post="exit_post"
             @summary-ready="handleSummary"
         >
@@ -176,6 +177,7 @@ export default {
             show_message: false,
             external_links_shortcuts: false,
             external_links: [],
+            isLoadingPost: false,
         };
     },
     created() {
@@ -375,33 +377,12 @@ export default {
             console.log('📖 Opening post, fetching full content on-demand:', p.id);
             this.external_links_shortcuts = false;
             this.displayed_summary = null;
+            this.isLoadingPost = true;
 
             // Show the post immediately with available data
             this.displayed_post = {
                 ...p,
-                content: `<div class="w-full mt-2 md:mt-4">
-                        <div class="mt-8 space-y-4">
-                            <div class="h-4 bg-gray-100 rounded animate-pulse w-full"></div>
-                            <div class="h-4 bg-gray-100 rounded animate-pulse w-5/6"></div>
-                            <div class="h-4 bg-gray-100 rounded animate-pulse w-3/4"></div>
-                            <div class="h-4 bg-gray-100 rounded animate-pulse w-2/3"></div>
-                            <div class="h-4 bg-gray-100 rounded animate-pulse w-1/4"></div>
-                        </div>
-                        <div class="mt-8 space-y-4">
-                            <div class="h-4 bg-gray-100 rounded animate-pulse w-5/6"></div>
-                            <div class="h-4 bg-gray-100 rounded animate-pulse w-full"></div>
-                            <div class="h-4 bg-gray-100 rounded animate-pulse w-2/3"></div>
-                            <div class="h-4 bg-gray-100 rounded animate-pulse w-5/6"></div>
-                            <div class="h-4 bg-gray-100 rounded animate-pulse w-1/4"></div>
-                        </div>
-                        <div class="mt-8 space-y-4">
-                            <div class="h-4 bg-gray-100 rounded animate-pulse w-full"></div>
-                            <div class="h-4 bg-gray-100 rounded animate-pulse w-5/6"></div>
-                            <div class="h-4 bg-gray-100 rounded animate-pulse w-3/4"></div>
-                            <div class="h-4 bg-gray-100 rounded animate-pulse w-2/3"></div>
-                            <div class="h-4 bg-gray-100 rounded animate-pulse w-1/4"></div>
-                        </div>
-                    </div>`
+                content: null // Will be loaded via API
             };
 
             try {
@@ -412,10 +393,12 @@ export default {
 
                 // Update with the full post data including content
                 this.displayed_post = fullPost;
+                this.isLoadingPost = false;
                 console.log('✅ Full post content loaded:', fullPost.title);
 
             } catch (error) {
                 console.error('❌ Failed to fetch full post content:', error);
+                this.isLoadingPost = false;
 
                 // Show error in content area
                 this.displayed_post = {
@@ -472,6 +455,7 @@ export default {
 
             this.displayed_post = {};
             this.external_links = [];
+            this.isLoadingPost = false;
         },
         show_highlighted_post() {
             console.log("Showing post " + this.highlighter_position);
