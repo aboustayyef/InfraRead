@@ -1,19 +1,19 @@
 <template>
     <div class="admin-sources">
         <!-- Header -->
-        <div class="flex justify-between mb-6">
-            <h2 class="text-4xl font-bold text-gray-600">Sources</h2>
-            <div class="flex space-x-4">
+        <div class="flex flex-col md:flex-row md:justify-between mb-6 space-y-4 md:space-y-0">
+            <h2 class="text-2xl md:text-4xl font-bold text-gray-600">Sources</h2>
+            <div class="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-4">
                 <button
                     @click="exportOpml"
-                    class="inline-block rounded-md px-3 py-2 bg-yellow-50 hover:bg-yellow-200 text-gray-500"
+                    class="inline-block rounded-md px-3 py-2 bg-yellow-50 hover:bg-yellow-200 text-gray-500 text-sm"
                     :disabled="loading"
                 >
                     ↓ Download OPML
                 </button>
                 <button
                     @click="openCreateModal"
-                    class="hover:text-white hover:bg-primary bg-white text-primary px-4 py-2 border border-primary rounded-md"
+                    class="hover:text-white hover:bg-primary bg-white text-primary px-4 py-2 border border-primary rounded-md text-sm"
                     :disabled="loading"
                 >
                     + Add Source
@@ -22,14 +22,14 @@
         </div>
 
         <!-- Filter and Search -->
-        <div class="flex flex-wrap w-full max-w-2xl items-center mb-6 space-x-4">
+        <div class="flex flex-col md:flex-row w-full max-w-none md:max-w-2xl items-stretch md:items-center mb-6 space-y-4 md:space-y-0 md:space-x-4">
             <input
                 v-model="searchString"
                 type="text"
                 placeholder="Filter Sources"
                 class="ir_input flex-1"
             >
-            <select v-model="filterCategory" class="ir_input">
+            <select v-model="filterCategory" class="ir_input flex-none md:w-auto">
                 <option value="">All Categories</option>
                 <option v-for="category in categories" :key="category.id" :value="category.id">
                     {{ category.description }}
@@ -55,9 +55,50 @@
             <div
                 v-for="source in filteredSources"
                 :key="source.id"
-                class="flex justify-between items-start bg-white rounded-md hover:shadow-sm"
+                class="flex flex-col md:flex-row md:justify-between md:items-start bg-white rounded-md hover:shadow-sm"
             >
-                <div class="flex space-x-2 p-4">
+                <!-- Mobile Action Buttons - Top -->
+                <div class="flex justify-between md:hidden p-4 border-b border-gray-100">
+                    <div class="flex space-x-2">
+                        <button
+                            @click.stop="refreshSource(source)"
+                            class="text-gray-600 hover:text-blue-800 p-2 rounded-full hover:bg-blue-50"
+                            :disabled="source.refreshing"
+                            title="Refresh source"
+                        >
+                            <svg v-if="source.refreshing" class="w-5 h-5 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            <svg v-else class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+                            </svg>
+                        </button>
+                        <button
+                            @click.stop="editSource(source)"
+                            class="text-gray-600 hover:text-blue-800 p-2 rounded-full hover:bg-blue-50"
+                            :disabled="loading"
+                            title="Edit source"
+                        >
+                            <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+                            </svg>
+                        </button>
+                    </div>
+                    <button
+                        @click.stop="deleteSource(source)"
+                        class="text-gray-600 hover:text-red-800 p-2 rounded-full hover:bg-red-50"
+                        :disabled="loading"
+                        title="Delete source"
+                    >
+                        <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Desktop Action Buttons - Left -->
+                <div class="hidden md:flex space-x-2 p-4">
                     <button
                         @click.stop="refreshSource(source)"
                         class="text-gray-600 hover:text-blue-800 p-1 rounded-full hover:bg-blue-50"
@@ -83,16 +124,18 @@
                         </svg>
                     </button>
                 </div>
+                
+                <!-- Content -->
                 <div class="flex-1 p-4 cursor-pointer hover:bg-gray-50" @click="editSource(source)">
-                    <div class="flex space-x-6">
-                        <div class="text-primary font-semibold text-xl tracking-wider">{{ source.name }}</div>
-                        <div class="text-sm bg-gray-100 text-gray-400 rounded-full w-8 h-8 leading-8 flex items-center pb-1 justify-center align-middle">{{ source.id }}</div>
+                    <div class="flex flex-col md:flex-row md:space-x-6 space-y-2 md:space-y-0">
+                        <div class="text-primary font-semibold text-lg md:text-xl tracking-wider">{{ source.name }}</div>
+                        <div class="text-sm bg-gray-100 text-gray-400 rounded-full w-8 h-8 leading-8 flex items-center pb-1 justify-center align-middle self-start">{{ source.id }}</div>
                     </div>
-                    <div class="text-gray-700">{{ source.description }}</div>
-                    <div class="text-gray-400">
+                    <div class="text-gray-700 mt-1">{{ source.description }}</div>
+                    <div class="text-gray-400 text-sm mt-1">
                         {{ source.category ? source.category.description : 'No Category' }}
                     </div>
-                    <div class="text-xs text-gray-500 mt-1">
+                    <div class="text-xs text-gray-500 mt-1 break-all">
                         {{ source.fetcher_source }}
                     </div>
                 </div>
@@ -108,11 +151,18 @@
         </div>
 
         <!-- Create/Edit Modal -->
-        <div v-if="showCreateModal || showEditModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">
-            <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-md">
-                <h3 class="text-lg font-semibold mb-4">
-                    {{ showCreateModal ? 'Add New Source' : 'Edit Source' }}
-                </h3>
+        <div v-if="showCreateModal || showEditModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div class="bg-white rounded-lg shadow-xl p-4 md:p-6 w-full max-w-md max-h-screen overflow-y-auto">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-semibold">
+                        {{ showCreateModal ? 'Add New Source' : 'Edit Source' }}
+                    </h3>
+                    <button @click="closeModal" class="text-gray-400 hover:text-gray-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
 
                 <!-- Error Message in Modal -->
                 <div v-if="modalError" class="bg-red-50 border border-red-200 rounded-md p-3 mb-4">
@@ -124,18 +174,18 @@
                         <!-- URL Analysis Section (only for create) -->
                         <div v-if="showCreateModal" class="bg-blue-50 p-4 rounded-lg border border-blue-200">
                             <h4 class="text-sm font-medium text-blue-900 mb-2">Auto-Discover RSS Feed</h4>
-                            <div class="flex gap-2">
+                            <div class="flex flex-col md:flex-row gap-2">
                                 <input
                                     v-model="websiteUrl"
                                     type="url"
                                     placeholder="https://example.com"
-                                    class="flex-1 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                                    class="flex-1 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm"
                                 >
                                 <button
                                     type="button"
                                     @click="analyzeUrl"
                                     :disabled="analyzing || !websiteUrl"
-                                    class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm"
                                 >
                                     {{ analyzing ? 'Analyzing...' : 'Analyze' }}
                                 </button>

@@ -1,6 +1,17 @@
-<div id="sidebar-info" class="w-1/5  bg-gray-100 min-h-screen flex-shrink-0 sticky top-0 self-start border-b-0 border-r border-gray-200">
+<div id="sidebar-info" class="fixed inset-y-0 left-0 z-50 w-64 bg-gray-100 transform transition-transform duration-300 ease-in-out md:relative md:translate-x-0 md:w-1/5 md:flex-shrink-0 md:sticky md:top-0 md:self-start border-b-0 border-r border-gray-200 min-h-screen" 
+     :class="{ 'translate-x-0': sidebarOpen, '-translate-x-full': !sidebarOpen }"
+     @click.outside="sidebarOpen = false">
     {{--sidebar info--}}
     <div class="md:justify-between md:h-full md:flex md:flex-col">
+        <!-- Mobile close button -->
+        <div class="md:hidden flex justify-end p-4">
+            <button @click="sidebarOpen = false" class="text-gray-600 hover:text-gray-900">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+        
         {{-- sidebar top --}}
     <div id="sidebar-top" class="flex flex-col h-48 md:justify-between">
             {{-- logo --}}

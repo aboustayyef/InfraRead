@@ -2,14 +2,14 @@
     <div class="bg-white">
         <div class="px-4 py-5 sm:p-6">
             <!-- Header -->
-            <div class="flex justify-between items-center mb-6">
+            <div class="flex flex-col md:flex-row md:justify-between md:items-center mb-6 space-y-4 md:space-y-0">
                 <div>
                     <h3 class="text-lg leading-6 font-medium text-gray-900">Categories Management</h3>
                     <p class="mt-1 text-sm text-gray-500">Manage RSS feed categories</p>
                 </div>
                 <button
                     @click="openCreateModal"
-                    class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                    class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 self-start"
                 >
                     <svg class="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
@@ -24,9 +24,10 @@
                 <p class="mt-2 text-sm text-gray-500">Loading categories...</p>
             </div>
 
-            <!-- Categories Table -->
+            <!-- Categories List -->
             <div v-else class="flex flex-col">
-                <div class="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                <!-- Desktop Table -->
+                <div class="hidden md:block -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                     <div class="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
                         <div class="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
                             <table class="min-w-full divide-y divide-gray-200">
@@ -83,6 +84,43 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Mobile Card Layout -->
+                <div class="md:hidden space-y-4">
+                    <div v-for="category in categories" :key="category.id" class="bg-white rounded-lg shadow border border-gray-200 p-4">
+                        <div class="flex justify-between items-start mb-3">
+                            <div class="flex-1">
+                                <h4 class="text-sm font-medium text-gray-900 mb-2">
+                                    {{ category.description }}
+                                </h4>
+                                <div class="flex flex-col space-y-2">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 self-start">
+                                        {{ category.sources_count || 0 }} sources
+                                    </span>
+                                    <span class="text-xs text-gray-500">
+                                        Created {{ formatDate(category.created_at) }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex justify-end space-x-3 pt-3 border-t border-gray-100">
+                            <button
+                                @click="editCategory(category)"
+                                class="text-indigo-600 hover:text-indigo-900 text-sm font-medium"
+                            >
+                                Edit
+                            </button>
+                            <button
+                                @click="deleteCategory(category)"
+                                class="text-red-600 hover:text-red-900 text-sm font-medium"
+                                :class="{ 'opacity-50 cursor-not-allowed': deleting === category.id }"
+                                :disabled="deleting === category.id"
+                            >
+                                {{ deleting === category.id ? 'Deleting...' : 'Delete' }}
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- Empty State -->
@@ -114,14 +152,21 @@
                 <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true" @click="closeModal"></div>
 
                 <!-- Modal panel -->
-                <div class="relative inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                <div class="relative inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full mx-4">
                     <form @submit.prevent="saveCategory">
                         <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                             <div class="sm:flex sm:items-start">
                                 <div class="w-full mt-3 text-center sm:mt-0 sm:text-left">
-                                    <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4" id="modal-title">
-                                        {{ isEditing ? 'Edit Category' : 'Add New Category' }}
-                                    </h3>
+                                    <div class="flex justify-between items-center mb-4">
+                                        <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">
+                                            {{ isEditing ? 'Edit Category' : 'Add New Category' }}
+                                        </h3>
+                                        <button type="button" @click="closeModal" class="text-gray-400 hover:text-gray-600">
+                                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                            </svg>
+                                        </button>
+                                    </div>
 
                                     <!-- Category Description Field -->
                                     <div class="mb-4">
@@ -129,7 +174,7 @@
                                         <input
                                             v-model="categoryForm.description"
                                             type="text"
-                                            class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                                            class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm"
                                             placeholder="Enter category description"
                                             required
                                             :class="{ 'border-red-500': errors.description }"
@@ -142,10 +187,10 @@
                         </div>
 
                         <!-- Modal Actions -->
-                        <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                        <div class="bg-gray-50 px-4 py-3 sm:px-6 flex flex-col-reverse sm:flex-row sm:justify-end space-y-reverse space-y-2 sm:space-y-0 sm:space-x-3">
                             <button
                                 type="submit"
-                                class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:ml-3 sm:w-auto sm:text-sm"
+                                class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:w-auto sm:text-sm"
                                 :class="{ 'opacity-50 cursor-not-allowed': saving }"
                                 :disabled="saving"
                             >
@@ -154,7 +199,7 @@
                             <button
                                 type="button"
                                 @click="closeModal"
-                                class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+                                class="w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:w-auto sm:text-sm"
                             >
                                 Cancel
                             </button>
