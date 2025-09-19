@@ -36,16 +36,8 @@ class PostController extends Controller
         } else {
             $query->orderBy('posted_at', 'desc');
         }
-        $size = min((int) $request->query('page.size', 50), 200);
-        $posts = $query->paginate($size)->appends($request->query());
-        return PostResource::collection($posts)->additional([
-            'meta' => [
-                'total' => $posts->total(),
-                'current_page' => $posts->currentPage(),
-                'last_page' => $posts->lastPage(),
-                'per_page' => $posts->perPage(),
-            ],
-        ]);
+        $posts = $query->get();
+        return PostResource::collection($posts);
     }
 
     public function show(Request $request, Post $post)

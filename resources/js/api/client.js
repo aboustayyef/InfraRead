@@ -203,6 +203,7 @@ class InfrareadAPI {
         if (filters.include) {
             params.append('include', Array.isArray(filters.include) ? filters.include.join(',') : filters.include);
         }
+        // Remove any page.size or pagination params
 
         const query = params.toString();
         const endpoint = query ? `/posts?${query}` : '/posts';
