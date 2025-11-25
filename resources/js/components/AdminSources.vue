@@ -1,19 +1,19 @@
 <template>
     <div class="admin-sources">
         <!-- Header -->
-        <div class="flex justify-between mb-6">
-            <h2 class="text-4xl font-bold text-gray-600">Sources</h2>
-            <div class="flex space-x-4">
+        <div class="flex flex-col gap-3 mb-6 md:flex-row md:items-center md:justify-between">
+            <h2 class="text-3xl font-bold text-gray-600">Sources</h2>
+            <div class="flex flex-col gap-2 w-full md:w-auto md:flex-row md:items-center md:gap-3">
                 <button
                     @click="exportOpml"
-                    class="inline-block rounded-md px-3 py-2 bg-yellow-50 hover:bg-yellow-200 text-gray-500"
+                    class="inline-block rounded-md px-3 py-2 bg-yellow-50 hover:bg-yellow-200 text-gray-600 w-full md:w-auto text-center"
                     :disabled="loading"
                 >
                     ↓ Download OPML
                 </button>
                 <button
                     @click="openCreateModal"
-                    class="hover:text-white hover:bg-primary bg-white text-primary px-4 py-2 border border-primary rounded-md"
+                    class="hover:text-white hover:bg-primary bg-white text-primary px-4 py-2 border border-primary rounded-md w-full md:w-auto"
                     :disabled="loading"
                 >
                     + Add Source
@@ -22,14 +22,14 @@
         </div>
 
         <!-- Filter and Search -->
-        <div class="flex flex-wrap w-full max-w-2xl items-center mb-6 space-x-4">
+        <div class="flex flex-col w-full max-w-2xl gap-3 mb-6 md:flex-row md:items-center md:gap-4">
             <input
                 v-model="searchString"
                 type="text"
                 placeholder="Filter Sources"
-                class="ir_input flex-1"
+                class="ir_input w-full"
             >
-            <select v-model="filterCategory" class="ir_input">
+            <select v-model="filterCategory" class="ir_input w-full md:w-60">
                 <option value="">All Categories</option>
                 <option v-for="category in categories" :key="category.id" :value="category.id">
                     {{ category.description }}
@@ -51,13 +51,13 @@
         </div>
 
         <!-- Sources List -->
-        <div class="space-y-2">
+        <div class="space-y-3">
             <div
                 v-for="source in filteredSources"
                 :key="source.id"
-                class="flex justify-between items-start bg-white rounded-md hover:shadow-sm"
+                class="flex flex-col gap-3 bg-white rounded-md hover:shadow-sm md:flex-row md:items-start md:justify-between"
             >
-                <div class="flex space-x-2 p-4">
+                <div class="flex items-center gap-2 px-4 pt-4 md:p-4 md:order-2">
                     <button
                         @click.stop="refreshSource(source)"
                         class="text-gray-600 hover:text-blue-800 p-1 rounded-full hover:bg-blue-50"
@@ -83,16 +83,16 @@
                         </svg>
                     </button>
                 </div>
-                <div class="flex-1 p-4 cursor-pointer hover:bg-gray-50" @click="editSource(source)">
-                    <div class="flex space-x-6">
-                        <div class="text-primary font-semibold text-xl tracking-wider">{{ source.name }}</div>
-                        <div class="text-sm bg-gray-100 text-gray-400 rounded-full w-8 h-8 leading-8 flex items-center pb-1 justify-center align-middle">{{ source.id }}</div>
+                <div class="flex-1 px-4 pb-4 cursor-pointer hover:bg-gray-50 md:p-4" @click="editSource(source)">
+                    <div class="flex items-center flex-wrap gap-3">
+                        <div class="text-primary font-semibold text-xl tracking-wider break-words">{{ source.name }}</div>
+                        <div class="text-sm bg-gray-100 text-gray-400 rounded-full w-8 h-8 leading-8 flex items-center justify-center">{{ source.id }}</div>
                     </div>
-                    <div class="text-gray-700">{{ source.description }}</div>
+                    <div class="text-gray-700 break-words">{{ source.description }}</div>
                     <div class="text-gray-400">
                         {{ source.category ? source.category.description : 'No Category' }}
                     </div>
-                    <div class="text-xs text-gray-500 mt-1">
+                    <div class="text-xs text-gray-500 mt-1 break-words">
                         {{ source.fetcher_source }}
                     </div>
                 </div>

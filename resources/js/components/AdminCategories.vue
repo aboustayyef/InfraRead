@@ -2,14 +2,14 @@
     <div class="bg-white">
         <div class="px-4 py-5 sm:p-6">
             <!-- Header -->
-            <div class="flex justify-between items-center mb-6">
+            <div class="flex flex-col gap-3 mb-6 sm:flex-row sm:items-start sm:justify-between">
                 <div>
                     <h3 class="text-lg leading-6 font-medium text-gray-900">Categories Management</h3>
                     <p class="mt-1 text-sm text-gray-500">Manage RSS feed categories</p>
                 </div>
                 <button
                     @click="openCreateModal"
-                    class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                    class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 w-full sm:w-auto"
                 >
                     <svg class="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
@@ -25,61 +25,93 @@
             </div>
 
             <!-- Categories Table -->
-            <div v-else class="flex flex-col">
-                <div class="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-                    <div class="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
-                        <div class="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
-                            <table class="min-w-full divide-y divide-gray-200">
-                                <thead class="bg-gray-50">
-                                    <tr>
-                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Category
-                                        </th>
-                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Sources Count
-                                        </th>
-                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Created
-                                        </th>
-                                        <th scope="col" class="relative px-6 py-3">
-                                            <span class="sr-only">Actions</span>
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody class="bg-white divide-y divide-gray-200">
-                                    <tr v-for="category in categories" :key="category.id">
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="text-sm font-medium text-gray-900">
-                                                {{ category.description }}
-                                            </div>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                                {{ category.sources_count || 0 }} sources
-                                            </span>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                            {{ formatDate(category.created_at) }}
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                            <button
-                                                @click="editCategory(category)"
-                                                class="text-indigo-600 hover:text-indigo-900 mr-4"
-                                            >
-                                                Edit
-                                            </button>
-                                            <button
-                                                @click="deleteCategory(category)"
-                                                class="text-red-600 hover:text-red-900"
-                                                :class="{ 'opacity-50 cursor-not-allowed': deleting === category.id }"
-                                                :disabled="deleting === category.id"
-                                            >
-                                                {{ deleting === category.id ? 'Deleting...' : 'Delete' }}
-                                            </button>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
+            <div v-else class="flex flex-col gap-4">
+                <!-- Mobile cards -->
+                <div class="space-y-3 md:hidden">
+                    <div v-for="category in categories" :key="category.id" class="p-4 bg-gray-50 border border-gray-200 rounded-lg">
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="font-semibold text-gray-900 break-words">{{ category.description }}</div>
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                {{ category.sources_count || 0 }}
+                            </span>
+                        </div>
+                        <div class="text-xs text-gray-500 mb-3">Created {{ formatDate(category.created_at) }}</div>
+                        <div class="flex flex-col gap-2">
+                            <button
+                                @click="editCategory(category)"
+                                class="inline-flex justify-center items-center px-3 py-2 text-sm font-medium rounded-md border border-indigo-200 text-indigo-700 bg-white hover:bg-indigo-50"
+                            >
+                                Edit
+                            </button>
+                            <button
+                                @click="deleteCategory(category)"
+                                class="inline-flex justify-center items-center px-3 py-2 text-sm font-medium rounded-md border border-red-200 text-red-700 bg-white hover:bg-red-50"
+                                :class="{ 'opacity-50 cursor-not-allowed': deleting === category.id }"
+                                :disabled="deleting === category.id"
+                            >
+                                {{ deleting === category.id ? 'Deleting...' : 'Delete' }}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Desktop table -->
+                <div class="hidden md:block">
+                    <div class="-my-2 overflow-x-auto lg:-mx-8">
+                        <div class="py-2 align-middle inline-block min-w-full lg:px-8">
+                            <div class="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Category
+                                            </th>
+                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Sources Count
+                                            </th>
+                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Created
+                                            </th>
+                                            <th scope="col" class="relative px-6 py-3">
+                                                <span class="sr-only">Actions</span>
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="bg-white divide-y divide-gray-200">
+                                        <tr v-for="category in categories" :key="category.id">
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <div class="text-sm font-medium text-gray-900">
+                                                    {{ category.description }}
+                                                </div>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                                    {{ category.sources_count || 0 }} sources
+                                                </span>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                {{ formatDate(category.created_at) }}
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                                <button
+                                                    @click="editCategory(category)"
+                                                    class="text-indigo-600 hover:text-indigo-900 mr-4"
+                                                >
+                                                    Edit
+                                                </button>
+                                                <button
+                                                    @click="deleteCategory(category)"
+                                                    class="text-red-600 hover:text-red-900"
+                                                    :class="{ 'opacity-50 cursor-not-allowed': deleting === category.id }"
+                                                    :disabled="deleting === category.id"
+                                                >
+                                                    {{ deleting === category.id ? 'Deleting...' : 'Delete' }}
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>

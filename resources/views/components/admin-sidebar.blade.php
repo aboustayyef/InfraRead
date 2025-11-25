@@ -1,23 +1,31 @@
-<div id="sidebar-info" class="w-1/5  bg-gray-100 min-h-screen flex-shrink-0 sticky top-0 self-start border-b-0 border-r border-gray-200">
+<div
+    id="sidebar-info"
+    class="fixed inset-y-0 left-0 z-40 w-72 bg-gray-100 border-r border-gray-200 transform transition-transform duration-200 ease-in-out md:relative md:translate-x-0 md:w-64 md:flex-shrink-0"
+    x-bind:class="sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'"
+    x-cloak
+>
     {{--sidebar info--}}
-    <div class="md:justify-between md:h-full md:flex md:flex-col">
+    <div class="flex flex-col justify-between h-full">
         {{-- sidebar top --}}
-    <div id="sidebar-top" class="flex flex-col h-48 md:justify-between">
+        <div id="sidebar-top" class="flex flex-col gap-6 p-4">
             {{-- logo --}}
-            <a href="/app"><img src="/img/infraread144.png" class="w-12 ml-4 mt-4" alt=""></a>
+            <a href="/app" class="flex items-center space-x-3">
+                <img src="/img/infraread144.png" class="w-12" alt="">
+                <span class="text-lg font-semibold text-gray-700 hidden md:block">InfraRead</span>
+            </a>
 
             {{-- Sources - Categories --}}
-            <ul class="mt-4">
-                <li class="hover:bg-primary hover:text-white @if (request()->is('app/admin/sources')) bg-gray-200 @endif">
-                    <a href="/app/admin/sources" class="w-full pl-4 py-2 block">
+            <ul class="space-y-2">
+                <li class="hover:bg-primary hover:text-white @if (request()->is('app/admin/sources')) bg-gray-200 @endif rounded-md">
+                    <a href="/app/admin/sources" class="w-full px-3 py-2 block">
                         <div class="flex space-x-4">
                             <x-ui.sources-icon classes="text-gray-400" />
                             <div>Sources</div>
                         </div>
                     </a>
                 </li>
-                <li class="hover:bg-primary hover:text-white @if (request()->is('app/admin/categories')) bg-gray-200 @endif">
-                    <a href="/app/admin/categories" class="w-full pl-4 py-2 block">
+                <li class="hover:bg-primary hover:text-white @if (request()->is('app/admin/categories')) bg-gray-200 @endif rounded-md">
+                    <a href="/app/admin/categories" class="w-full px-3 py-2 block">
                         <div class="flex space-x-4">
                             <x-ui.categories-icon classes="text-gray-400" />
                             <div>Categories</div>
@@ -26,14 +34,14 @@
                 </li>
 
                 <!-- API Section Divider -->
-                <li class="border-t border-gray-300 mt-4 pt-4">
-                    <div class="pl-4 pb-2">
+                <li class="pt-4 mt-4 border-t border-gray-300">
+                    <div class="pb-2 px-3">
                         <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider">API</span>
                     </div>
                 </li>
 
-                <li class="hover:bg-primary hover:text-white @if (request()->routeIs('admin.token.show')) bg-gray-200 @endif">
-                    <a href="{{ route('admin.token.show') }}" class="w-full pl-4 py-2 block">
+                <li class="hover:bg-primary hover:text-white @if (request()->routeIs('admin.token.show')) bg-gray-200 @endif rounded-md">
+                    <a href="{{ route('admin.token.show') }}" class="w-full px-3 py-2 block">
                         <div class="flex space-x-4">
                             <!-- Heroicons: identification (credential/token icon) -->
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -43,8 +51,8 @@
                         </div>
                     </a>
                 </li>
-                <li class="hover:bg-primary hover:text-white @if (request()->is('api-tester')) bg-gray-200 @endif">
-                    <a href="/api-tester" class="w-full pl-4 py-2 block">
+                <li class="hover:bg-primary hover:text-white @if (request()->is('api-tester')) bg-gray-200 @endif rounded-md">
+                    <a href="/api-tester" class="w-full px-3 py-2 block">
                         <div class="flex space-x-4">
                             <!-- Heroicons: beaker (for testing) -->
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -55,13 +63,13 @@
                     </a>
                 </li>
             </ul>
-
         </div>
-    </div>
-    {{-- User --}}
-    <div class="flex w-full items-center justify-between md:absolute p-4 bottom-0 left-0">
-        <span class="uppercase text-sm font-bold text-gray-600">{{ Auth::user()->name }}</span>
-        <a href="/logout"
-            class="px-3 py-2 ml-2 text-xs uppercase bg-gray-300 rounded-lg hover:bg-primary hover:text-white">logout</a>
+
+        {{-- User --}}
+        <div class="flex items-center justify-between w-full px-4 py-3 border-t border-gray-200">
+            <span class="uppercase text-sm font-bold text-gray-600 truncate">{{ Auth::user()->name }}</span>
+            <a href="/logout"
+                class="px-3 py-2 text-xs uppercase bg-gray-300 rounded-lg hover:bg-primary hover:text-white">logout</a>
+        </div>
     </div>
 </div>

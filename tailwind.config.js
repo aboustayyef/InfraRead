@@ -13,9 +13,13 @@ module.exports = {
             colors: {
                 primary: '#B90C11'
             },
-        },
-        screens: {
-            md: '600px',
+            screens: {
+                sm: '480px',
+                md: '600px',
+                lg: '960px',
+                xl: '1280px',
+                '2xl': '1536px',
+            },
         },
     },
 

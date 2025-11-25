@@ -15,6 +15,8 @@
         "alpinejs": "^2.7.3",
         "autoprefixer": "^9.8.6",
         "axios": "^0.19",
+        "browser-sync": "^2.27.10",
+        "browser-sync-webpack-plugin": "^2.0.1",
         "cross-env": "^7.0",
         "laravel-mix": "^5.0.1",
         "lodash": "^4.17.19",
@@ -22,10 +24,8 @@
         "resolve-url-loader": "^3.1.0",
         "sass": "^1.29.0",
         "sass-loader": "^8.0.2",
-        "browser-sync": "^2.27.10",
         "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.0.1",
-        "vue-template-compiler": "^2.6.12",
-        "browser-sync-webpack-plugin": "^2.0.1"
+        "vue-template-compiler": "^2.6.12"
     },
     "dependencies": {
         "bootstrap-sass": "^3.4.1",
