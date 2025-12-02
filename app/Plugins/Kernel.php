@@ -151,6 +151,13 @@ class Kernel
                         'reason' => 'Auto-read for Slow Boring'
                     ]
                 ]
+            ],
+
+            'marginalrevolution.com' => [
+                [
+                    'name' => 'ResolveFeedblitz',
+                    'options' => []
+                ]
             ]
         ];
     }

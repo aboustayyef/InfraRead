@@ -178,9 +178,6 @@ class PluginManagerCommand extends Command
         $this->line('');
         $this->info('🚀 Executing plugins...');
 
-        // Capture log output during plugin execution
-        $originalLogLevel = Log::getLogger()->getLevel();
-
         try {
             $post->applyPlugins();
             $this->info('✅ Plugin execution completed successfully');
@@ -220,7 +217,11 @@ class PluginManagerCommand extends Command
             $this->line("  • {$pluginConfig['name']}");
         }
 
-        $posts = $source->posts()->limit(5)->get();
+        // Fetch directly via query to avoid cached collection limitations on Source::posts()
+        $posts = \App\Models\Post::where('source_id', $source->id)
+            ->orderBy('posted_at', 'desc')
+            ->limit(5)
+            ->get();
 
         if ($posts->isEmpty()) {
             $this->warn('No posts found for this source.');
