@@ -3,6 +3,7 @@
 namespace App;
 
 use Embed\Embed;
+use Psr\Http\Message\ResponseInterface;
 
 class UrlAnalyzer
 {
@@ -92,6 +93,9 @@ class UrlAnalyzer
         if (!empty($feeds)) {
             // Take the first available feed
             $this->result['rss'] = (string) $feeds[0];
+        } elseif ($this->isDirectFeedResponse($embed->getResponse())) {
+            // The provided URL itself is the feed (no <link rel="alternate"> on a page)
+            $this->result['rss'] = (string) $embed->url;
         }
     }
 
@@ -111,6 +115,69 @@ class UrlAnalyzer
         $cleaned = preg_replace('/[\x00-\x1F\x7F]/', '', $cleaned);
 
         return $cleaned ?: null;
+    }
+
+    /**
+     * Detect if the HTTP response is itself an RSS/Atom feed.
+     */
+    private function isDirectFeedResponse(ResponseInterface $response): bool
+    {
+        $contentType = strtolower($response->getHeaderLine('content-type'));
+        $feedMimeTypes = [
+            'application/atom+xml',
+            'application/rss+xml',
+            'application/xml',
+            'text/xml',
+        ];
+
+        foreach ($feedMimeTypes as $type) {
+            if (strpos($contentType, $type) !== false) {
+                return true;
+            }
+        }
+
+        // Fallback: inspect the beginning of the body for RSS/Atom markers
+        $body = $response->getBody();
+        $bodyStart = '';
+
+        if ($body->isSeekable()) {
+            $body->rewind();
+            $bodyStart = strtolower(substr(ltrim($body->getContents()), 0, 300));
+            $body->rewind();
+        } else {
+            $bodyStart = strtolower(substr(ltrim((string) $body), 0, 300));
+        }
+
+        return strpos($bodyStart, '<rss') === 0 || strpos($bodyStart, '<feed') === 0;
+    }
+
+    private function looksLikeFeedUrl(string $url): bool
+    {
+        $parts = parse_url($url);
+        $host = strtolower($parts['host'] ?? '');
+        $path = strtolower($parts['path'] ?? '');
+
+        // Obvious feed-ish hosts (e.g. feeds.feedblitz.com)
+        if ($host && preg_match('/feed|rss|atom|xml/', $host)) {
+            return true;
+        }
+
+        $extensions = ['.rss', '.xml', '.atom', '.rdf'];
+        foreach ($extensions as $ext) {
+            if (substr($path, -strlen($ext)) === $ext) {
+                return true;
+            }
+        }
+
+        // Common feed path patterns
+        $patterns = ['/feed', '/rss', '/feeds/', '/xml'];
+        foreach ($patterns as $pattern) {
+            if (strpos($path, $pattern) !== false) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -170,6 +237,14 @@ class UrlAnalyzer
     public function hasRssFeed()
     {
         return !empty($this->result['rss']);
+    }
+
+    /**
+     * Heuristic: user-provided URL itself looks like a feed even if discovery failed.
+     */
+    public function isLikelyFeedUrl(): bool
+    {
+        return $this->looksLikeFeedUrl($this->url);
     }
 
     /**

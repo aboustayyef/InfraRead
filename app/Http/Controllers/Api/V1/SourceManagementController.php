@@ -7,7 +7,6 @@ use App\Http\Requests\Api\V1\CreateSourceRequest;
 use App\Http\Requests\Api\V1\UpdateSourceRequest;
 use App\Http\Resources\SourceResource;
 use App\Models\Source;
-use App\UrlAnalyzer;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 
@@ -28,30 +27,10 @@ class SourceManagementController extends Controller
         $validated = $request->validated();
         $url = $validated['url'];
 
-        // Step 1: Use our existing UrlAnalyzer for feed discovery
-        $analyzer = new UrlAnalyzer($url);
-
-        if ($analyzer->status === 'error') {
-            return response()->json([
-                'message' => 'Failed to analyze URL',
-                'errors' => [
-                    'url' => $analyzer->error_messages
-                ]
-            ], 422);
-        }
-
-        // Step 2: Validate that we found a usable RSS feed
-        if (!$analyzer->hasRssFeed()) {
-            return response()->json([
-                'message' => 'No RSS feed found',
-                'errors' => [
-                    'url' => ['No RSS or Atom feed could be discovered at this URL']
-                ]
-            ], 422);
-        }
+        // Trust the user-provided URL as the feed; analyzer is only for pre-fill on the client.
+        $rssUrl = $url;
 
         // Step 3: Check for duplicate sources
-        $rssUrl = $analyzer->getRssFeed();
         $existingSource = Source::where('fetcher_source', $rssUrl)->first();
         if ($existingSource) {
             return response()->json([
@@ -66,13 +45,11 @@ class SourceManagementController extends Controller
         DB::beginTransaction();
 
         try {
-            $metadata = $analyzer->getMetadata();
-
             $source = Source::create([
-                'name' => $validated['name'] ?? $metadata['title'],
-                'description' => $validated['description'] ?? $metadata['description'],
-                'url' => $metadata['canonical_url'],
-                'author' => $metadata['author'],
+                'name' => $validated['name'] ?? $url,
+                'description' => $validated['description'] ?? null,
+                'url' => $url,
+                'author' => '',
                 'fetcher_kind' => 'rss',  // Currently only RSS supported
                 'fetcher_source' => $rssUrl,
                 'category_id' => $validated['category_id'],
@@ -102,6 +79,23 @@ class SourceManagementController extends Controller
     public function update(UpdateSourceRequest $request, Source $source): JsonResponse
     {
         $validated = $request->validated();
+
+        // Enforce unique feed URL across sources (gracefully)
+        if (array_key_exists('fetcher_source', $validated)) {
+            $newFeed = $validated['fetcher_source'];
+            $duplicate = Source::where('fetcher_source', $newFeed)
+                ->where('id', '!=', $source->id)
+                ->first();
+
+            if ($duplicate) {
+                return response()->json([
+                    'message' => 'Source already exists',
+                    'errors' => [
+                        'fetcher_source' => ['A source with this RSS feed already exists: ' . $duplicate->name]
+                    ]
+                ], 422);
+            }
+        }
 
         $source->update($validated);
 
