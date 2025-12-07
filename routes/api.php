@@ -45,6 +45,8 @@ Route::get('v2_readlaterservice', function () {
             return 'instapaper';
         case 'omnivore':
             return 'omnivore';
+        case 'narrator':
+            return 'narrator';
         default:
             return 'none';
     }

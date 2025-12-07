@@ -8,6 +8,14 @@
         <div @click="save" v-if="status == 'save' && readlaterservice=='instapaper'">
             <svg class="h-10 opacity-50 group-hover:opacity-100" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><circle cx="256" cy="256" r="256" fill="#7f8c8d"/><path d="M197.4 384.5v-14c3.7 0 39.1-1.9 39.1-25.1V168.5c0-24.2-35.4-26.1-39.1-26.1v-14h118.2v14c-4.7 0-39.1.9-39.1 24.2v178.8c0 24.2 34.4 25.1 39.1 25.1v14H197.4z" fill="#fff"/></svg>
         </div>
+        <!-- button for Narrator -->
+        <div @click="save" v-if="status == 'save' && readlaterservice=='narrator'">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 opacity-50 group-hover:opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 6.75A2.75 2.75 0 016.75 4h7.5A2.75 2.75 0 0117 6.75v.5A2.75 2.75 0 0114.25 10h-7.5A2.75 2.75 0 014 7.25v-.5z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 16.75A2.75 2.75 0 016.75 14h4.5A2.75 2.75 0 0114 16.75v.5A2.75 2.75 0 0111.25 20h-4.5A2.75 2.75 0 014 17.25v-.5z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M17 8.5h.75A2.25 2.25 0 0120 10.75v2.5A2.25 2.25 0 0117.75 15H17" />
+            </svg>
+        </div>
         <!-- button for Omnivore -->
         <div @click="save" v-if="status == 'save' && readlaterservice=='omnivore'">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"> <path stroke-linecap="round" stroke-linejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0Z" /> </svg>
@@ -39,7 +47,7 @@ export default {
     props: ['shown','url'],
     data(){
         return {
-           readlaterservice:'omnivore',
+           readlaterservice:'none',
            status: 'save'
         }
     },

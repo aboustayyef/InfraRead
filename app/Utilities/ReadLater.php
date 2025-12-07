@@ -2,6 +2,7 @@
 
 namespace App\Utilities;
 
+use App\Models\Post;
 use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
@@ -18,9 +19,10 @@ class ReadLater
             !env('OMNIVORE_API_KEY') &&
             !env('POCKET_ACCESS_TOKEN') &&
             !env('INSTAPAPER_USERNAME') &&
+            !env('NARRATOR_API_TOKEN') &&
             !env('PREFERRED_READLATER_SERVICE')
         ) {
-            throw new Exception('You have to setup either Omnivore, Instapaper or Pocket and choose which one you prefer');
+            throw new Exception('You have to setup either Omnivore, Instapaper, Narrator or Pocket and choose which one you prefer');
         }
         // Validate URL
         if (filter_var($url, FILTER_VALIDATE_URL)) {
@@ -40,6 +42,8 @@ class ReadLater
             }
         } elseif (env('PREFERRED_READLATER_SERVICE') == 'omnivore') {
             return $this->saveToOmnivore();
+        } elseif (env('PREFERRED_READLATER_SERVICE') == 'narrator') {
+            return $this->saveToNarrator();
         } else {
             $response = json_decode((string) $this->saveToInstapaper());
             if (isset($response->bookmark_id)) {
@@ -90,6 +94,66 @@ class ReadLater
             return false;
         }
     }
+    public function saveToNarrator()
+    {
+        $token = trim((string) env('NARRATOR_API_TOKEN'));
+        if (!$token) {
+            throw new Exception('Narrator token is not configured');
+        }
+
+        $post = Post::where('url', $this->url)->first();
+        $title = $post->title ?? $this->url;
+        $htmlBody = $post->content ?? '';
+        $markdownBody = $this->convertHtmlToMarkdown($htmlBody);
+
+        // Fallback to plain text if markdown conversion produced nothing
+        if (trim($markdownBody) === '') {
+            $markdownBody = trim(strip_tags($htmlBody)) ?: $this->url;
+        }
+
+        $bodyPayload = [
+            'title' => $title,
+            'url' => $this->url,
+            'body' => $markdownBody,
+        ];
+
+        $bodyJson = json_encode($bodyPayload, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+
+        try {
+            $client = new Client();
+            $response = $client->request('POST', 'https://narrator.beirutspring.com/api/save', [
+                'headers' => [
+                    'Content-Type' => 'application/json',
+                    'X-Narrator-Token' => $token,
+                ],
+                'json' => $bodyPayload,
+            ]);
+
+            $rawBody = (string) $response->getBody();
+
+            return [
+                'success' => $response->getStatusCode() >= 200 && $response->getStatusCode() < 300,
+                'status_code' => $response->getStatusCode(),
+                'payload' => json_decode($rawBody, true),
+                'raw_body' => $rawBody,
+                'token_preview' => $this->maskToken($token),
+                'curl_example' => "curl -X POST https://narrator.beirutspring.com/api/save \\\n  -H 'Content-Type: application/json' \\\n  -H 'X-Narrator-Token: {$token}' \\\n  -d '{$bodyJson}'",
+            ];
+        } catch (GuzzleException $e) {
+            $errorResponse = method_exists($e, 'getResponse') ? $e->getResponse() : null;
+            $errorBody = $errorResponse ? (string) $errorResponse->getBody() : null;
+
+            return [
+                'success' => false,
+                'status_code' => $errorResponse ? $errorResponse->getStatusCode() : null,
+                'payload' => $errorBody ? json_decode($errorBody, true) : null,
+                'raw_body' => $errorBody,
+                'error' => $e->getMessage(),
+                'token_preview' => $this->maskToken($token),
+                'curl_example' => "curl -X POST https://narrator.beirutspring.com/api/save \\\n  -H 'Content-Type: application/json' \\\n  -H 'X-Narrator-Token: {$token}' \\\n  -d '{$bodyJson}'",
+            ];
+        }
+    }
     public function saveToPocket()
     {
         $client = new Client();
@@ -120,5 +184,139 @@ class ReadLater
         ]);
 
         return $res->getBody();
+    }
+
+    private function convertHtmlToMarkdown(?string $html): string
+    {
+        if (!$html) {
+            return '';
+        }
+
+        $document = new \DOMDocument();
+        libxml_use_internal_errors(true);
+        $document->loadHTML('<?xml encoding="utf-8" ?>' . $html);
+        libxml_clear_errors();
+
+        $body = $document->getElementsByTagName('body')->item(0);
+        if (!$body) {
+            return '';
+        }
+
+        $markdown = $this->walkNodes($body);
+        $markdown = preg_replace("/\n{3,}/", "\n\n", $markdown);
+
+        return trim($markdown);
+    }
+
+    private function walkNodes(\DOMNode $node): string
+    {
+        $markdown = '';
+
+        /** @var \DOMNode $child */
+        foreach ($node->childNodes as $child) {
+            if ($child->nodeType === XML_TEXT_NODE) {
+                $value = htmlspecialchars_decode($child->nodeValue, ENT_QUOTES);
+                if (trim($value) === '') {
+                    continue;
+                }
+                $markdown .= $value;
+                continue;
+            }
+
+            if ($child->nodeType !== XML_ELEMENT_NODE) {
+                continue;
+            }
+
+            $content = trim($this->walkNodes($child));
+
+            switch (strtolower($child->nodeName)) {
+                case 'img':
+                    // Skip images entirely for Narrator markdown
+                    break;
+                case 'p':
+                    if ($content !== '') {
+                        $markdown .= $content . "\n\n";
+                    }
+                    break;
+                case 'br':
+                    $markdown .= "  \n";
+                    break;
+                case 'blockquote':
+                    if ($content !== '') {
+                        $lines = explode("\n", $content);
+                        $quoted = implode("\n", array_map(function ($line) {
+                            return '> ' . ltrim($line);
+                        }, $lines));
+                        $markdown .= $quoted . "\n\n";
+                    }
+                    break;
+                case 'strong':
+                case 'b':
+                    $markdown .= '**' . $content . '**';
+                    break;
+                case 'em':
+                case 'i':
+                    $markdown .= '*' . $content . '*';
+                    break;
+                case 'a':
+                    $hrefAttribute = $child->attributes->getNamedItem('href');
+                    $href = $hrefAttribute ? $hrefAttribute->nodeValue : null;
+                    $markdown .= $href ? '[' . ($content ?: $href) . '](' . $href . ')' : $content;
+                    break;
+                case 'ul':
+                    $items = [];
+                    foreach ($child->childNodes as $li) {
+                        if ($li->nodeName === 'li') {
+                            $itemContent = trim($this->walkNodes($li));
+                            if ($itemContent !== '') {
+                                $items[] = '- ' . $itemContent;
+                            }
+                        }
+                    }
+                    $markdown .= implode("\n", $items) . "\n\n";
+                    break;
+                case 'ol':
+                $items = [];
+                $index = 1;
+                foreach ($child->childNodes as $li) {
+                    if ($li->nodeName === 'li') {
+                        $itemContent = trim($this->walkNodes($li));
+                        if ($itemContent !== '') {
+                            $items[] = $index . '. ' . $itemContent;
+                            $index++;
+                        }
+                    }
+                }
+                $markdown .= implode("\n", $items) . "\n\n";
+                break;
+                case 'h1':
+                case 'h2':
+                case 'h3':
+                case 'h4':
+            case 'h5':
+            case 'h6':
+                $level = (int) substr($child->nodeName, 1);
+                $markdown .= str_repeat('#', $level) . ' ' . $content . "\n\n";
+                break;
+            case 'pre':
+                $markdown .= "\n```\n" . $child->textContent . "\n```\n\n";
+                break;
+            default:
+                $markdown .= $content;
+                break;
+        }
+    }
+
+    return $markdown;
+}
+
+    private function maskToken(string $token): string
+    {
+        $len = strlen($token);
+        if ($len <= 6) {
+            return str_repeat('*', max(0, $len - 2)) . substr($token, -2);
+        }
+
+        return substr($token, 0, 4) . '...' . substr($token, -2) . " (len:$len)";
     }
 }
