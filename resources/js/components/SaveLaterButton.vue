@@ -10,10 +10,11 @@
         </div>
         <!-- button for Narrator -->
         <div @click="save" v-if="status == 'save' && readlaterservice=='narrator'">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 opacity-50 group-hover:opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M4 6.75A2.75 2.75 0 016.75 4h7.5A2.75 2.75 0 0117 6.75v.5A2.75 2.75 0 0114.25 10h-7.5A2.75 2.75 0 014 7.25v-.5z" />
-                <path stroke-linecap="round" stroke-linejoin="round" d="M4 16.75A2.75 2.75 0 016.75 14h4.5A2.75 2.75 0 0114 16.75v.5A2.75 2.75 0 0111.25 20h-4.5A2.75 2.75 0 014 17.25v-.5z" />
-                <path stroke-linecap="round" stroke-linejoin="round" d="M17 8.5h.75A2.25 2.25 0 0120 10.75v2.5A2.25 2.25 0 0117.75 15H17" />
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 opacity-50 group-hover:opacity-100 lucide lucide-message-square-text" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z"/>
+                <path d="M7 11h10"/>
+                <path d="M7 15h6"/>
+                <path d="M7 7h8"/>
             </svg>
         </div>
         <!-- button for Omnivore -->
