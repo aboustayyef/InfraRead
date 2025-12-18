@@ -1,12 +1,13 @@
 <?php
 
-use App\Http\Controllers\VueAdminController;
 use App\Http\Controllers\PocketSetupController;
 use App\Http\Controllers\ReadlaterController;
 use App\Http\Controllers\Api\V1\PostController as V1PostController;
 use App\Http\Controllers\Api\V1\SourceController as V1SourceController;
 use App\Http\Controllers\Api\V1\CategoryController as V1CategoryController;
 use App\Http\Controllers\Api\V1\PostSummaryController as V1PostSummaryController;
+use App\Http\Controllers\Admin\BulkReadController;
+use App\Http\Controllers\VueAdminController;
 use App\Models\Category;
 use App\Models\Post;
 use App\Models\Source;
@@ -44,7 +45,7 @@ Route::get('/api-tester', function() { return view('api-tester'); })->middleware
 
 // Administration (Vue-based)
 Route::prefix('admin')->middleware('auth')->group(function () {
-    Route::get('/', function () { return redirect('/app/admin/sources'); });
+    Route::get('/', function () { return redirect('/app/admin'); });
     // Simple token management UI
     Route::get('token', [\App\Http\Controllers\AdminTokenController::class, 'show'])->name('admin.token.show');
     Route::post('token', [\App\Http\Controllers\AdminTokenController::class, 'store'])->name('admin.token.store');
@@ -53,6 +54,11 @@ Route::prefix('admin')->middleware('auth')->group(function () {
 
 // Vue.js Admin Interface (Primary)
 Route::prefix('app/admin')->middleware('auth')->group(function () {
+    Route::get('/', [VueAdminController::class, 'home'])->name('vue.admin.home');
+    Route::get('/mark-read', [BulkReadController::class, 'index'])->name('vue.admin.mark-read.index');
+    Route::post('/mark-read/all', [BulkReadController::class, 'markAll'])->name('vue.admin.mark-read.all');
+    Route::post('/mark-read/older-than', [BulkReadController::class, 'markOlderThan'])->name('vue.admin.mark-read.older-than');
+    Route::post('/mark-read/except-latest', [BulkReadController::class, 'markExceptLatest'])->name('vue.admin.mark-read.except-latest');
     Route::get('/sources', [VueAdminController::class, 'sources'])->name('vue.admin.sources');
     Route::get('/categories', [VueAdminController::class, 'categories'])->name('vue.admin.categories');
 });

@@ -2,10 +2,32 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Models\Category;
+use App\Models\Post;
+use App\Models\Source;
 
 class VueAdminController extends Controller
 {
+    /**
+     * Display the admin landing page with quick stats.
+     */
+    public function home()
+    {
+        $user = auth()->user();
+
+        return view('admin.vue-home', [
+            'title' => 'Admin Home',
+            'api_token' => $this->resolveApiToken(),
+            'stats' => [
+                'sources' => Source::count(),
+                'categories' => Category::count(),
+                'posts' => Post::count(),
+                'unread_posts' => Post::where('read', false)->count(),
+                'tokens' => $user ? $user->tokens()->count() : 0,
+            ],
+        ]);
+    }
+
     /**
      * Display the Vue.js admin interface for source management.
      *
@@ -13,18 +35,9 @@ class VueAdminController extends Controller
      */
     public function sources()
     {
-        // Use token from .env if available, otherwise generate a new one
-        $token = env('INFRAREAD_API_TOKEN');
-
-        if (!$token) {
-            // Fallback: Generate API token for the current user
-            $user = auth()->user();
-            $token = $user->createToken('admin-spa-token')->plainTextToken;
-        }
-
         return view('admin.vue-sources', [
             'title' => 'Sources Management',
-            'api_token' => $token
+            'api_token' => $this->resolveApiToken(),
         ]);
     }
 
@@ -35,18 +48,21 @@ class VueAdminController extends Controller
      */
     public function categories()
     {
-        // Use token from .env if available, otherwise generate a new one
+        return view('admin.vue-categories', [
+            'title' => 'Categories Management',
+            'api_token' => $this->resolveApiToken(),
+        ]);
+    }
+
+    private function resolveApiToken(): string
+    {
         $token = env('INFRAREAD_API_TOKEN');
 
         if (!$token) {
-            // Fallback: Generate API token for the current user
             $user = auth()->user();
             $token = $user->createToken('admin-spa-token')->plainTextToken;
         }
 
-        return view('admin.vue-categories', [
-            'title' => 'Categories Management',
-            'api_token' => $token
-        ]);
+        return $token;
     }
 }

@@ -16,6 +16,26 @@
 
             {{-- Sources - Categories --}}
             <ul class="space-y-2">
+                <li class="hover:bg-primary hover:text-white @if (request()->routeIs('vue.admin.home') || request()->is('app/admin')) bg-gray-200 @endif rounded-md">
+                    <a href="/app/admin" class="w-full px-3 py-2 block">
+                        <div class="flex space-x-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                            </svg>
+                            <div>Overview</div>
+                        </div>
+                    </a>
+                </li>
+                <li class="hover:bg-primary hover:text-white @if (request()->routeIs('vue.admin.mark-read.*')) bg-gray-200 @endif rounded-md">
+                    <a href="{{ route('vue.admin.mark-read.index') }}" class="w-full px-3 py-2 block">
+                        <div class="flex space-x-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                            </svg>
+                            <div>Mark as read</div>
+                        </div>
+                    </a>
+                </li>
                 <li class="hover:bg-primary hover:text-white @if (request()->is('app/admin/sources')) bg-gray-200 @endif rounded-md">
                     <a href="/app/admin/sources" class="w-full px-3 py-2 block">
                         <div class="flex space-x-4">
