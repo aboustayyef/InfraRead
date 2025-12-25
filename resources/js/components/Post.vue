@@ -90,7 +90,7 @@ import LoadingIndicator from "./partials/ui/LoadingIndicator.vue";
 import PostContentSkeleton from "./partials/ui/PostContentSkeleton.vue";
 
 export default {
-  props: ["post", "summary", "isLoading"],
+  props: ["post", "summary", "isLoading", "readLaterService"],
   components: { SaveLaterButton, SummarizeButton, LoadingIndicator, PostContentSkeleton },
   methods: {
     handleSummary: function (summary) {

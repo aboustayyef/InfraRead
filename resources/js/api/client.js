@@ -216,6 +216,10 @@ class InfrareadAPI {
         return await this.request('GET', `/posts/${id}${params}`);
     }
 
+    async cachePostMarkdown(id) {
+        return await this.request('POST', `/posts/${id}/cache-markdown`);
+    }
+
     async markPostRead(id, read = true) {
         return await this.request('PATCH', `/posts/${id}/read-status`, { read });
     }

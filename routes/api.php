@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\V1\PostSummaryController as V1PostSummaryController
 use App\Http\Controllers\Api\V1\PostReadStatusController as V1PostReadStatusController;
 use App\Http\Controllers\Api\V1\BulkPostReadStatusController as V1BulkPostReadStatusController;
 use App\Http\Controllers\Api\V1\MarkAllReadController as V1MarkAllReadController;
+use App\Http\Controllers\Api\V1\PostMarkdownCacheController;
 use App\Http\Controllers\Api\V1\SourceManagementController as V1SourceManagementController;
 use App\Http\Controllers\Api\V1\OpmlController as V1OpmlController;
 use App\Http\Controllers\Api\V1\JobController as V1JobController;
@@ -87,6 +88,7 @@ Route::prefix('v1')->group(function () {
 
     // Special endpoints
     Route::post('/posts/{post}/summary', V1PostSummaryController::class)->middleware('throttle:summaries');
+    Route::post('/posts/{post}/cache-markdown', PostMarkdownCacheController::class);
 
     // Job-based endpoints (Phase 6)
     Route::prefix('jobs')->name('api.v1.jobs.')->group(function () {

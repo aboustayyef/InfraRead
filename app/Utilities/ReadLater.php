@@ -7,10 +7,12 @@ use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Cache;
 
 class ReadLater
 {
     private $url;
+    private const NARRATOR_CACHE_TTL = 86400; // 24 hours
 
     public function __construct($url)
     {
@@ -104,12 +106,7 @@ class ReadLater
         $post = Post::where('url', $this->url)->first();
         $title = $post->title ?? $this->url;
         $htmlBody = $post->content ?? '';
-        $markdownBody = $this->convertHtmlToMarkdown($htmlBody);
-
-        // Fallback to plain text if markdown conversion produced nothing
-        if (trim($markdownBody) === '') {
-            $markdownBody = trim(strip_tags($htmlBody)) ?: $this->url;
-        }
+        $markdownBody = $post ? $this->getCachedNarratorMarkdown($post) : $this->buildNarratorMarkdown($htmlBody);
 
         $bodyPayload = [
             'title' => $title,
@@ -154,6 +151,10 @@ class ReadLater
             ];
         }
     }
+    public function warmNarratorCache(Post $post): string
+    {
+        return $this->getCachedNarratorMarkdown($post);
+    }
     public function saveToPocket()
     {
         $client = new Client();
@@ -184,6 +185,27 @@ class ReadLater
         ]);
 
         return $res->getBody();
+    }
+
+    private function buildNarratorMarkdown(?string $html): string
+    {
+        $markdownBody = $this->convertHtmlToMarkdown($html);
+
+        // Fallback to plain text if markdown conversion produced nothing
+        if (trim($markdownBody) === '') {
+            $markdownBody = trim(strip_tags($html ?? '')) ?: $this->url;
+        }
+
+        return $markdownBody;
+    }
+
+    private function getCachedNarratorMarkdown(Post $post): string
+    {
+        $cacheKey = $this->getNarratorCacheKey($post);
+
+        return Cache::remember($cacheKey, now()->addSeconds(self::NARRATOR_CACHE_TTL), function () use ($post) {
+            return $this->buildNarratorMarkdown($post->content ?? '');
+        });
     }
 
     private function convertHtmlToMarkdown(?string $html): string
@@ -309,6 +331,11 @@ class ReadLater
 
     return $markdown;
 }
+
+    private function getNarratorCacheKey(Post $post): string
+    {
+        return 'narrator:markdown:post:' . $post->id;
+    }
 
     private function maskToken(string $token): string
     {

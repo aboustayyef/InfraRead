@@ -110,6 +110,7 @@
             :post="displayed_post"
             :summary="displayed_summary"
             :is-loading="isLoadingPost"
+            :read-later-service="readLaterService"
             v-on:exit-post="exit_post"
             @summary-ready="handleSummary"
         >
@@ -178,11 +179,13 @@ export default {
             external_links_shortcuts: false,
             external_links: [],
             isLoadingPost: false,
+            readLaterService: 'none',
         };
     },
     created() {
         this.fetch_posts_from_server();
         this.fetch_crawl_status(); // Use API instead of prop
+        this.fetchReadLaterService();
         window.keys_entered = "";
         window.shortcutTimer = null; // Timer for handling multi-digit shortcuts
 
@@ -276,9 +279,25 @@ export default {
             return this.unread_posts[this.highlighter_position];
         },
     },
+    watch: {
+        readLaterService(newValue) {
+            if (newValue === 'narrator' && this.displayed_post && this.displayed_post.id) {
+                this.cacheNarratorMarkdown(this.displayed_post);
+            }
+        }
+    },
     methods: {
         handleSummary(summary) {
             this.displayed_summary = summary;
+        },
+        async fetchReadLaterService() {
+            try {
+                const response = await axios.get('/api/v2_readlaterservice');
+                this.readLaterService = response.data || 'none';
+            } catch (error) {
+                console.warn('⚠️ Failed to detect read-later service', error);
+                this.readLaterService = 'none';
+            }
         },
         fetch_posts_from_server: async function () {
             try {
@@ -395,6 +414,7 @@ export default {
                 this.displayed_post = fullPost;
                 this.isLoadingPost = false;
                 console.log('✅ Full post content loaded:', fullPost.title);
+                this.cacheNarratorMarkdown(fullPost);
 
             } catch (error) {
                 console.error('❌ Failed to fetch full post content:', error);
@@ -409,6 +429,17 @@ export default {
                         <a href="${p.url}" target="_blank" class="text-blue-600 underline mt-4 inline-block">Read on original site →</a>
                     </div>`
                 };
+            }
+        },
+        async cacheNarratorMarkdown(post) {
+            if (this.readLaterService !== 'narrator' || !post || !post.id) {
+                return;
+            }
+
+            try {
+                await window.api.cachePostMarkdown(post.id);
+            } catch (error) {
+                console.warn('⚠️ Could not warm Narrator markdown cache', error.getUserMessage ? error.getUserMessage() : error);
             }
         },
         mark_post_as_read: async function (p) {

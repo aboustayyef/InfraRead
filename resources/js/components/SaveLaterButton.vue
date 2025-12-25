@@ -45,21 +45,36 @@
 
 <script>
 export default {
-    props: ['shown','url'],
+    props: {
+        shown: Boolean,
+        url: String,
+        readLaterService: {
+            type: String,
+            default: 'none'
+        }
+    },
     data(){
         return {
-           readlaterservice:'none',
+           readlaterservice: this.readLaterService || 'none',
            status: 'save'
+        }
+    },
+    watch: {
+        readLaterService(newValue) {
+            this.readlaterservice = newValue || 'none';
         }
     },
     mounted() {
         window.addEventListener('keydown', (e) => {
           this.handle_keyboard_shortcut(e.key);
         });
-        axios.get('/api/v2_readlaterservice').then((res) => {
-            console.log(res);
-        this.readlaterservice = res.data;
-        })
+        if (this.readlaterservice === 'none') {
+            axios.get('/api/v2_readlaterservice').then((res) => {
+                this.readlaterservice = res.data;
+            }).catch(() => {
+                this.readlaterservice = 'none';
+            });
+        }
     },
     methods: {
         save: function(){
