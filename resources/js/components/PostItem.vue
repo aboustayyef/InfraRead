@@ -3,11 +3,11 @@
         class="p-2 mx-auto border-b border-gray-200 cursor-pointer max-w-7xl"
         :class="{ 'bg-yellow-50': highlighted }"
     >
-        <div :id="'post-' + index" class="md:flex">
+        <div :id="'post-' + index" class="md:flex min-w-0">
             <!-- Title, author and date -->
-            <div class="w-full md:mr-12 md:w-1/2">
+            <div class="w-full md:mr-12 md:w-1/2 min-w-0">
                     <h2 v-on:click="$emit('displayPost', post)"
-                        class="pt-2 md:pt-6 text-xl md:text-2xl font-semibold text-gray-700 cursor-pointer">
+                        class="pt-2 md:pt-6 text-xl md:text-2xl font-semibold text-gray-700 cursor-pointer break-words [overflow-wrap:anywhere]">
                         {{ post.title }}
                     </h2>
                     <h3 v-on:click="$emit('switchSource', 'source', post.source.id, post.source.name)"
@@ -20,8 +20,8 @@
                 </div>
                 <!-- Body of Post -->
                 <div v-on:click="$emit('displayPost', post)"
-                    class="w-full mt-2 text-xl font-light leading-relaxed text-gray-400 cursor-pointer overflow-clip md:mt-4 md:w-1/2">
-                    <p class="text-base md:text-xl">{{ post.excerpt }}</p>
+                    class="w-full mt-2 text-xl font-light leading-relaxed text-gray-400 cursor-pointer overflow-clip md:mt-4 md:w-1/2 min-w-0">
+                    <p class="text-base md:text-xl break-words [overflow-wrap:anywhere]">{{ post.excerpt }}</p>
                 </div>
         </div>
         <!-- Mark as Read Button -->
