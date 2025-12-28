@@ -2,7 +2,7 @@
   <div class="realtive">
     <div
       id="post-view"
-      class="fixed top-0 right-0 w-full h-screen overflow-y-auto transition duration-75 ease-out transform bg-white"
+      class="fixed inset-0 w-full h-[100dvh] overflow-y-auto transition duration-75 ease-out transform bg-white"
       :class="{ 'translate-x-full': !shown, 'translate-x-0': shown }"
     >
       <div

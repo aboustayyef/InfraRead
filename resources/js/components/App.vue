@@ -1,7 +1,5 @@
 <template>
-    <div
-        class="relative w-full h-screen p-2 pt-12 overflow-y-auto text-left md:p-12"
-    >
+    <div class="relative w-full h-screen text-left">
         <!-- Debug Bar -->
         <div
             v-if="this.debug == true"
@@ -18,92 +16,96 @@
             >
         </div>
 
-        <!-- API Client Test (Phase 5A) -->
-        <api-client-test v-if="this.debug == true"></api-client-test>
-
-        <!-- Loading Indicator -->
-        <div v-cloak v-if="(posts_loaded == false)">
-            <div>
-                <!-- First, the header -->
-                <div class="w-full max-w-7xl mx-auto">
-                    <div class="mb-6 ml-2 w-8 h-8 md:w-12 md:h-12 bg-gray-200 animate-pulse"></div>
-                </div>
-                <!-- The the skeleton "posts" -->
-                <LoadingSkeleton />
-                <LoadingSkeleton />
-                <LoadingSkeleton />
-                <LoadingSkeleton />
-                <LoadingSkeleton />
-                <LoadingSkeleton />
-            </div>
-        </div>
-
-        <!-- Header -->
         <div
-            v-if="posts_loaded == true"
-            class="flex items-center justify-between mx-auto mb-6 max-w-7xl"
+            class="relative w-full h-full p-2 pt-12 overflow-y-auto md:p-12"
         >
-            <!-- Logo -->
-            <a href="/"><IrLogo class="ml-2 h-8 md:h-12" /></a>
+            <!-- API Client Test (Phase 5A) -->
+            <api-client-test v-if="this.debug == true"></api-client-test>
 
-            <!-- Read Count -->
-            <ReadCount :count="number_of_unread_posts" />
-
-            <!-- Undo & Settings -->
-            <div class="flex align-center">
-                <!-- Undo Button if exists -->
-                <div v-if="undoable" @click="undo()">
-                    <UndoButton />
+            <!-- Loading Indicator -->
+            <div v-cloak v-if="(posts_loaded == false)">
+                <div>
+                    <!-- First, the header -->
+                    <div class="w-full max-w-7xl mx-auto">
+                        <div class="mb-6 ml-2 w-8 h-8 md:w-12 md:h-12 bg-gray-200 animate-pulse"></div>
+                    </div>
+                    <!-- The the skeleton "posts" -->
+                    <LoadingSkeleton />
+                    <LoadingSkeleton />
+                    <LoadingSkeleton />
+                    <LoadingSkeleton />
+                    <LoadingSkeleton />
+                    <LoadingSkeleton />
                 </div>
-                <!-- Settings -->
-                <a href="/admin" class="block"><SettingsIcon /> </a>
             </div>
-        </div>
 
-        <!-- Banner that will only be displayed if viewing one source -->
-        <div v-if="which_source !== 'all'">
+            <!-- Header -->
             <div
-                class="container flex items-center justify-between p-2 py-4 mx-auto mb-4 rounded-md shadow-md bg-gray-50 max-w-7xl"
+                v-if="posts_loaded == true"
+                class="flex items-center justify-between mx-auto mb-6 max-w-7xl"
             >
-                <div class="text-sm font-semibold text-gray-600 uppercase">
-                    Posts by {{ source_name }}
+                <!-- Logo -->
+                <a href="/"><IrLogo class="ml-2 h-8 md:h-12" /></a>
+
+                <!-- Read Count -->
+                <ReadCount :count="number_of_unread_posts" />
+
+                <!-- Undo & Settings -->
+                <div class="flex align-center">
+                    <!-- Undo Button if exists -->
+                    <div v-if="undoable" @click="undo()">
+                        <UndoButton />
+                    </div>
+                    <!-- Settings -->
+                    <a href="/admin" class="block"><SettingsIcon /> </a>
                 </div>
-                <button
-                    @click="reset_to_all()"
-                    class="w-8 h-8 text-lg text-gray-400 bg-gray-100 rounded-full hover:bg-primary hover:text-white"
-                >
-                    &times;
-                </button>
             </div>
+
+            <!-- Banner that will only be displayed if viewing one source -->
+            <div v-if="which_source !== 'all'">
+                <div
+                    class="container flex items-center justify-between p-2 py-4 mx-auto mb-4 rounded-md shadow-md bg-gray-50 max-w-7xl"
+                >
+                    <div class="text-sm font-semibold text-gray-600 uppercase">
+                        Posts by {{ source_name }}
+                    </div>
+                    <button
+                        @click="reset_to_all()"
+                        class="w-8 h-8 text-lg text-gray-400 bg-gray-100 rounded-full hover:bg-primary hover:text-white"
+                    >
+                        &times;
+                    </button>
+                </div>
+            </div>
+
+            <!-- Crawl Warning Message if last crawl was long ago -->
+            <Message v-if="last_successful_crawl_data.status == 'warning' || last_successful_crawl_data.status == 'no_data' || last_successful_crawl_data.status == 'error'">
+                {{ last_successful_crawl_data.message }}
+            </Message>
+
+            <!-- Well Done! You've read everything message -->
+            <div
+                v-if="number_of_unread_posts < 1"
+                class="container max-w-md mx-auto"
+            >
+                <InboxZero />
+            </div>
+
+            <!-- List of Posts -->
+            <ul>
+                <li v-for="(post, index) in unread_posts" :key="post.id">
+                    <PostItem
+                        :post="post"
+                        :highlighter_on="highlighter_on"
+                        :index="index"
+                        :highlighter_position="highlighter_position"
+                        v-on:displayPost="display_post"
+                        v-on:switchSource="switch_source"
+                        v-on:markRead="mark_post_as_read"
+                    />
+                </li>
+            </ul>
         </div>
-
-        <!-- Crawl Warning Message if last crawl was long ago -->
-        <Message v-if="last_successful_crawl_data.status == 'warning' || last_successful_crawl_data.status == 'no_data' || last_successful_crawl_data.status == 'error'">
-            {{ last_successful_crawl_data.message }}
-        </Message>
-
-        <!-- Well Done! You've read everything message -->
-        <div
-            v-if="number_of_unread_posts < 1"
-            class="container max-w-md mx-auto"
-        >
-            <InboxZero />
-        </div>
-
-        <!-- List of Posts -->
-        <ul>
-            <li v-for="(post, index) in unread_posts" :key="post.id">
-                <PostItem
-                    :post="post"
-                    :highlighter_on="highlighter_on"
-                    :index="index"
-                    :highlighter_position="highlighter_position"
-                    v-on:displayPost="display_post"
-                    v-on:switchSource="switch_source"
-                    v-on:markRead="mark_post_as_read"
-                />
-            </li>
-        </ul>
 
         <!-- Single post details -->
         <post
