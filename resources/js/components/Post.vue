@@ -38,7 +38,7 @@
         <div id="summary" v-if="summary !== null" class="bg-yellow-50 p-4 my-4">
           <h3 class="font-bold mb-2">Summary</h3>
           <div v-if="summary === 'summarizing'">
-            <LoadingIndicator />
+            <SummarySkeleton />
           </div>
           <div v-else>
             <p class="content text-gray-900" v-html="summary"></p>
@@ -86,12 +86,12 @@
 <script>
 import SaveLaterButton from "./SaveLaterButton.vue";
 import SummarizeButton from "./SummarizeButton.vue";
-import LoadingIndicator from "./partials/ui/LoadingIndicator.vue";
 import PostContentSkeleton from "./partials/ui/PostContentSkeleton.vue";
+import SummarySkeleton from "./partials/ui/SummarySkeleton.vue";
 
 export default {
   props: ["post", "summary", "isLoading", "readLaterService"],
-  components: { SaveLaterButton, SummarizeButton, LoadingIndicator, PostContentSkeleton },
+  components: { SaveLaterButton, SummarizeButton, PostContentSkeleton, SummarySkeleton },
   methods: {
     handleSummary: function (summary) {
       this.$emit("summary-ready", summary);
