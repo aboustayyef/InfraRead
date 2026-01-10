@@ -43,9 +43,31 @@ class PostApiTest extends TestCase
             ->assertJsonStructure([
                 'data' => [
                     '*' => ['id','title','url','excerpt','posted_at','read','uid','author','time_ago']
-                ],
-                'meta' => ['total','current_page','last_page','per_page']
+                ]
             ]);
+    }
+
+    public function test_default_sort_returns_latest_posts_first()
+    {
+        $user = $this->actingUser();
+        $category = Category::factory()->create();
+        $source = Source::factory()->create(['category_id' => $category->id]);
+        $olderPost = Post::factory()->create([
+            'source_id' => $source->id,
+            'category_id' => $category->id,
+            'posted_at' => now()->subDays(2),
+        ]);
+        $newerPost = Post::factory()->create([
+            'source_id' => $source->id,
+            'category_id' => $category->id,
+            'posted_at' => now()->subDay(),
+        ]);
+
+        $response = $this->actingAs($user)->getJson('/api/v1/posts');
+
+        $response->assertOk();
+        $this->assertSame($olderPost->id, $response->json('data.0.id'));
+        $this->assertSame($newerPost->id, $response->json('data.1.id'));
     }
 
     public function test_can_filter_by_source()

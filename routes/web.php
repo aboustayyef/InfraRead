@@ -11,6 +11,7 @@ use App\Http\Controllers\VueAdminController;
 use App\Models\Category;
 use App\Models\Post;
 use App\Models\Source;
+use App\Utilities\ApiTokenResolver;
 use App\Utilities\OpmlImporter;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -23,14 +24,8 @@ require __DIR__.'/onboarding.php';
 
 // Launch App
 Route::get('/app', function () {
-    // Use token from .env if available, otherwise generate a new one
-    $token = config('infraread.api_token');
-
-    if (!$token) {
-        // Fallback: Generate API token for the current user
-        $user = auth()->user();
-        $token = $user->createToken('spa-token')->plainTextToken;
-    }
+    $user = auth()->user();
+    $token = ApiTokenResolver::resolveForUser($user, 'spa-token');
 
     return view('home')->with([
         'api_token' => $token

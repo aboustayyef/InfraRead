@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\Post;
 use App\Models\Source;
+use App\Utilities\ApiTokenResolver;
 use Illuminate\View\View;
 
 class VueAdminController extends Controller
@@ -57,13 +58,8 @@ class VueAdminController extends Controller
 
     private function resolveApiToken(): string
     {
-        $token = config('infraread.api_token');
+        $user = auth()->user();
 
-        if (!$token) {
-            $user = auth()->user();
-            $token = $user->createToken('admin-spa-token')->plainTextToken;
-        }
-
-        return $token;
+        return ApiTokenResolver::resolveForUser($user, 'admin-spa-token');
     }
 }

@@ -36,8 +36,9 @@ class PostController extends Controller
         } else {
             $query->orderBy('posted_at', 'desc');
         }
-        $perPage = (int) $request->query('per_page', 15);
-        $posts = $query->paginate($perPage)->appends($request->query());
+
+        $posts = $query->get();
+
         return PostResource::collection($posts);
     }
 
