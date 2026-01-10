@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class CategoryManagementApiTest extends TestCase
 {
@@ -22,7 +23,7 @@ class CategoryManagementApiTest extends TestCase
         Sanctum::actingAs($this->user);
     }
 
-    /** @test */
+    #[Test]
     public function it_requires_authentication_for_all_endpoints()
     {
         // Remove Sanctum authentication
@@ -47,7 +48,7 @@ class CategoryManagementApiTest extends TestCase
         $response->assertUnauthorized();
     }
 
-    /** @test */
+    #[Test]
     public function it_can_create_a_new_category()
     {
         $data = [
@@ -78,7 +79,7 @@ class CategoryManagementApiTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function it_validates_required_fields_for_creation()
     {
         $response = $this->postJson('/api/v1/categories', []);
@@ -87,7 +88,7 @@ class CategoryManagementApiTest extends TestCase
             ->assertJsonValidationErrors(['description']);
     }
 
-    /** @test */
+    #[Test]
     public function it_validates_description_length_for_creation()
     {
         // Test minimum length
@@ -105,7 +106,7 @@ class CategoryManagementApiTest extends TestCase
             ->assertJsonValidationErrors(['description']);
     }
 
-    /** @test */
+    #[Test]
     public function it_validates_unique_description_for_creation()
     {
         Category::factory()->create(['description' => 'Existing Category']);
@@ -118,7 +119,7 @@ class CategoryManagementApiTest extends TestCase
             ->assertJsonValidationErrors(['description']);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_update_a_category()
     {
         $category = Category::factory()->create(['description' => 'Old Name']);
@@ -153,7 +154,7 @@ class CategoryManagementApiTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function it_validates_required_fields_for_update()
     {
         $category = Category::factory()->create();
@@ -164,7 +165,7 @@ class CategoryManagementApiTest extends TestCase
             ->assertJsonValidationErrors(['description']);
     }
 
-    /** @test */
+    #[Test]
     public function it_validates_unique_description_for_update_except_current()
     {
         $category1 = Category::factory()->create(['description' => 'Category 1']);
@@ -184,7 +185,7 @@ class CategoryManagementApiTest extends TestCase
         $response->assertOk();
     }
 
-    /** @test */
+    #[Test]
     public function it_returns_404_for_nonexistent_category_on_update()
     {
         $response = $this->putJson('/api/v1/categories/999', [
@@ -194,7 +195,7 @@ class CategoryManagementApiTest extends TestCase
         $response->assertNotFound();
     }
 
-    /** @test */
+    #[Test]
     public function it_can_delete_empty_category()
     {
         $category = Category::factory()->create(['description' => 'Empty Category']);
@@ -222,7 +223,7 @@ class CategoryManagementApiTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function it_moves_sources_to_uncategorized_when_deleting_category_with_sources()
     {
         $category = Category::factory()->create(['description' => 'Category with Sources']);
@@ -262,7 +263,7 @@ class CategoryManagementApiTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function it_uses_existing_uncategorized_category_when_available()
     {
         // Create existing "Uncategorized" category
@@ -285,7 +286,7 @@ class CategoryManagementApiTest extends TestCase
         $this->assertEquals(1, Category::where('description', 'Uncategorized')->count());
     }
 
-    /** @test */
+    #[Test]
     public function it_returns_404_for_nonexistent_category_on_delete()
     {
         $response = $this->deleteJson('/api/v1/categories/999');
@@ -293,7 +294,7 @@ class CategoryManagementApiTest extends TestCase
         $response->assertNotFound();
     }
 
-    /** @test */
+    #[Test]
     public function it_handles_deletion_errors_gracefully()
     {
         $category = Category::factory()->create();
@@ -308,7 +309,7 @@ class CategoryManagementApiTest extends TestCase
         $response->assertOk();
     }
 
-    /** @test */
+    #[Test]
     public function category_index_includes_source_counts()
     {
         $category1 = Category::factory()->create(['description' => 'Category 1']);
@@ -344,7 +345,7 @@ class CategoryManagementApiTest extends TestCase
         $this->assertEquals(0, $cat2Data['sources_count']);
     }
 
-    /** @test */
+    #[Test]
     public function category_show_includes_sources_when_loaded()
     {
         $category = Category::factory()->create(['description' => 'Test Category']);

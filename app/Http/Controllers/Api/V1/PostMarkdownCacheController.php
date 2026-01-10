@@ -14,7 +14,7 @@ class PostMarkdownCacheController extends Controller
     {
         try {
             // Only warm the cache when Narrator is configured
-            if (env('PREFERRED_READLATER_SERVICE') !== 'narrator') {
+            if (config('infraread.preferred_readlater_service') !== 'narrator') {
                 return response()->json([
                     'status' => 'skipped',
                     'reason' => 'Narrator read-later service is not enabled',

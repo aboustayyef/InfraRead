@@ -12,6 +12,7 @@ use App\Plugins\PluginFixRelativeLinks;
 use App\Exceptions\FeedProcessing\PluginException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Log;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Test the improved plugin system with enhanced error handling,
@@ -42,7 +43,7 @@ class ImprovedPluginSystemTest extends TestCase
         Log::spy();
     }
 
-    /** @test */
+    #[Test]
     public function plugin_kernel_returns_plugins_for_known_source()
     {
         $kernel = new Kernel();
@@ -51,13 +52,14 @@ class ImprovedPluginSystemTest extends TestCase
         $this->assertNotEmpty($plugins);
         $this->assertIsArray($plugins);
 
-        // Should have FixRelativeLinks plugin for kottke.org
-        $this->assertCount(1, $plugins);
-        $this->assertEquals('FixRelativeLinks', $plugins[0]['name']);
-        $this->assertArrayHasKey('options', $plugins[0]);
+        // Should have global plugin plus FixRelativeLinks for kottke.org
+        $this->assertCount(2, $plugins);
+        $this->assertEquals('GlobalMutedPhrases', $plugins[0]['name']);
+        $this->assertEquals('FixRelativeLinks', $plugins[1]['name']);
+        $this->assertArrayHasKey('options', $plugins[1]);
     }
 
-    /** @test */
+    #[Test]
     public function plugin_kernel_returns_empty_for_unknown_source()
     {
         $unknownSource = Source::factory()->create([
@@ -69,10 +71,11 @@ class ImprovedPluginSystemTest extends TestCase
         $kernel = new Kernel();
         $plugins = $kernel->getPluginsForSource($unknownSource);
 
-        $this->assertEmpty($plugins);
+        $this->assertCount(1, $plugins);
+        $this->assertEquals('GlobalMutedPhrases', $plugins[0]['name']);
     }
 
-    /** @test */
+    #[Test]
     public function plugin_kernel_supports_legacy_configuration()
     {
         // Create source that matches legacy configuration
@@ -85,13 +88,14 @@ class ImprovedPluginSystemTest extends TestCase
         $kernel = new Kernel();
         $plugins = $kernel->getPluginsForSource($legacySource);
 
-        // Should get plugins from new configuration (slashdot.org)
-        $this->assertCount(2, $plugins);
-        $this->assertEquals('MakeTextLegible', $plugins[0]['name']);
-        $this->assertEquals('ReplaceArticleLink', $plugins[1]['name']);
+        // Should get global plugin plus new configuration (slashdot.org)
+        $this->assertCount(3, $plugins);
+        $this->assertEquals('GlobalMutedPhrases', $plugins[0]['name']);
+        $this->assertEquals('MakeTextLegible', $plugins[1]['name']);
+        $this->assertEquals('ReplaceArticleLink', $plugins[2]['name']);
     }
 
-    /** @test */
+    #[Test]
     public function post_applies_plugins_with_options()
     {
         $post = Post::factory()->create([
@@ -108,7 +112,7 @@ class ImprovedPluginSystemTest extends TestCase
         $this->assertStringContainsString('https://kottke.org/test-image.jpg', $post->content);
     }
 
-    /** @test */
+    #[Test]
     public function post_handles_plugin_failures_gracefully()
     {
         // Create a post that will cause plugin issues
@@ -128,7 +132,7 @@ class ImprovedPluginSystemTest extends TestCase
            ->once();
     }
 
-    /** @test */
+    #[Test]
     public function plugin_execution_preserves_error_context()
     {
         $post = Post::factory()->create([
@@ -152,7 +156,7 @@ class ImprovedPluginSystemTest extends TestCase
            ->once();
     }
 
-    /** @test */
+    #[Test]
     public function plugin_logs_successful_processing_summary()
     {
         $post = Post::factory()->create([
@@ -170,12 +174,13 @@ class ImprovedPluginSystemTest extends TestCase
                return $context['post_id'] === $post->id &&
                       isset($context['successful_plugins']) &&
                       in_array('FixRelativeLinks', $context['successful_plugins']) &&
-                      $context['total_plugins'] === 1;
+                      in_array('GlobalMutedPhrases', $context['successful_plugins']) &&
+                      $context['total_plugins'] === 2;
            }))
            ->once();
     }
 
-    /** @test */
+    #[Test]
     public function fix_relative_links_plugin_supports_options()
     {
         $post = Post::factory()->create([
@@ -202,7 +207,7 @@ class ImprovedPluginSystemTest extends TestCase
         $this->assertStringNotContainsString('srcset=', $post->content);
     }
 
-    /** @test */
+    #[Test]
     public function plugin_metadata_provides_comprehensive_information()
     {
         $post = Post::factory()->create([
@@ -232,7 +237,7 @@ class ImprovedPluginSystemTest extends TestCase
         }
     }
 
-    /** @test */
+    #[Test]
     public function kernel_can_validate_plugin_configuration()
     {
         $kernel = new Kernel();
@@ -244,7 +249,7 @@ class ImprovedPluginSystemTest extends TestCase
         // which is expected in test environment
     }
 
-    /** @test */
+    #[Test]
     public function kernel_can_list_available_plugins()
     {
         $kernel = new Kernel();
@@ -254,7 +259,7 @@ class ImprovedPluginSystemTest extends TestCase
         $this->assertContains('FixRelativeLinks', $available);
     }
 
-    /** @test */
+    #[Test]
     public function plugin_handles_malformed_post_urls_gracefully()
     {
         $post = Post::factory()->create([
@@ -273,7 +278,7 @@ class ImprovedPluginSystemTest extends TestCase
         $this->assertEquals('<img src="/test.jpg">', $post->content);
     }
 
-    /** @test */
+    #[Test]
     public function plugin_only_saves_when_content_changes()
     {
         $post = Post::factory()->create([

@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
+use PHPUnit\Framework\Attributes\Test;
 
 class PostsUpdaterCommandTest extends TestCase
 {
@@ -33,7 +34,7 @@ class PostsUpdaterCommandTest extends TestCase
         Log::spy();
     }
 
-    /** @test */
+    #[Test]
     public function can_process_single_source_successfully()
     {
         // Create a source
@@ -76,7 +77,7 @@ class PostsUpdaterCommandTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function processes_source_with_valid_feed()
     {
         $source = Source::factory()->create([
@@ -105,7 +106,7 @@ class PostsUpdaterCommandTest extends TestCase
         $this->assertEquals(0, $source->consecutive_failures);
     }
 
-    /** @test */
+    #[Test]
     public function handles_single_source_not_found()
     {
         // Run command with non-existent source ID
@@ -114,7 +115,7 @@ class PostsUpdaterCommandTest extends TestCase
              ->assertExitCode(1);
     }
 
-    /** @test */
+    #[Test]
     public function handles_single_source_feed_fetch_error()
     {
         // Create a test source
@@ -141,7 +142,7 @@ class PostsUpdaterCommandTest extends TestCase
         $this->assertEquals(1, $source->consecutive_failures);
     }
 
-    /** @test */
+    #[Test]
     public function processes_all_active_sources()
     {
         // Create multiple test sources
@@ -193,7 +194,7 @@ class PostsUpdaterCommandTest extends TestCase
         $this->assertNull($inactiveSource->last_fetched_at); // Should not be processed
     }
 
-    /** @test */
+    #[Test]
     public function skips_sources_in_exponential_backoff()
     {
         // Create a source with failures that should trigger backoff
@@ -220,7 +221,7 @@ class PostsUpdaterCommandTest extends TestCase
         $this->assertEquals($originalLastFetched, $source->last_fetched_at);
     }
 
-    /** @test */
+    #[Test]
     public function handles_mixed_success_and_failure_scenarios()
     {
         // Create sources with different outcomes
@@ -262,7 +263,7 @@ class PostsUpdaterCommandTest extends TestCase
         $this->assertEquals('failed', $failSource->status);
     }
 
-    /** @test */
+    #[Test]
     public function logs_processing_summary()
     {
         // Create a test source
@@ -287,7 +288,7 @@ class PostsUpdaterCommandTest extends TestCase
            ->once();
     }
 
-    /** @test */
+    #[Test]
     public function updates_last_successful_crawl_timestamp()
     {
         // Create a test source
@@ -317,7 +318,7 @@ class PostsUpdaterCommandTest extends TestCase
         $this->assertInstanceOf(Carbon::class, $parsed);
     }
 
-    /** @test */
+    #[Test]
     public function handles_critical_errors_gracefully()
     {
         // Create a source that will cause issues
@@ -388,7 +389,7 @@ class PostsUpdaterCommandTest extends TestCase
         $this->assertEquals(0, $source->consecutive_failures);
     }
 
-    /** @test */
+    #[Test]
     public function handles_single_source_not_found()
     {
         // Run command with non-existent source ID
@@ -397,7 +398,7 @@ class PostsUpdaterCommandTest extends TestCase
              ->assertExitCode(1);
     }
 
-    /** @test */
+    #[Test]
     public function handles_single_source_feed_fetch_error()
     {
         // Create a test source
@@ -425,7 +426,7 @@ class PostsUpdaterCommandTest extends TestCase
         $this->assertEquals(1, $source->consecutive_failures);
     }
 
-    /** @test */
+    #[Test]
     public function processes_all_active_sources()
     {
         // Create multiple test sources
@@ -480,7 +481,7 @@ class PostsUpdaterCommandTest extends TestCase
         $this->assertNull($inactiveSource->last_fetched_at); // Should not be processed
     }
 
-    /** @test */
+    #[Test]
     public function skips_sources_in_exponential_backoff()
     {
         // Create a source with failures that should trigger backoff
@@ -508,7 +509,7 @@ class PostsUpdaterCommandTest extends TestCase
         $this->assertEquals($originalLastFetched, $source->last_fetched_at);
     }
 
-    /** @test */
+    #[Test]
     public function handles_mixed_success_and_failure_scenarios()
     {
         // Create sources with different outcomes
@@ -552,7 +553,7 @@ class PostsUpdaterCommandTest extends TestCase
         $this->assertEquals('failed', $failSource->status);
     }
 
-    /** @test */
+    #[Test]
     public function logs_processing_summary()
     {
         // Create a test source
@@ -578,7 +579,7 @@ class PostsUpdaterCommandTest extends TestCase
            ->once();
     }
 
-    /** @test */
+    #[Test]
     public function updates_last_successful_crawl_timestamp()
     {
         // Create a test source
@@ -609,7 +610,7 @@ class PostsUpdaterCommandTest extends TestCase
         $this->assertInstanceOf(Carbon::class, $parsed);
     }
 
-    /** @test */
+    #[Test]
     public function handles_critical_errors_gracefully()
     {
         // Create a source that will cause issues

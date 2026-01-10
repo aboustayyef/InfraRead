@@ -7,6 +7,7 @@ use App\Http\Requests\Api\V1\CreateSourceRequest;
 use App\Http\Requests\Api\V1\UpdateSourceRequest;
 use App\Http\Resources\SourceResource;
 use App\Models\Source;
+use App\UrlAnalyzer;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 
@@ -27,8 +28,29 @@ class SourceManagementController extends Controller
         $validated = $request->validated();
         $url = $validated['url'];
 
-        // Trust the user-provided URL as the feed; analyzer is only for pre-fill on the client.
-        $rssUrl = $url;
+        // Analyze URL to validate reachability and discover RSS feed metadata.
+        $analysis = UrlAnalyzer::create($url);
+        if (!$analysis->isSuccessful()) {
+            return response()->json([
+                'message' => 'Failed to analyze URL',
+                'errors' => [
+                    'url' => [$analysis->getFirstError()]
+                ]
+            ], 422);
+        }
+
+        $rssUrl = $analysis->getRssFeed();
+        if (!$rssUrl && !$analysis->isLikelyFeedUrl()) {
+            return response()->json([
+                'message' => 'No RSS feed discovered for this URL',
+                'errors' => [
+                    'url' => ['No RSS or Atom feed discovered at this URL.']
+                ]
+            ], 422);
+        }
+
+        $rssUrl = $rssUrl ?: $url;
+        $metadata = $analysis->getMetadata();
 
         // Step 3: Check for duplicate sources
         $existingSource = Source::where('fetcher_source', $rssUrl)->first();
@@ -46,10 +68,10 @@ class SourceManagementController extends Controller
 
         try {
             $source = Source::create([
-                'name' => $validated['name'] ?? $url,
-                'description' => $validated['description'] ?? null,
+                'name' => $validated['name'] ?? $metadata['title'] ?? $url,
+                'description' => $validated['description'] ?? $metadata['description'] ?? null,
                 'url' => $url,
-                'author' => '',
+                'author' => $metadata['author'] ?? '',
                 'fetcher_kind' => 'rss',  // Currently only RSS supported
                 'fetcher_source' => $rssUrl,
                 'category_id' => $validated['category_id'],

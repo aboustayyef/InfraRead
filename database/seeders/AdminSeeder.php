@@ -19,9 +19,9 @@ class AdminSeeder extends Seeder
         // Erase old Data
         DB::table('users')->truncate();
         $admin = new User();
-        $admin->name = env('ADMIN_NAME');
-        $admin->email = env('ADMIN_EMAIL');
-        $admin->password = bcrypt(env('ADMIN_PASSWORD'));
+        $admin->name = config('infraread.admin.name');
+        $admin->email = config('infraread.admin.email');
+        $admin->password = bcrypt((string) config('infraread.admin.password'));
         $admin->email_verified_at = new Carbon();
         $admin->save();
     }

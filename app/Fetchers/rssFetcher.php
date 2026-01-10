@@ -114,7 +114,7 @@ class rssFetcher
                 ],
                 'headers' => [
                     'Content-Type:' => 'application/json',
-                    'x-api-key' => env('MERCURY_API_KEY'),
+                    'x-api-key' => config('services.mercury.api_key'),
                 ],
             ]);
             $content = json_decode($response->getBody());

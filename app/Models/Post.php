@@ -16,12 +16,6 @@ class Post extends Model
     use HasFactory;
     protected $guarded = [];
     protected $appends = ['time_ago'];
-    protected $dates = [
-        'created_at',
-        'updated_at',
-        'deleted_at',
-        'posted_at',
-    ];
 
     /**
      * The attributes that should be cast to native types.
@@ -31,11 +25,12 @@ class Post extends Model
      */
     protected $casts = [
         'read' => 'boolean',
+        'posted_at' => 'datetime',
     ];
 
     public function summary($numSentences = 2)
     {
-        $apiKey = env('OPENAI_KEY');
+        $apiKey = config('services.openai.key');
 
         // Keep HTML but remove potentially dangerous scripts or styles
         $text = $this->content; // Already contains HTML
@@ -91,7 +86,7 @@ EOT;
 
     public function old_summary($numSentences = 4)
     {
-        $apiKey = env('OPENAI_KEY');
+        $apiKey = config('services.openai.key');
         $text = strip_tags($this->content);
         $text = str_replace(PHP_EOL, '', $text);
 
@@ -163,6 +158,10 @@ EOT;
 
     public function getTimeAgoAttribute()
     {
+        if (!$this->posted_at) {
+            return null;
+        }
+
         return $this->posted_at->diffForHumans();
     }
 

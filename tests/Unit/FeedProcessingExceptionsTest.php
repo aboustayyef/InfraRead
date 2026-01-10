@@ -9,6 +9,7 @@ use App\Exceptions\FeedProcessing\FeedFetchException;
 use App\Exceptions\FeedProcessing\FeedParseException;
 use App\Exceptions\FeedProcessing\PluginException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Test suite for custom feed processing exceptions.
@@ -34,7 +35,7 @@ class FeedProcessingExceptionsTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function feed_fetch_exception_includes_source_context()
     {
         $exception = new FeedFetchException(
@@ -51,7 +52,7 @@ class FeedProcessingExceptionsTest extends TestCase
         $this->assertStringContainsString('Network timeout', $exception->getMessage());
     }
 
-    /** @test */
+    #[Test]
     public function feed_fetch_http_error_factory_method_works()
     {
         $exception = FeedFetchException::httpError($this->source, 404, 'Not Found');
@@ -62,7 +63,7 @@ class FeedProcessingExceptionsTest extends TestCase
         $this->assertFalse($exception->isRetryable()); // 404 should not be retried
     }
 
-    /** @test */
+    #[Test]
     public function feed_fetch_timeout_factory_method_works()
     {
         $exception = FeedFetchException::timeout($this->source, 30);
@@ -72,7 +73,7 @@ class FeedProcessingExceptionsTest extends TestCase
         $this->assertTrue($exception->isRetryable()); // Timeouts should be retried
     }
 
-    /** @test */
+    #[Test]
     public function feed_fetch_invalid_url_factory_method_works()
     {
         $badUrl = 'not-a-valid-url';
@@ -83,7 +84,7 @@ class FeedProcessingExceptionsTest extends TestCase
         $this->assertFalse($exception->isRetryable()); // Invalid URLs shouldn't be retried
     }
 
-    /** @test */
+    #[Test]
     public function feed_fetch_retryability_logic_works_correctly()
     {
         // Test permanent errors (not retryable)
@@ -105,7 +106,7 @@ class FeedProcessingExceptionsTest extends TestCase
         $this->assertTrue($exception->isRetryable());
     }
 
-    /** @test */
+    #[Test]
     public function feed_parse_exception_works_correctly()
     {
         $exception = new FeedParseException(
@@ -119,7 +120,7 @@ class FeedProcessingExceptionsTest extends TestCase
         $this->assertStringContainsString('Invalid XML structure', $exception->getMessage());
     }
 
-    /** @test */
+    #[Test]
     public function feed_parse_xml_error_factory_method_works()
     {
         $xmlError = 'Syntax error at line 5';
@@ -132,7 +133,7 @@ class FeedProcessingExceptionsTest extends TestCase
         $this->assertEquals('<rss><channel><item>', $exception->getContext()['feed_snippet']);
     }
 
-    /** @test */
+    #[Test]
     public function feed_parse_missing_elements_factory_method_works()
     {
         $missingElements = ['title', 'description', 'link'];
@@ -142,7 +143,7 @@ class FeedProcessingExceptionsTest extends TestCase
         $this->assertEquals($missingElements, $exception->getContext()['missing_elements']);
     }
 
-    /** @test */
+    #[Test]
     public function feed_parse_unsupported_format_factory_method_works()
     {
         $exception = FeedParseException::unsupportedFormat($this->source, 'atom');
@@ -151,7 +152,7 @@ class FeedProcessingExceptionsTest extends TestCase
         $this->assertEquals('atom', $exception->getContext()['detected_format']);
     }
 
-    /** @test */
+    #[Test]
     public function feed_parse_empty_feed_factory_method_works()
     {
         $exception = FeedParseException::emptyFeed($this->source);
@@ -160,7 +161,7 @@ class FeedProcessingExceptionsTest extends TestCase
         $this->assertEquals(0, $exception->getContext()['item_count']);
     }
 
-    /** @test */
+    #[Test]
     public function plugin_exception_includes_plugin_context()
     {
         $pluginName = 'FixRelativeLinks';
@@ -178,7 +179,7 @@ class FeedProcessingExceptionsTest extends TestCase
         $this->assertEquals(123, $exception->getContext()['post_id']);
     }
 
-    /** @test */
+    #[Test]
     public function plugin_configuration_error_factory_method_works()
     {
         $exception = PluginException::configurationError(
@@ -191,7 +192,7 @@ class FeedProcessingExceptionsTest extends TestCase
         $this->assertEquals('Missing required config parameter', $exception->getContext()['config_error']);
     }
 
-    /** @test */
+    #[Test]
     public function plugin_execution_error_factory_method_works()
     {
         $exception = PluginException::executionError(
@@ -206,7 +207,7 @@ class FeedProcessingExceptionsTest extends TestCase
         $this->assertEquals(456, $exception->getContext()['post_id']);
     }
 
-    /** @test */
+    #[Test]
     public function all_exceptions_include_source_information_in_message()
     {
         $exceptions = [
@@ -221,7 +222,7 @@ class FeedProcessingExceptionsTest extends TestCase
         }
     }
 
-    /** @test */
+    #[Test]
     public function exceptions_preserve_original_exception_chain()
     {
         $originalException = new \Exception('Original network error');

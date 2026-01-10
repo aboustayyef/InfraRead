@@ -11,6 +11,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Log;
 use Tests\TestCase;
 use Mockery;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Unit tests for the RefreshSourceJob
@@ -38,7 +39,7 @@ class RefreshSourceJobTest extends TestCase
         $this->category = Category::factory()->create();
     }
 
-    /** @test */
+    #[Test]
     public function job_successfully_refreshes_source()
     {
         // Create a source and mock its updatePosts method
@@ -61,6 +62,7 @@ class RefreshSourceJobTest extends TestCase
         // Mock the job's internal properties that would be set by Laravel
         $job->job = Mockery::mock();
         $job->job->shouldReceive('getJobId')->andReturn('test-job-123');
+        $job->job->shouldReceive('attempts')->andReturn(1);
 
         Log::shouldReceive('info')->twice(); // Start and completion logs
 
@@ -70,7 +72,7 @@ class RefreshSourceJobTest extends TestCase
         $this->assertTrue(true);
     }
 
-    /** @test */
+    #[Test]
     public function job_handles_retryable_feed_processing_exception()
     {
         $source = Source::factory()->create(['category_id' => $this->category->id]);
@@ -88,10 +90,7 @@ class RefreshSourceJobTest extends TestCase
         // Mock job properties
         $job->job = Mockery::mock();
         $job->job->shouldReceive('getJobId')->andReturn('test-job-123');
-
-        // Mock attempts() to simulate this is attempt #1 of 3
-        $job = Mockery::mock($job)->makePartial();
-        $job->shouldReceive('attempts')->andReturn(1);
+        $job->job->shouldReceive('attempts')->andReturn(1);
 
         Log::shouldReceive('info')->once(); // Start log
         Log::shouldReceive('error')->once(); // Error log
@@ -103,13 +102,13 @@ class RefreshSourceJobTest extends TestCase
         $job->handle();
     }
 
-    /** @test */
+    #[Test]
     public function job_fails_permanently_for_non_retryable_exception()
     {
         $source = Source::factory()->create(['category_id' => $this->category->id]);
 
         // Create a non-retryable exception
-        $exception = FeedFetchException::invalidFeed($source, 'Not a valid RSS feed');
+        $exception = FeedFetchException::httpError($source, 404, 'Not a valid RSS feed');
 
         $mockedSource = Mockery::mock($source)->makePartial();
         $mockedSource->shouldReceive('updatePosts')
@@ -121,18 +120,18 @@ class RefreshSourceJobTest extends TestCase
         // Mock job properties
         $job->job = Mockery::mock();
         $job->job->shouldReceive('getJobId')->andReturn('test-job-123');
-
-        $job = Mockery::mock($job)->makePartial();
-        $job->shouldReceive('attempts')->andReturn(1);
-        $job->shouldReceive('fail')->once(); // Should call fail() for non-retryable
+        $job->job->shouldReceive('attempts')->andReturn(1);
+        $job->job->shouldReceive('fail')->once(); // Should call fail() for non-retryable
 
         Log::shouldReceive('info')->once(); // Start log
         Log::shouldReceive('error')->twice(); // Error log + permanent failure log
 
         $job->handle();
+
+        $this->assertTrue(true);
     }
 
-    /** @test */
+    #[Test]
     public function job_fails_permanently_after_max_attempts()
     {
         $source = Source::factory()->create(['category_id' => $this->category->id]);
@@ -148,19 +147,18 @@ class RefreshSourceJobTest extends TestCase
 
         $job->job = Mockery::mock();
         $job->job->shouldReceive('getJobId')->andReturn('test-job-123');
-
-        // Simulate max attempts reached
-        $job = Mockery::mock($job)->makePartial();
-        $job->shouldReceive('attempts')->andReturn(3); // At max attempts
-        $job->shouldReceive('fail')->once();
+        $job->job->shouldReceive('attempts')->andReturn(3); // At max attempts
+        $job->job->shouldReceive('fail')->once();
 
         Log::shouldReceive('info')->once(); // Start log
         Log::shouldReceive('error')->twice(); // Error log + permanent failure log
 
         $job->handle();
+
+        $this->assertTrue(true);
     }
 
-    /** @test */
+    #[Test]
     public function job_handles_unexpected_exceptions()
     {
         $source = Source::factory()->create(['category_id' => $this->category->id]);
@@ -177,9 +175,7 @@ class RefreshSourceJobTest extends TestCase
 
         $job->job = Mockery::mock();
         $job->job->shouldReceive('getJobId')->andReturn('test-job-123');
-
-        $job = Mockery::mock($job)->makePartial();
-        $job->shouldReceive('attempts')->andReturn(1);
+        $job->job->shouldReceive('attempts')->andReturn(1);
 
         Log::shouldReceive('info')->once(); // Start log
         Log::shouldReceive('error')->once(); // Error log
@@ -191,7 +187,7 @@ class RefreshSourceJobTest extends TestCase
         $job->handle();
     }
 
-    /** @test */
+    #[Test]
     public function job_failed_method_logs_properly()
     {
         $source = Source::factory()->create(['category_id' => $this->category->id]);
@@ -200,9 +196,7 @@ class RefreshSourceJobTest extends TestCase
         // Mock job properties
         $job->job = Mockery::mock();
         $job->job->shouldReceive('getJobId')->andReturn('test-job-123');
-
-        $job = Mockery::mock($job)->makePartial();
-        $job->shouldReceive('attempts')->andReturn(3);
+        $job->job->shouldReceive('attempts')->andReturn(3);
 
         $exception = new \Exception('Final failure');
 
@@ -212,9 +206,11 @@ class RefreshSourceJobTest extends TestCase
         );
 
         $job->failed($exception);
+
+        $this->assertTrue(true);
     }
 
-    /** @test */
+    #[Test]
     public function job_uses_correct_queue_name()
     {
         $source = Source::factory()->create(['category_id' => $this->category->id]);
@@ -224,7 +220,7 @@ class RefreshSourceJobTest extends TestCase
         $this->assertEquals('refresh', $job->queue);
     }
 
-    /** @test */
+    #[Test]
     public function job_has_correct_retry_configuration()
     {
         $source = Source::factory()->create(['category_id' => $this->category->id]);
@@ -239,7 +235,7 @@ class RefreshSourceJobTest extends TestCase
         $this->assertEquals($expectedBackoff, $job->backoff());
     }
 
-    /** @test */
+    #[Test]
     public function job_stores_source_correctly()
     {
         $source = Source::factory()->create(['category_id' => $this->category->id]);

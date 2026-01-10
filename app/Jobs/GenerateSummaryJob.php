@@ -178,7 +178,7 @@ class GenerateSummaryJob implements ShouldQueue
             ];
 
             $shouldRetry = collect($retryableErrors)->some(function ($pattern) use ($e) {
-                return str_contains(strtolower($e->getMessage()), $pattern);
+                return str_contains(strtolower($e->getMessage()), strtolower($pattern));
             });
 
             if ($shouldRetry && $this->attempts() < $this->tries) {

@@ -24,7 +24,7 @@ require __DIR__.'/onboarding.php';
 // Launch App
 Route::get('/app', function () {
     // Use token from .env if available, otherwise generate a new one
-    $token = env('INFRAREAD_API_TOKEN');
+    $token = config('infraread.api_token');
 
     if (!$token) {
         // Fallback: Generate API token for the current user

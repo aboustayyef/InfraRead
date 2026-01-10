@@ -6,6 +6,7 @@
 .env
 .env.backup
 .phpunit.result.cache
+/database/testing.sqlite
 Homestead.json
 Homestead.yaml
 npm-debug.log

@@ -9,6 +9,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class OpmlApiTest extends TestCase
 {
@@ -23,7 +24,7 @@ class OpmlApiTest extends TestCase
         Sanctum::actingAs($this->user);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_export_opml_when_no_sources_exist()
     {
         $response = $this->getJson('/api/v1/export-opml');
@@ -51,7 +52,7 @@ class OpmlApiTest extends TestCase
         $this->assertStringContainsString('<title>Infraread RSS Feeds</title>', $opmlContent);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_export_opml_with_sources_and_categories()
     {
         // Create test data
@@ -99,7 +100,7 @@ class OpmlApiTest extends TestCase
         $this->assertStringContainsString('https://techcrunch.com/feed/', $opmlContent);
     }
 
-    /** @test */
+    #[Test]
     public function it_requires_authentication_for_opml_export()
     {
         // Remove Sanctum authentication
@@ -110,7 +111,7 @@ class OpmlApiTest extends TestCase
         $response->assertUnauthorized();
     }
 
-    /** @test */
+    #[Test]
     public function it_can_preview_valid_opml_file()
     {
         $opmlContent = $this->getValidOpmlContent();
@@ -140,7 +141,7 @@ class OpmlApiTest extends TestCase
         $this->assertEquals('Random Blog', $data['uncategorized_sources'][0]['name']);
     }
 
-    /** @test */
+    #[Test]
     public function it_rejects_invalid_opml_file()
     {
         $invalidContent = '<invalid>not opml</invalid>';
@@ -156,7 +157,7 @@ class OpmlApiTest extends TestCase
             ]);
     }
 
-    /** @test */
+    #[Test]
     public function it_validates_opml_file_requirements()
     {
         // Test missing file
@@ -180,7 +181,7 @@ class OpmlApiTest extends TestCase
             ->assertJsonValidationErrors(['opml']);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_import_opml_in_replace_mode()
     {
         // Create existing data that should be replaced
@@ -226,7 +227,7 @@ class OpmlApiTest extends TestCase
         $this->assertDatabaseHas('categories', ['description' => 'Tech News']);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_import_opml_in_merge_mode()
     {
         // Create existing data that should be preserved
@@ -258,7 +259,7 @@ class OpmlApiTest extends TestCase
         $this->assertDatabaseHas('categories', ['description' => 'Tech News']);
     }
 
-    /** @test */
+    #[Test]
     public function it_skips_duplicate_sources_in_merge_mode()
     {
         // Create existing source with same RSS URL
@@ -284,7 +285,7 @@ class OpmlApiTest extends TestCase
         $this->assertEquals(1, Source::where('fetcher_source', 'https://techcrunch.com/feed/')->count());
     }
 
-    /** @test */
+    #[Test]
     public function it_defaults_to_replace_mode_when_mode_not_specified()
     {
         $opmlContent = $this->getValidOpmlContent();
@@ -298,7 +299,7 @@ class OpmlApiTest extends TestCase
         $this->assertEquals('replace', $response->json('data.mode'));
     }
 
-    /** @test */
+    #[Test]
     public function it_requires_authentication_for_opml_import()
     {
         // Remove Sanctum authentication

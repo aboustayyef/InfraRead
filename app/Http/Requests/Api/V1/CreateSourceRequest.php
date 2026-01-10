@@ -22,7 +22,7 @@ class CreateSourceRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'url' => 'required|url',
+            'url' => 'required|url:http,https',
             'category_id' => 'required|integer|exists:categories,id',
             'name' => 'sometimes|string|max:255',
             'description' => 'sometimes|string|max:500',

@@ -10,10 +10,10 @@
         @foreach ($categories as $category)
         <outline title="{{$category->description}}">
             @foreach ($category->sources as $source)
-            @if(env('OPML') == 'original')
+            @if(config('infraread.opml') == 'original')
             <outline title="{{$source->name}}" text="{{$source->description}}" xmlUrl="{{$source->fetcher_source}}" type="rss" htmlUrl="{{$source->url}}" />
             @else
-            <outline title="{{$source->name}}" text="{{$source->description}}" xmlUrl="{{env('APP_URL')}}/rss/{{$source->id}}" type="rss" htmlUrl="{{$source->url}}" />
+            <outline title="{{$source->name}}" text="{{$source->description}}" xmlUrl="{{config('app.url')}}/rss/{{$source->id}}" type="rss" htmlUrl="{{$source->url}}" />
             @endif
             @endforeach
         </outline>

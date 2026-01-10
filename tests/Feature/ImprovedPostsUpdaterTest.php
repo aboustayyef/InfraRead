@@ -7,9 +7,11 @@ use App\Models\Source;
 use App\Models\Category;
 use App\Exceptions\FeedProcessing\FeedFetchException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Feature tests for the improved PostsUpdater console command.
@@ -35,7 +37,7 @@ class ImprovedPostsUpdaterTest extends TestCase
         Log::shouldReceive('critical')->byDefault();
     }
 
-    /** @test */
+    #[Test]
     public function command_handles_non_existent_source_gracefully()
     {
         $this->artisan('app:update_posts', ['source' => 999])
@@ -43,7 +45,7 @@ class ImprovedPostsUpdaterTest extends TestCase
              ->assertExitCode(1);
     }
 
-    /** @test */
+    #[Test]
     public function command_processes_single_source_successfully()
     {
         $category = Category::factory()->create();
@@ -54,14 +56,18 @@ class ImprovedPostsUpdaterTest extends TestCase
         ]);
 
         // Mock the updatePosts method to return success
-        $source = \Mockery::mock($source)->makePartial();
-        $source->shouldReceive('updatePosts')
-               ->once()
-               ->andReturn(\App\ValueObjects\SourceUpdateResult::success(5, 2.5));
+        $sourceMock = \Mockery::mock($source)->makePartial();
+        $sourceMock->shouldReceive('updatePosts')
+                   ->once()
+                   ->andReturn(\App\ValueObjects\SourceUpdateResult::success(5, 2.5));
 
-        Source::shouldReceive('find')
-              ->with((string) $source->id)
-              ->andReturn($source);
+        $sourceModel = \Mockery::mock(Source::class);
+        $sourceQuery = \Mockery::mock(\Illuminate\Database\Eloquent\Builder::class);
+        $sourceModel->shouldReceive('newQuery')->andReturn($sourceQuery);
+        $sourceQuery->shouldReceive('find')
+                    ->with((string) $source->id)
+                    ->andReturn($sourceMock);
+        $this->app->instance(Source::class, $sourceModel);
 
         $this->artisan('app:update_posts', ['source' => $source->id])
              ->expectsOutput('Processing source: Test Source')
@@ -70,7 +76,7 @@ class ImprovedPostsUpdaterTest extends TestCase
              ->assertExitCode(0);
     }
 
-    /** @test */
+    #[Test]
     public function command_handles_single_source_failure()
     {
         $category = Category::factory()->create();
@@ -81,15 +87,19 @@ class ImprovedPostsUpdaterTest extends TestCase
         ]);
 
         // Mock the updatePosts method to throw an exception
-        $source = \Mockery::mock($source)->makePartial();
         $exception = FeedFetchException::httpError($source, 404);
-        $source->shouldReceive('updatePosts')
-               ->once()
-               ->andThrow($exception);
+        $sourceMock = \Mockery::mock($source)->makePartial();
+        $sourceMock->shouldReceive('updatePosts')
+                   ->once()
+                   ->andThrow($exception);
 
-        Source::shouldReceive('find')
-              ->with((string) $source->id)
-              ->andReturn($source);
+        $sourceModel = \Mockery::mock(Source::class);
+        $sourceQuery = \Mockery::mock(\Illuminate\Database\Eloquent\Builder::class);
+        $sourceModel->shouldReceive('newQuery')->andReturn($sourceQuery);
+        $sourceQuery->shouldReceive('find')
+                    ->with((string) $source->id)
+                    ->andReturn($sourceMock);
+        $this->app->instance(Source::class, $sourceModel);
 
         $this->artisan('app:update_posts', ['source' => $source->id])
              ->expectsOutput('Processing source: Failed Source')
@@ -97,7 +107,7 @@ class ImprovedPostsUpdaterTest extends TestCase
              ->assertExitCode(1);
     }
 
-    /** @test */
+    #[Test]
     public function command_skips_sources_in_backoff()
     {
         $category = Category::factory()->create();
@@ -119,18 +129,25 @@ class ImprovedPostsUpdaterTest extends TestCase
         ]);
 
         // Mock successful processing for active source
-        Source::shouldReceive('where->get')
-              ->andReturn(collect([$activeSource, $backoffSource]));
+        $activeSourceMock = \Mockery::mock($activeSource)->makePartial();
+        $activeSourceMock->shouldReceive('shouldSkipDueToBackoff')->andReturn(false);
+        $activeSourceMock->shouldReceive('updatePosts')
+                         ->andReturn(\App\ValueObjects\SourceUpdateResult::success(3, 1.5));
 
-        $activeSource = \Mockery::mock($activeSource)->makePartial();
-        $activeSource->shouldReceive('shouldSkipDueToBackoff')->andReturn(false);
-        $activeSource->shouldReceive('updatePosts')
-                    ->andReturn(\App\ValueObjects\SourceUpdateResult::success(3, 1.5));
+        $backoffSourceMock = \Mockery::mock($backoffSource)->makePartial();
+        $backoffSourceMock->shouldReceive('shouldSkipDueToBackoff')->andReturn(true);
+        $backoffSourceMock->shouldReceive('getNextAttemptTime')
+                          ->andReturn(now()->addMinutes(180));
 
-        $backoffSource = \Mockery::mock($backoffSource)->makePartial();
-        $backoffSource->shouldReceive('shouldSkipDueToBackoff')->andReturn(true);
-        $backoffSource->shouldReceive('getNextAttemptTime')
-                     ->andReturn(now()->addMinutes(180));
+        $sourceModel = \Mockery::mock(Source::class);
+        $sourceQuery = \Mockery::mock(\Illuminate\Database\Eloquent\Builder::class);
+        $sourceModel->shouldReceive('newQuery')->andReturn($sourceQuery);
+        $sourceQuery->shouldReceive('where')
+                    ->with('active', true)
+                    ->andReturnSelf();
+        $sourceQuery->shouldReceive('get')
+                    ->andReturn(collect([$activeSourceMock, $backoffSourceMock]));
+        $this->app->instance(Source::class, $sourceModel);
 
         $this->artisan('app:update_posts')
              ->expectsOutput('Found 2 active sources')
@@ -146,7 +163,7 @@ class ImprovedPostsUpdaterTest extends TestCase
              ->assertExitCode(0);
     }
 
-    /** @test */
+    #[Test]
     public function command_continues_processing_after_individual_failures()
     {
         $category = Category::factory()->create();
@@ -163,20 +180,27 @@ class ImprovedPostsUpdaterTest extends TestCase
             'active' => true
         ]);
 
-        Source::shouldReceive('where->get')
-              ->andReturn(collect([$source1, $source2]));
-
         // First source fails
-        $source1 = \Mockery::mock($source1)->makePartial();
-        $source1->shouldReceive('shouldSkipDueToBackoff')->andReturn(false);
-        $source1->shouldReceive('updatePosts')
-               ->andThrow(FeedFetchException::timeout($source1, 30));
+        $source1Mock = \Mockery::mock($source1)->makePartial();
+        $source1Mock->shouldReceive('shouldSkipDueToBackoff')->andReturn(false);
+        $source1Mock->shouldReceive('updatePosts')
+                    ->andThrow(FeedFetchException::timeout($source1, 30));
 
         // Second source succeeds
-        $source2 = \Mockery::mock($source2)->makePartial();
-        $source2->shouldReceive('shouldSkipDueToBackoff')->andReturn(false);
-        $source2->shouldReceive('updatePosts')
-               ->andReturn(\App\ValueObjects\SourceUpdateResult::success(2, 1.0));
+        $source2Mock = \Mockery::mock($source2)->makePartial();
+        $source2Mock->shouldReceive('shouldSkipDueToBackoff')->andReturn(false);
+        $source2Mock->shouldReceive('updatePosts')
+                    ->andReturn(\App\ValueObjects\SourceUpdateResult::success(2, 1.0));
+
+        $sourceModel = \Mockery::mock(Source::class);
+        $sourceQuery = \Mockery::mock(\Illuminate\Database\Eloquent\Builder::class);
+        $sourceModel->shouldReceive('newQuery')->andReturn($sourceQuery);
+        $sourceQuery->shouldReceive('where')
+                    ->with('active', true)
+                    ->andReturnSelf();
+        $sourceQuery->shouldReceive('get')
+                    ->andReturn(collect([$source1Mock, $source2Mock]));
+        $this->app->instance(Source::class, $sourceModel);
 
         $this->artisan('app:update_posts')
              ->expectsOutputToContain('🔄 Processing: Source 1')
@@ -189,7 +213,7 @@ class ImprovedPostsUpdaterTest extends TestCase
              ->assertExitCode(1); // Exit code 1 because there were failures
     }
 
-    /** @test */
+    #[Test]
     public function command_updates_last_successful_crawl_timestamp()
     {
         $category = Category::factory()->create();
@@ -198,26 +222,31 @@ class ImprovedPostsUpdaterTest extends TestCase
             'active' => true
         ]);
 
-        Source::shouldReceive('where->get')
-              ->andReturn(collect([$source]));
+        $sourceMock = \Mockery::mock($source)->makePartial();
+        $sourceMock->shouldReceive('shouldSkipDueToBackoff')->andReturn(false);
+        $sourceMock->shouldReceive('updatePosts')
+                   ->andReturn(\App\ValueObjects\SourceUpdateResult::success(1, 0.5));
 
-        $source = \Mockery::mock($source)->makePartial();
-        $source->shouldReceive('shouldSkipDueToBackoff')->andReturn(false);
-        $source->shouldReceive('updatePosts')
-               ->andReturn(\App\ValueObjects\SourceUpdateResult::success(1, 0.5));
+        $sourceModel = \Mockery::mock(Source::class);
+        $sourceQuery = \Mockery::mock(\Illuminate\Database\Eloquent\Builder::class);
+        $sourceModel->shouldReceive('newQuery')->andReturn($sourceQuery);
+        $sourceQuery->shouldReceive('where')
+                    ->with('active', true)
+                    ->andReturnSelf();
+        $sourceQuery->shouldReceive('get')
+                    ->andReturn(collect([$sourceMock]));
+        $this->app->instance(Source::class, $sourceModel);
 
         Carbon::setTestNow($testTime = now());
 
         $this->artisan('app:update_posts')
              ->assertExitCode(0);
 
-        // Check that the timestamp was written
-        Storage::disk('local')->assertExists('LastSuccessfulCrawl.txt');
-        $timestamp = Storage::disk('local')->get('LastSuccessfulCrawl.txt');
-        $this->assertEquals($testTime->toISOString(), $timestamp);
+        $timestamp = Cache::get('last_successful_crawl');
+        $this->assertTrue($timestamp->equalTo($testTime));
     }
 
-    /** @test */
+    #[Test]
     public function command_displays_comprehensive_summary()
     {
         $category = Category::factory()->create();
@@ -235,8 +264,6 @@ class ImprovedPostsUpdaterTest extends TestCase
                 'last_error_at' => now()->subMinutes(60)
             ])
         ]);
-
-        Source::shouldReceive('where->get')->andReturn($sources);
 
         // Mock each source's behavior
         foreach ($sources as $index => $source) {
@@ -257,6 +284,15 @@ class ImprovedPostsUpdaterTest extends TestCase
 
             $sources[$index] = $mockedSource;
         }
+
+        $sourceModel = \Mockery::mock(Source::class);
+        $sourceQuery = \Mockery::mock(\Illuminate\Database\Eloquent\Builder::class);
+        $sourceModel->shouldReceive('newQuery')->andReturn($sourceQuery);
+        $sourceQuery->shouldReceive('where')
+                    ->with('active', true)
+                    ->andReturnSelf();
+        $sourceQuery->shouldReceive('get')->andReturn($sources);
+        $this->app->instance(Source::class, $sourceModel);
 
         $this->artisan('app:update_posts')
              ->expectsOutputToContain('📊 PROCESSING SUMMARY')

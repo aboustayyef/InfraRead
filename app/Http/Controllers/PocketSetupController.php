@@ -14,8 +14,8 @@ class PocketSetupController extends Controller
         $client = new Client(); 
         $res= $client->request('POST', 'https://getpocket.com/v3/oauth/request', [
             'form_params' => [
-                'consumer_key' => env('POCKET_CONSUMER_KEY'),
-                'redirect_uri' => env('APP_URL'). '/app/pocketsetup',
+                'consumer_key' => config('services.pocket.consumer_key'),
+                'redirect_uri' => config('app.url'). '/app/pocketsetup',
             ]
         ]);
 
@@ -23,7 +23,7 @@ class PocketSetupController extends Controller
         if (str_contains($returned_string, 'code=')) {
             $code = str_replace('code=','',$returned_string);
             session(['code' => $code]);
-            return redirect('https://getpocket.com/auth/authorize?request_token='.$code.'&redirect_uri='. env('APP_URL'). '/app/setuppocket/authorise');
+            return redirect('https://getpocket.com/auth/authorize?request_token='.$code.'&redirect_uri='. config('app.url'). '/app/setuppocket/authorise');
         }
 
 
@@ -36,7 +36,7 @@ class PocketSetupController extends Controller
         $client = new Client(); 
         $res= $client->request('POST', 'https://getpocket.com/v3/oauth/authorize', [
             'form_params' => [
-                'consumer_key' => env('POCKET_CONSUMER_KEY'),
+                'consumer_key' => config('services.pocket.consumer_key'),
                 'code' => $code,
             ]
         ]);

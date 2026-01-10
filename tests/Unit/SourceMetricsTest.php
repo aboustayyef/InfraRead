@@ -10,6 +10,7 @@ use App\Exceptions\FeedProcessing\FeedFetchException;
 use App\Exceptions\FeedProcessing\FeedParseException;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Test suite for Source model metrics and tracking functionality.
@@ -38,7 +39,7 @@ class SourceMetricsTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function source_starts_with_healthy_status()
     {
         $this->assertEquals(Source::STATUS_ACTIVE, $this->source->status);
@@ -50,7 +51,7 @@ class SourceMetricsTest extends TestCase
         $this->assertFalse($this->source->isFailed());
     }
 
-    /** @test */
+    #[Test]
     public function successful_update_records_metrics_correctly()
     {
         // Simulate a successful update
@@ -76,7 +77,7 @@ class SourceMetricsTest extends TestCase
         $this->assertNull($this->source->last_error_message);
     }
 
-    /** @test */
+    #[Test]
     public function failed_update_records_error_metrics()
     {
         $startTime = microtime(true);
@@ -102,7 +103,7 @@ class SourceMetricsTest extends TestCase
         $this->assertStringContainsString('HTTP 404 error', $this->source->last_error_message);
     }
 
-    /** @test */
+    #[Test]
     public function multiple_failures_change_status_to_failed()
     {
         // Simulate 5 consecutive failures
@@ -122,7 +123,7 @@ class SourceMetricsTest extends TestCase
         $this->assertFalse($this->source->isHealthy());
     }
 
-    /** @test */
+    #[Test]
     public function exponential_backoff_calculation_works_correctly()
     {
         Carbon::setTestNow($testTime = now());
@@ -150,7 +151,7 @@ class SourceMetricsTest extends TestCase
         }
     }
 
-    /** @test */
+    #[Test]
     public function next_attempt_time_calculation_is_accurate()
     {
         Carbon::setTestNow($baseTime = now());
@@ -169,7 +170,7 @@ class SourceMetricsTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function source_metrics_method_returns_complete_data()
     {
         Carbon::setTestNow($testTime = now());
@@ -201,7 +202,7 @@ class SourceMetricsTest extends TestCase
         $this->assertStringContainsString('Issues detected', $metrics['status_description']);
     }
 
-    /** @test */
+    #[Test]
     public function query_scopes_filter_sources_correctly()
     {
         // Create sources with different statuses
@@ -226,7 +227,7 @@ class SourceMetricsTest extends TestCase
         $this->assertCount(1, Source::failed()->get());
     }
 
-    /** @test */
+    #[Test]
     public function status_description_returns_meaningful_messages()
     {
         $testCases = [

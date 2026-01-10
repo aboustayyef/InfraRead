@@ -27,7 +27,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
+Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 Route::get('test', function(){
@@ -39,7 +39,7 @@ return 'test successful';
 Route::get('urlanalyze', [UrlAnalysisController::class, 'index']);
 
 Route::get('v2_readlaterservice', function () {
-    switch (env('PREFERRED_READLATER_SERVICE')) {
+    switch (config('infraread.preferred_readlater_service')) {
         case 'pocket':
             return 'pocket';
         case 'instapaper':

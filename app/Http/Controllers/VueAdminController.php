@@ -5,13 +5,14 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\Post;
 use App\Models\Source;
+use Illuminate\View\View;
 
 class VueAdminController extends Controller
 {
     /**
      * Display the admin landing page with quick stats.
      */
-    public function home()
+    public function home(): View
     {
         $user = auth()->user();
 
@@ -33,7 +34,7 @@ class VueAdminController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function sources()
+    public function sources(): View
     {
         return view('admin.vue-sources', [
             'title' => 'Sources Management',
@@ -46,7 +47,7 @@ class VueAdminController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function categories()
+    public function categories(): View
     {
         return view('admin.vue-categories', [
             'title' => 'Categories Management',
@@ -56,7 +57,7 @@ class VueAdminController extends Controller
 
     private function resolveApiToken(): string
     {
-        $token = env('INFRAREAD_API_TOKEN');
+        $token = config('infraread.api_token');
 
         if (!$token) {
             $user = auth()->user();

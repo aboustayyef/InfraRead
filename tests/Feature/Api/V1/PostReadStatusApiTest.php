@@ -8,6 +8,7 @@ use App\Models\Source;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class PostReadStatusApiTest extends TestCase
 {
@@ -43,7 +44,7 @@ class PostReadStatusApiTest extends TestCase
         ], $attributes));
     }
 
-    /** @test */
+    #[Test]
     public function requires_authentication()
     {
         // Arrange: Create a post
@@ -58,7 +59,7 @@ class PostReadStatusApiTest extends TestCase
         $response->assertStatus(401);
     }
 
-    /** @test */
+    #[Test]
     public function can_mark_post_as_read()
     {
         // Arrange: Create user and unread post
@@ -87,7 +88,7 @@ class PostReadStatusApiTest extends TestCase
         $this->assertTrue($post->fresh()->read);
     }
 
-    /** @test */
+    #[Test]
     public function can_mark_post_as_unread()
     {
         // Arrange: Create user and read post
@@ -109,7 +110,7 @@ class PostReadStatusApiTest extends TestCase
         $this->assertFalse($post->fresh()->read);
     }
 
-    /** @test */
+    #[Test]
     public function validates_read_status_is_required()
     {
         $user = $this->actingUser();
@@ -122,7 +123,7 @@ class PostReadStatusApiTest extends TestCase
             ->assertJsonValidationErrors(['read']);
     }
 
-    /** @test */
+    #[Test]
     public function validates_read_status_is_boolean()
     {
         $user = $this->actingUser();
@@ -137,7 +138,7 @@ class PostReadStatusApiTest extends TestCase
             ->assertJsonValidationErrors(['read']);
     }
 
-    /** @test */
+    #[Test]
     public function returns_404_for_nonexistent_post()
     {
         $user = $this->actingUser();
@@ -150,7 +151,7 @@ class PostReadStatusApiTest extends TestCase
         $response->assertStatus(404);
     }
 
-    /** @test */
+    #[Test]
     public function is_idempotent()
     {
         // Idempotent means: calling the same operation multiple times

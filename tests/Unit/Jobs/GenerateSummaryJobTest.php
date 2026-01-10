@@ -10,8 +10,11 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Http\Client\RequestException;
+use Illuminate\Http\Client\Response;
+use GuzzleHttp\Psr7\Response as PsrResponse;
 use Tests\TestCase;
 use Mockery;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Unit tests for the GenerateSummaryJob
@@ -42,7 +45,7 @@ class GenerateSummaryJobTest extends TestCase
         $this->source = Source::factory()->create(['category_id' => $this->category->id]);
     }
 
-    /** @test */
+    #[Test]
     public function job_successfully_generates_and_caches_summary()
     {
         $post = Post::factory()->create(['source_id' => $this->source->id]);
@@ -61,9 +64,7 @@ class GenerateSummaryJobTest extends TestCase
         // Mock job properties
         $job->job = Mockery::mock();
         $job->job->shouldReceive('getJobId')->andReturn('test-job-123');
-
-        $job = Mockery::mock($job)->makePartial();
-        $job->shouldReceive('attempts')->andReturn(1);
+        $job->job->shouldReceive('attempts')->andReturn(1);
 
         Log::shouldReceive('info')->twice(); // Start and completion logs
 
@@ -84,7 +85,7 @@ class GenerateSummaryJobTest extends TestCase
         $this->assertFalse(Cache::has($cacheKey . '_status'));
     }
 
-    /** @test */
+    #[Test]
     public function job_handles_ai_api_error()
     {
         $post = Post::factory()->create(['source_id' => $this->source->id]);
@@ -101,9 +102,7 @@ class GenerateSummaryJobTest extends TestCase
 
         $job->job = Mockery::mock();
         $job->job->shouldReceive('getJobId')->andReturn('test-job-123');
-
-        $job = Mockery::mock($job)->makePartial();
-        $job->shouldReceive('attempts')->andReturn(1);
+        $job->job->shouldReceive('attempts')->andReturn(1);
 
         Log::shouldReceive('info')->once(); // Start log
         Log::shouldReceive('error')->once(); // Error log
@@ -122,17 +121,18 @@ class GenerateSummaryJobTest extends TestCase
         $cachedResult = Cache::get($cacheKey);
         $this->assertNotNull($cachedResult);
         $this->assertEquals('error', $cachedResult['status']);
-        $this->assertStringContains('AI summary generation failed', $cachedResult['error']);
+        $this->assertStringContainsString('AI summary generation failed', $cachedResult['error']);
     }
 
-    /** @test */
+    #[Test]
     public function job_handles_http_request_exception()
     {
         $post = Post::factory()->create(['source_id' => $this->source->id]);
         $cacheKey = 'test_summary_key';
 
         // Mock the post's summary method to throw a RequestException
-        $requestException = new RequestException('Network timeout');
+        $response = new Response(new PsrResponse(500, [], 'Server error'));
+        $requestException = new RequestException($response);
 
         $mockedPost = Mockery::mock($post)->makePartial();
         $mockedPost->shouldReceive('summary')
@@ -144,9 +144,7 @@ class GenerateSummaryJobTest extends TestCase
 
         $job->job = Mockery::mock();
         $job->job->shouldReceive('getJobId')->andReturn('test-job-123');
-
-        $job = Mockery::mock($job)->makePartial();
-        $job->shouldReceive('attempts')->andReturn(1);
+        $job->job->shouldReceive('attempts')->andReturn(1);
 
         Log::shouldReceive('info')->twice(); // Start + will retry logs
         Log::shouldReceive('error')->once(); // Error log
@@ -163,10 +161,10 @@ class GenerateSummaryJobTest extends TestCase
         $cachedResult = Cache::get($cacheKey);
         $this->assertNotNull($cachedResult);
         $this->assertEquals('error', $cachedResult['status']);
-        $this->assertStringContains('HTTP error', $cachedResult['error']);
+        $this->assertStringContainsString('HTTP error', $cachedResult['error']);
     }
 
-    /** @test */
+    #[Test]
     public function job_fails_permanently_after_max_attempts()
     {
         $post = Post::factory()->create(['source_id' => $this->source->id]);
@@ -182,11 +180,8 @@ class GenerateSummaryJobTest extends TestCase
 
         $job->job = Mockery::mock();
         $job->job->shouldReceive('getJobId')->andReturn('test-job-123');
-
-        // Simulate max attempts reached
-        $job = Mockery::mock($job)->makePartial();
-        $job->shouldReceive('attempts')->andReturn(3); // Max attempts
-        $job->shouldReceive('fail')->once();
+        $job->job->shouldReceive('attempts')->andReturn(3); // Max attempts
+        $job->job->shouldReceive('fail')->once();
 
         Log::shouldReceive('info')->once(); // Start log
         Log::shouldReceive('error')->twice(); // Error + permanent failure logs
@@ -196,13 +191,16 @@ class GenerateSummaryJobTest extends TestCase
 
         $job->handle();
 
-        // Verify error was cached
+        $cachedResult = Cache::get($cacheKey);
+        $this->assertNotNull($cachedResult);
+        $this->assertEquals('error', $cachedResult['status']);
+
         $cachedResult = Cache::get($cacheKey);
         $this->assertNotNull($cachedResult);
         $this->assertEquals('error', $cachedResult['status']);
     }
 
-    /** @test */
+    #[Test]
     public function job_handles_non_retryable_errors_correctly()
     {
         $post = Post::factory()->create(['source_id' => $this->source->id]);
@@ -219,10 +217,8 @@ class GenerateSummaryJobTest extends TestCase
 
         $job->job = Mockery::mock();
         $job->job->shouldReceive('getJobId')->andReturn('test-job-123');
-
-        $job = Mockery::mock($job)->makePartial();
-        $job->shouldReceive('attempts')->andReturn(1);
-        $job->shouldReceive('fail')->once(); // Should fail immediately
+        $job->job->shouldReceive('attempts')->andReturn(1);
+        $job->job->shouldReceive('fail')->once(); // Should fail immediately
 
         Log::shouldReceive('info')->once(); // Start log
         Log::shouldReceive('error')->twice(); // Error + permanent failure logs
@@ -231,9 +227,13 @@ class GenerateSummaryJobTest extends TestCase
         Cache::forget($cacheKey . '_status');
 
         $job->handle();
+
+        $cachedResult = Cache::get($cacheKey);
+        $this->assertNotNull($cachedResult);
+        $this->assertEquals('error', $cachedResult['status']);
     }
 
-    /** @test */
+    #[Test]
     public function job_sets_processing_status_in_cache()
     {
         $post = Post::factory()->create(['source_id' => $this->source->id]);
@@ -249,9 +249,7 @@ class GenerateSummaryJobTest extends TestCase
 
         $job->job = Mockery::mock();
         $job->job->shouldReceive('getJobId')->andReturn('test-job-123');
-
-        $job = Mockery::mock($job)->makePartial();
-        $job->shouldReceive('attempts')->andReturn(1);
+        $job->job->shouldReceive('attempts')->andReturn(1);
 
         Log::shouldReceive('info')->twice();
 
@@ -267,7 +265,7 @@ class GenerateSummaryJobTest extends TestCase
         $this->assertTrue(Cache::has($cacheKey));
     }
 
-    /** @test */
+    #[Test]
     public function job_failed_method_caches_permanent_failure()
     {
         $post = Post::factory()->create(['source_id' => $this->source->id]);
@@ -277,9 +275,7 @@ class GenerateSummaryJobTest extends TestCase
 
         $job->job = Mockery::mock();
         $job->job->shouldReceive('getJobId')->andReturn('test-job-123');
-
-        $job = Mockery::mock($job)->makePartial();
-        $job->shouldReceive('attempts')->andReturn(3);
+        $job->job->shouldReceive('attempts')->andReturn(3);
 
         $exception = new \Exception('Permanent failure');
 
@@ -294,10 +290,10 @@ class GenerateSummaryJobTest extends TestCase
         $cachedResult = Cache::get($cacheKey);
         $this->assertNotNull($cachedResult);
         $this->assertEquals('failed', $cachedResult['status']);
-        $this->assertStringContains('Permanent failure', $cachedResult['error']);
+        $this->assertStringContainsString('Permanent failure', $cachedResult['error']);
     }
 
-    /** @test */
+    #[Test]
     public function job_uses_correct_configuration()
     {
         $post = Post::factory()->create(['source_id' => $this->source->id]);
@@ -318,7 +314,7 @@ class GenerateSummaryJobTest extends TestCase
         $this->assertEquals('test_key', $job->cacheKey);
     }
 
-    /** @test */
+    #[Test]
     public function job_generates_cache_key_if_none_provided()
     {
         $post = Post::factory()->create(['source_id' => $this->source->id]);

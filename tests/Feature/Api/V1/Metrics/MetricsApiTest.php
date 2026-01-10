@@ -10,6 +10,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
 use Tests\TestCase;
 use Carbon\Carbon;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Test metrics API endpoints for monitoring and observability
@@ -38,7 +39,7 @@ class MetricsApiTest extends TestCase
         $this->category = Category::factory()->create();
     }
 
-    /** @test */
+    #[Test]
     public function source_metrics_endpoint_returns_comprehensive_data()
     {
         $source = Source::factory()->create([
@@ -101,7 +102,7 @@ class MetricsApiTest extends TestCase
             ]);
     }
 
-    /** @test */
+    #[Test]
     public function source_metrics_shows_backoff_info_for_failing_source()
     {
         $source = Source::factory()->create([
@@ -130,7 +131,7 @@ class MetricsApiTest extends TestCase
         }
     }
 
-    /** @test */
+    #[Test]
     public function system_stats_endpoint_returns_comprehensive_overview()
     {
         // Create test data
@@ -223,7 +224,7 @@ class MetricsApiTest extends TestCase
         $this->assertEquals(3, $data['posts']['posts_today']);
     }
 
-    /** @test */
+    #[Test]
     public function system_stats_are_cached()
     {
         // Clear any existing cache
@@ -250,7 +251,7 @@ class MetricsApiTest extends TestCase
         $this->assertEquals($response1->json(), $response2->json());
     }
 
-    /** @test */
+    #[Test]
     public function sources_health_endpoint_shows_problematic_sources()
     {
         // Create sources with different health statuses
@@ -330,7 +331,7 @@ class MetricsApiTest extends TestCase
         $this->assertFalse($sourceNames->contains('Healthy Source'));
     }
 
-    /** @test */
+    #[Test]
     public function recent_activity_endpoint_shows_recent_updates()
     {
         // Create sources with different last_fetched_at times
@@ -388,7 +389,7 @@ class MetricsApiTest extends TestCase
         $this->assertEquals('Recent Source', $data['recently_updated_sources'][0]['source_name']);
     }
 
-    /** @test */
+    #[Test]
     public function metrics_endpoints_require_authentication()
     {
         $source = Source::factory()->create(['category_id' => $this->category->id]);
@@ -406,7 +407,7 @@ class MetricsApiTest extends TestCase
         }
     }
 
-    /** @test */
+    #[Test]
     public function source_metrics_handles_nonexistent_source()
     {
         $response = $this->actingAs($this->user)

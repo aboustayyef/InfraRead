@@ -18,11 +18,11 @@ class ReadLater
     {
         // Check if Instapaper or Pocket are set up
         if (
-            !env('OMNIVORE_API_KEY') &&
-            !env('POCKET_ACCESS_TOKEN') &&
-            !env('INSTAPAPER_USERNAME') &&
-            !env('NARRATOR_API_TOKEN') &&
-            !env('PREFERRED_READLATER_SERVICE')
+            !config('services.omnivore.api_key') &&
+            !config('services.pocket.access_token') &&
+            !config('services.instapaper.username') &&
+            !config('services.narrator.api_token') &&
+            !config('infraread.preferred_readlater_service')
         ) {
             throw new Exception('You have to setup either Omnivore, Instapaper, Narrator or Pocket and choose which one you prefer');
         }
@@ -36,15 +36,15 @@ class ReadLater
 
     public function save()
     {
-        if (env('PREFERRED_READLATER_SERVICE') == 'pocket') {
+        if (config('infraread.preferred_readlater_service') == 'pocket') {
             $response = json_decode((string) $this->saveToPocket());
             // Check if the `status` is `1` for success
             if (isset($response->status) && $response->status == 1) {
                 return true;
             }
-        } elseif (env('PREFERRED_READLATER_SERVICE') == 'omnivore') {
+        } elseif (config('infraread.preferred_readlater_service') == 'omnivore') {
             return $this->saveToOmnivore();
-        } elseif (env('PREFERRED_READLATER_SERVICE') == 'narrator') {
+        } elseif (config('infraread.preferred_readlater_service') == 'narrator') {
             return $this->saveToNarrator();
         } else {
             $response = json_decode((string) $this->saveToInstapaper());
@@ -62,7 +62,7 @@ class ReadLater
         $client = new Client();
 
         // Replace '<your api key>' with your actual API key.
-        $apiKey = env('OMNIVORE_API_KEY');
+        $apiKey = config('services.omnivore.api_key');
         $headers = [
             'Content-Type' => 'application/json',
             'Authorization' => $apiKey
@@ -98,7 +98,7 @@ class ReadLater
     }
     public function saveToNarrator()
     {
-        $token = trim((string) env('NARRATOR_API_TOKEN'));
+        $token = trim((string) config('services.narrator.api_token'));
         if (!$token) {
             throw new Exception('Narrator token is not configured');
         }
@@ -161,8 +161,8 @@ class ReadLater
         $res = $client->request('POST', 'https://getpocket.com/v3/add', [
             'form_params' => [
                 'url' => urldecode($this->url),
-                'consumer_key' => env('POCKET_CONSUMER_KEY'),
-                'access_token' => env('POCKET_ACCESS_TOKEN'),
+                'consumer_key' => config('services.pocket.consumer_key'),
+                'access_token' => config('services.pocket.access_token'),
             ],
         ]);
 
@@ -172,8 +172,8 @@ class ReadLater
     public function saveToInstapaper()
     {
         $saving_string = 'https://www.instapaper.com/api/add?' .
-            'username=' . urlencode(env('INSTAPAPER_USERNAME')) .
-            '&password=' . urlencode(env('INSTAPAPER_PASSWORD')) .
+            'username=' . urlencode((string) config('services.instapaper.username')) .
+            '&password=' . urlencode((string) config('services.instapaper.password')) .
             '&url=' . $this->url;
 
         $client = new Client();

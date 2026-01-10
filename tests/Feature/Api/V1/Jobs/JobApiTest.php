@@ -12,6 +12,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Cache;
 use Tests\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Test job-based API endpoints for background processing
@@ -41,7 +42,7 @@ class JobApiTest extends TestCase
         $this->category = Category::factory()->create();
     }
 
-    /** @test */
+    #[Test]
     public function refresh_source_job_endpoint_dispatches_job()
     {
         Queue::fake(); // Prevent actual job execution
@@ -77,7 +78,7 @@ class JobApiTest extends TestCase
         });
     }
 
-    /** @test */
+    #[Test]
     public function refresh_source_job_requires_authentication()
     {
         $source = Source::factory()->create([
@@ -89,7 +90,7 @@ class JobApiTest extends TestCase
         $response->assertStatus(401);
     }
 
-    /** @test */
+    #[Test]
     public function refresh_source_job_handles_nonexistent_source()
     {
         $response = $this->actingAs($this->user)
@@ -98,7 +99,7 @@ class JobApiTest extends TestCase
         $response->assertStatus(404);
     }
 
-    /** @test */
+    #[Test]
     public function generate_summary_job_endpoint_dispatches_job()
     {
         Queue::fake();
@@ -139,7 +140,7 @@ class JobApiTest extends TestCase
         });
     }
 
-    /** @test */
+    #[Test]
     public function generate_summary_job_uses_default_sentences()
     {
         Queue::fake();
@@ -163,7 +164,7 @@ class JobApiTest extends TestCase
         });
     }
 
-    /** @test */
+    #[Test]
     public function generate_summary_job_validates_sentences_parameter()
     {
         $post = Post::factory()->create([
@@ -183,7 +184,7 @@ class JobApiTest extends TestCase
         }
     }
 
-    /** @test */
+    #[Test]
     public function summary_status_endpoint_handles_nonexistent_key()
     {
         $response = $this->actingAs($this->user)
@@ -196,7 +197,7 @@ class JobApiTest extends TestCase
             ]);
     }
 
-    /** @test */
+    #[Test]
     public function summary_status_endpoint_returns_processing_status()
     {
         $cacheKey = 'test_summary_key';
@@ -214,7 +215,7 @@ class JobApiTest extends TestCase
             ]);
     }
 
-    /** @test */
+    #[Test]
     public function summary_status_endpoint_returns_completed_result()
     {
         $cacheKey = 'test_summary_key';
@@ -242,7 +243,7 @@ class JobApiTest extends TestCase
             ]);
     }
 
-    /** @test */
+    #[Test]
     public function summary_status_endpoint_returns_error_result()
     {
         $cacheKey = 'test_summary_key';
@@ -268,7 +269,7 @@ class JobApiTest extends TestCase
             ]);
     }
 
-    /** @test */
+    #[Test]
     public function queue_status_endpoint_returns_system_info()
     {
         $response = $this->actingAs($this->user)
@@ -286,7 +287,7 @@ class JobApiTest extends TestCase
             ]);
     }
 
-    /** @test */
+    #[Test]
     public function job_endpoints_require_authentication()
     {
         $source = Source::factory()->create(['category_id' => $this->category->id]);

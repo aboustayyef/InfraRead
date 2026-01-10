@@ -8,6 +8,7 @@ use App\Models\Source;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class BulkPostReadStatusApiTest extends TestCase
 {
@@ -35,7 +36,7 @@ class BulkPostReadStatusApiTest extends TestCase
         return $posts;
     }
 
-    /** @test */
+    #[Test]
     public function requires_authentication()
     {
         $posts = $this->createPosts(2);
@@ -48,7 +49,7 @@ class BulkPostReadStatusApiTest extends TestCase
         $response->assertStatus(401);
     }
 
-    /** @test */
+    #[Test]
     public function can_bulk_mark_posts_as_read()
     {
         $user = $this->actingUser();
@@ -79,7 +80,7 @@ class BulkPostReadStatusApiTest extends TestCase
         }
     }
 
-    /** @test */
+    #[Test]
     public function can_bulk_mark_posts_as_unread()
     {
         $user = $this->actingUser();
@@ -105,7 +106,7 @@ class BulkPostReadStatusApiTest extends TestCase
         }
     }
 
-    /** @test */
+    #[Test]
     public function validates_post_ids_are_required()
     {
         $user = $this->actingUser();
@@ -119,7 +120,7 @@ class BulkPostReadStatusApiTest extends TestCase
             ->assertJsonValidationErrors(['post_ids']);
     }
 
-    /** @test */
+    #[Test]
     public function validates_post_ids_is_array()
     {
         $user = $this->actingUser();
@@ -134,7 +135,7 @@ class BulkPostReadStatusApiTest extends TestCase
             ->assertJsonValidationErrors(['post_ids']);
     }
 
-    /** @test */
+    #[Test]
     public function validates_post_ids_not_empty()
     {
         $user = $this->actingUser();
@@ -149,7 +150,7 @@ class BulkPostReadStatusApiTest extends TestCase
             ->assertJsonValidationErrors(['post_ids']);
     }
 
-    /** @test */
+    #[Test]
     public function validates_each_post_id_is_integer()
     {
         $user = $this->actingUser();
@@ -164,7 +165,7 @@ class BulkPostReadStatusApiTest extends TestCase
             ->assertJsonValidationErrors(['post_ids.1']);
     }
 
-    /** @test */
+    #[Test]
     public function validates_read_status_is_required()
     {
         $user = $this->actingUser();
@@ -179,7 +180,7 @@ class BulkPostReadStatusApiTest extends TestCase
             ->assertJsonValidationErrors(['read']);
     }
 
-    /** @test */
+    #[Test]
     public function fails_when_some_posts_do_not_exist()
     {
         $user = $this->actingUser();
@@ -202,7 +203,7 @@ class BulkPostReadStatusApiTest extends TestCase
         }
     }
 
-    /** @test */
+    #[Test]
     public function enforces_maximum_posts_limit()
     {
         $user = $this->actingUser();
@@ -220,7 +221,7 @@ class BulkPostReadStatusApiTest extends TestCase
             ->assertJsonValidationErrors(['post_ids']);
     }
 
-    /** @test */
+    #[Test]
     public function is_idempotent()
     {
         // Test that calling the same operation multiple times

@@ -32,7 +32,7 @@ class PostsUpdater extends Command
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(public Source $sourceModel)
     {
         parent::__construct();
     }
@@ -75,7 +75,7 @@ class PostsUpdater extends Command
      */
     protected function processSingleSource(string $sourceId): int
     {
-        $source = Source::find($sourceId);
+        $source = $this->sourceModel->newQuery()->find($sourceId);
 
         if (!$source) {
             $this->error("Source [{$sourceId}] not found");
@@ -108,7 +108,7 @@ class PostsUpdater extends Command
     protected function processAllSources(float $overallStartTime): int
     {
         // Get sources that are active and not in exponential backoff
-        $sources = Source::where('active', true)->get();
+        $sources = $this->sourceModel->newQuery()->where('active', true)->get();
 
         $this->info("Found {$sources->count()} active sources");
 

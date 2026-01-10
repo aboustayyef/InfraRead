@@ -9,6 +9,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class MarkAllReadApiTest extends TestCase
 {
@@ -71,7 +72,7 @@ class MarkAllReadApiTest extends TestCase
         ];
     }
 
-    /** @test */
+    #[Test]
     public function requires_authentication()
     {
         $response = $this->patchJson('/api/v1/posts/mark-all-read', [
@@ -81,7 +82,7 @@ class MarkAllReadApiTest extends TestCase
         $response->assertStatus(401);
     }
 
-    /** @test */
+    #[Test]
     public function can_mark_all_posts_as_read()
     {
         $user = $this->actingUser();
@@ -112,7 +113,7 @@ class MarkAllReadApiTest extends TestCase
         $this->assertEquals(0, Post::where('read', false)->count());
     }
 
-    /** @test */
+    #[Test]
     public function can_mark_all_posts_as_unread()
     {
         $user = $this->actingUser();
@@ -138,7 +139,7 @@ class MarkAllReadApiTest extends TestCase
         $this->assertEquals(4, Post::where('read', false)->count());
     }
 
-    /** @test */
+    #[Test]
     public function can_filter_by_source()
     {
         $user = $this->actingUser();
@@ -169,7 +170,7 @@ class MarkAllReadApiTest extends TestCase
         $this->assertFalse($data['posts']['news_unread']->fresh()->read);
     }
 
-    /** @test */
+    #[Test]
     public function can_filter_by_category()
     {
         $user = $this->actingUser();
@@ -197,7 +198,7 @@ class MarkAllReadApiTest extends TestCase
         $this->assertFalse($data['posts']['news_unread']->fresh()->read);
     }
 
-    /** @test */
+    #[Test]
     public function can_filter_by_date()
     {
         $user = $this->actingUser();
@@ -228,7 +229,7 @@ class MarkAllReadApiTest extends TestCase
         $this->assertFalse($data['posts']['news_unread']->fresh()->read);
     }
 
-    /** @test */
+    #[Test]
     public function can_combine_filters()
     {
         $user = $this->actingUser();
@@ -258,7 +259,7 @@ class MarkAllReadApiTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function validates_required_read_status()
     {
         $user = $this->actingUser();
@@ -270,7 +271,7 @@ class MarkAllReadApiTest extends TestCase
             ->assertJsonValidationErrors(['read']);
     }
 
-    /** @test */
+    #[Test]
     public function validates_source_exists()
     {
         $user = $this->actingUser();
@@ -285,7 +286,7 @@ class MarkAllReadApiTest extends TestCase
             ->assertJsonValidationErrors(['source_id']);
     }
 
-    /** @test */
+    #[Test]
     public function validates_category_exists()
     {
         $user = $this->actingUser();
@@ -300,7 +301,7 @@ class MarkAllReadApiTest extends TestCase
             ->assertJsonValidationErrors(['category_id']);
     }
 
-    /** @test */
+    #[Test]
     public function validates_date_format()
     {
         $user = $this->actingUser();
@@ -315,7 +316,7 @@ class MarkAllReadApiTest extends TestCase
             ->assertJsonValidationErrors(['posted_before']);
     }
 
-    /** @test */
+    #[Test]
     public function is_efficient_only_updates_relevant_posts()
     {
         // This test verifies that we only update posts that need updating

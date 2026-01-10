@@ -83,7 +83,7 @@ class OpmlExporter
      */
     private function getRssUrl(Source $source): string
     {
-        if (env('OPML_EXPORT_LOCAL_RSS_URLS', false)) {
+        if (config('infraread.opml_export_local_rss_urls')) {
             return route('api.v1.sources.rss', $source->id);
         }
 

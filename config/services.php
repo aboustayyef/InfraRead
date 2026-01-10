@@ -29,5 +29,25 @@ return [
         'secret' => env('AWS_SECRET_ACCESS_KEY'),
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
+    'openai' => [
+        'key' => env('OPENAI_KEY'),
+    ],
+    'mercury' => [
+        'api_key' => env('MERCURY_API_KEY'),
+    ],
+    'pocket' => [
+        'consumer_key' => env('POCKET_CONSUMER_KEY'),
+        'access_token' => env('POCKET_ACCESS_TOKEN'),
+    ],
+    'instapaper' => [
+        'username' => env('INSTAPAPER_USERNAME'),
+        'password' => env('INSTAPAPER_PASSWORD'),
+    ],
+    'omnivore' => [
+        'api_key' => env('OMNIVORE_API_KEY'),
+    ],
+    'narrator' => [
+        'api_token' => env('NARRATOR_API_TOKEN'),
+    ],
 
 ];

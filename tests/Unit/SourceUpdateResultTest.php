@@ -4,6 +4,7 @@ namespace Tests\Unit;
 
 use Tests\TestCase;
 use App\ValueObjects\SourceUpdateResult;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Test suite for SourceUpdateResult value object.
@@ -13,7 +14,7 @@ use App\ValueObjects\SourceUpdateResult;
  */
 class SourceUpdateResultTest extends TestCase
 {
-    /** @test */
+    #[Test]
     public function can_create_successful_result()
     {
         $result = SourceUpdateResult::success(
@@ -31,7 +32,7 @@ class SourceUpdateResultTest extends TestCase
         $this->assertEquals(['source' => 'test'], $result->context);
     }
 
-    /** @test */
+    #[Test]
     public function can_create_failed_result()
     {
         $result = SourceUpdateResult::failure(
@@ -50,7 +51,7 @@ class SourceUpdateResultTest extends TestCase
         $this->assertEquals(['timeout_seconds' => 30], $result->context);
     }
 
-    /** @test */
+    #[Test]
     public function success_summary_format_is_correct()
     {
         $result = SourceUpdateResult::success(
@@ -66,7 +67,7 @@ class SourceUpdateResultTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function failure_summary_format_is_correct()
     {
         $result = SourceUpdateResult::failure(
@@ -83,7 +84,7 @@ class SourceUpdateResultTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function to_array_returns_complete_data_for_success()
     {
         $result = SourceUpdateResult::success(
@@ -106,7 +107,7 @@ class SourceUpdateResultTest extends TestCase
         $this->assertEquals($expected, $array);
     }
 
-    /** @test */
+    #[Test]
     public function to_array_returns_complete_data_for_failure()
     {
         $result = SourceUpdateResult::failure(
@@ -130,7 +131,7 @@ class SourceUpdateResultTest extends TestCase
         $this->assertEquals($expected, $array);
     }
 
-    /** @test */
+    #[Test]
     public function readonly_properties_cannot_be_modified()
     {
         $result = SourceUpdateResult::success(5, 2.0);
@@ -141,7 +142,7 @@ class SourceUpdateResultTest extends TestCase
         $result->success = false; // Should throw error
     }
 
-    /** @test */
+    #[Test]
     public function constructor_sets_all_properties_correctly()
     {
         $result = new SourceUpdateResult(
@@ -161,7 +162,7 @@ class SourceUpdateResultTest extends TestCase
         $this->assertEquals(['key' => 'value'], $result->context);
     }
 
-    /** @test */
+    #[Test]
     public function default_values_work_correctly()
     {
         $result = new SourceUpdateResult(

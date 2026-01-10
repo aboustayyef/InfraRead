@@ -7,6 +7,7 @@ use App\Models\Source;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class SourceManagementApiTest extends TestCase
 {
@@ -22,7 +23,7 @@ class SourceManagementApiTest extends TestCase
         return Category::factory()->create($attributes);
     }
 
-    /** @test */
+    #[Test]
     public function requires_authentication_for_all_endpoints()
     {
         $category = $this->createCategory();
@@ -41,7 +42,7 @@ class SourceManagementApiTest extends TestCase
         }
     }
 
-    /** @test */
+    #[Test]
     public function validates_required_fields()
     {
         $user = $this->actingUser();
@@ -53,7 +54,7 @@ class SourceManagementApiTest extends TestCase
             ->assertJsonValidationErrors(['url', 'category_id']);
     }
 
-    /** @test */
+    #[Test]
     public function validates_category_exists()
     {
         $user = $this->actingUser();
@@ -68,7 +69,7 @@ class SourceManagementApiTest extends TestCase
             ->assertJsonValidationErrors(['category_id']);
     }
 
-    /** @test */
+    #[Test]
     public function validates_url_format()
     {
         $user = $this->actingUser();
@@ -93,7 +94,7 @@ class SourceManagementApiTest extends TestCase
         }
     }
 
-    /** @test */
+    #[Test]
     public function handles_unreachable_urls()
     {
         $user = $this->actingUser();
@@ -113,7 +114,7 @@ class SourceManagementApiTest extends TestCase
             ]);
     }
 
-    /** @test */
+    #[Test]
     public function can_update_source()
     {
         $user = $this->actingUser();
@@ -153,7 +154,7 @@ class SourceManagementApiTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function can_delete_source()
     {
         $user = $this->actingUser();
@@ -175,7 +176,7 @@ class SourceManagementApiTest extends TestCase
         $this->assertDatabaseMissing('sources', ['id' => $source->id]);
     }
 
-    /** @test */
+    #[Test]
     public function can_refresh_source_posts()
     {
         $user = $this->actingUser();
@@ -195,7 +196,7 @@ class SourceManagementApiTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function returns_404_for_nonexistent_source()
     {
         $user = $this->actingUser();
@@ -212,7 +213,7 @@ class SourceManagementApiTest extends TestCase
         }
     }
 
-    /** @test */
+    #[Test]
     public function prevents_duplicate_sources_by_rss_url()
     {
         // Create an existing source with a known RSS URL
@@ -237,7 +238,7 @@ class SourceManagementApiTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function source_creation_with_override_metadata()
     {
         // This test focuses on the logic that allows overriding discovered metadata
