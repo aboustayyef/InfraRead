@@ -15,6 +15,16 @@
             </div>
         @endif
 
+        <div class="bg-white shadow rounded p-6 space-y-2">
+            <h3 class="text-lg font-semibold">Configured .env Token</h3>
+            @if($configured_token)
+                <p class="text-xs text-gray-500">INFRAREAD_API_TOKEN is set.</p>
+                <pre class="mt-2 p-2 bg-gray-900 text-green-200 text-sm rounded overflow-auto">{{ $configured_token }}</pre>
+            @else
+                <p class="text-sm text-red-600">Missing INFRAREAD_API_TOKEN in .env.</p>
+            @endif
+        </div>
+
         <div class="bg-white shadow rounded p-6 space-y-4">
             <h3 class="text-lg font-semibold">Generate / Regenerate Token</h3>
             <form method="POST" action="{{ route('admin.token.store') }}" class="space-y-4">
@@ -36,7 +46,7 @@
                         <tr class="text-left border-b"><th class="py-1">Name</th><th class="py-1">Last Used</th><th class="py-1">Created</th><th class="py-1"></th></tr>
                     </thead>
                     <tbody>
-                    @forelse(auth()->user()->tokens as $token)
+                    @forelse($tokens as $token)
                         <tr class="border-b">
                             <td class="py-1 pr-2">{{ $token->name }}</td>
                             <td class="py-1 pr-2 text-xs">{{ optional($token->last_used_at)->diffForHumans() ?? '—' }}</td>

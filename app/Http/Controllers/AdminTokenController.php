@@ -3,13 +3,20 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
 
 class AdminTokenController extends Controller
 {
-    public function show()
+    public function show(Request $request): View
     {
-        return view('admin.token');
+        $user = $request->user();
+        $configuredToken = config('infraread.api_token');
+        $tokens = $user ? $user->tokens()->orderByDesc('created_at')->get() : collect();
+
+        return view('admin.token', [
+            'configured_token' => $configuredToken,
+            'tokens' => $tokens,
+        ]);
     }
 
     public function store(Request $request)
