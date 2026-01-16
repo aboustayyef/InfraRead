@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Models\Post;
 use App\Models\Source;
 use App\Models\User;
+use Illuminate\Http\Client\Request;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
@@ -50,6 +51,18 @@ class PostSummaryApiTest extends TestCase
         $response->assertOk()
             ->assertJsonStructure(['data' => ['post_id','sentences','summary']]);
         $this->assertStringContainsString('Sentence one', $response->json('data.summary'));
+
+        Http::assertSent(function (Request $request) {
+            $payload = $request->data();
+            $messages = $payload['messages'] ?? [];
+            $systemPrompt = $messages[0]['content'] ?? '';
+            $userPrompt = $messages[1]['content'] ?? '';
+
+            return str_contains($systemPrompt, 'blockquote')
+                && str_contains($systemPrompt, 'only <p> tags')
+                && str_contains($userPrompt, 'Do not include <blockquote> tags')
+                && str_contains($userPrompt, 'Wrap each output sentence in a <p>');
+        });
     }
 
     public function test_handles_summary_error()

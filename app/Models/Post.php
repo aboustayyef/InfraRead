@@ -28,11 +28,10 @@ class Post extends Model
         'posted_at' => 'datetime',
     ];
 
-    public function summary($numSentences = 2)
+    public function summary(int $numSentences = 2): string
     {
         $apiKey = config('services.openai.key');
 
-        // Keep HTML but remove potentially dangerous scripts or styles
         $text = $this->content; // Already contains HTML
 
         // OpenAI API endpoint
@@ -41,14 +40,15 @@ class Post extends Model
         // Clarify in the system prompt how blockquotes should be interpreted
         $systemPrompt = <<<EOT
 You are a helpful assistant that summarizes HTML content.
-The content may include <blockquote> tags, which indicate quoted text from someone else.
-Distinguish between the main author's commentary and the quoted material when generating the summary.
+The content may include <blockquote> tags that indicate quoted text from someone else.
+Focus on the main author's commentary and key points; only mention quoted material if it is essential.
+Return HTML with only <p> tags. Do not include any other HTML tags.
 EOT;
 
         $userPrompt = <<<EOT
 Summarize the following content in {$numSentences} sentences.
-Preserve any <blockquote> tags from the input, as they indicate quoted material.
-Don't include <blockquote> tags in the output, but wrap each output sentence in a <p> tag to make it HTML-ready.
+Do not include <blockquote> tags in the output. If you reference a quote, paraphrase it.
+Wrap each output sentence in a <p> tag and return only those <p> tags.
 
 {$text}
 EOT;
