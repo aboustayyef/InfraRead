@@ -1,7 +1,6 @@
 {
     "agents": [
-        "codex",
-        "copilot"
+        "codex"
     ],
     "editors": [
         "codex",
