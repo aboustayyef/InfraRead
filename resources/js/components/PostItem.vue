@@ -21,7 +21,7 @@
                 <!-- Body of Post -->
                 <div v-on:click="$emit('displayPost', post)"
                     class="w-full mt-2 text-xl font-light leading-relaxed text-gray-400 cursor-pointer overflow-clip md:mt-4 md:w-1/2 min-w-0">
-                    <p class="text-base md:text-xl break-words [overflow-wrap:anywhere]">{{ post.excerpt }}</p>
+                    <p class="excerpt text-base md:text-xl break-words [overflow-wrap:anywhere]">{{ post.excerpt }}</p>
                 </div>
         </div>
         <!-- Mark as Read Button -->

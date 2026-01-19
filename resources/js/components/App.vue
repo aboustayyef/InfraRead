@@ -1,5 +1,5 @@
 <template>
-    <div class="app-root relative w-full h-screen text-left font-serif">
+    <div class="relative w-full h-screen text-left">
         <!-- Debug Bar -->
         <div
             v-if="this.debug == true"
