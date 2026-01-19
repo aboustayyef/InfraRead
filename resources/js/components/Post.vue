@@ -12,7 +12,7 @@
         <div class="pb-4 mb-6 border-b border-gray-200">
           <a :href="post.url">
             <h1
-              class="text-xl md:text-2xl font-semibold text-gray-900 max-w-prose"
+              class="text-xl md:text-3xl font-semibold text-gray-900 max-w-prose"
             >
               {{ post.title }}
             </h1>
@@ -48,7 +48,7 @@
           id="post-content"
           v-if="!isLoading"
           v-html="post.content"
-          class="text-xl font-light leading-loose text-gray-900 content break-words"
+          class="text-xl font-light leading-loose text-gray-700 content break-words"
         ></div>
         <PostContentSkeleton v-else />
       </div>

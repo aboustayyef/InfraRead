@@ -1,6 +1,7 @@
 @import "tailwindcss/base";
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
+@import url("https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@600;700&display=swap");
 
 .ir_input {
   @apply flex-1 w-full p-3 border-gray-200 rounded-md bg-gray-50;
@@ -24,10 +25,18 @@ strong {
   @apply font-semibold;
 }
 .content {
-  font-family: "Roboto Slab", sans-serif;
+  font-family: "Georgia", serif;
 }
 .content {
   @apply mx-auto leading-relaxed md:leading-relaxed tracking-wide text-base md:text-xl;
+}
+.app-root h1,
+.app-root h2,
+.app-root h3,
+.app-root h4,
+.app-root h5,
+.app-root h6 {
+  font-family: "Source Sans 3", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 .content ul {
   @apply ml-10 list-disc my-2;
