@@ -48,7 +48,7 @@
           id="post-content"
           v-if="!isLoading"
           v-html="post.content"
-          class="text-xl font-light leading-loose text-gray-700 content break-words"
+          class="text-xl font-light leading-loose text-gray-600 content break-words"
         ></div>
         <PostContentSkeleton v-else />
       </div>
