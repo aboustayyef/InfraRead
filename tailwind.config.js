@@ -1,5 +1,3 @@
-const defaultTheme = require('tailwindcss/defaultTheme');
-
 module.exports = {
     purge: ['./storage/framework/views/*.php',
             './resources/views/**/*.blade.php',
@@ -8,7 +6,7 @@ module.exports = {
     theme: {
         extend: {
             fontFamily: {
-                serif: ['Georgia', ...defaultTheme.fontFamily.serif],
+                serif: ['Roboto Serif', 'ui-serif', 'Cambria', 'Times New Roman', 'Times', 'serif'],
             },
             colors: {
                 primary: '#B90C11'

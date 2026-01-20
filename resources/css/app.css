@@ -1,7 +1,7 @@
 @import "tailwindcss/base";
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
-@import url("https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Roboto+Serif:wght@400;500;600;700&family=Roboto+Slab:wght@500;600;700&display=swap");
 
 .ir_input {
   @apply flex-1 w-full p-3 border-gray-200 rounded-md bg-gray-50;
@@ -25,10 +25,10 @@ strong {
   @apply font-semibold;
 }
 .content {
-  font-family: "Georgia", serif;
+  font-family: "Roboto Serif", serif;
 }
 .excerpt {
-  font-family: "Georgia", serif;
+  font-family: "Roboto Serif", serif;
 }
 .content {
   @apply mx-auto leading-relaxed md:leading-relaxed tracking-wide text-base md:text-xl;
