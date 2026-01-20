@@ -43,10 +43,10 @@ strong {
   @apply mb-2;
 }
 .content blockquote {
-  @apply p-4 mb-4 text-gray-700 bg-gray-50 border-b-4 border-t-2 border-gray-200;
+  @apply p-4 my-4 text-gray-700 bg-gray-50 border-b-4 border-t-2 border-gray-200;
 }
 .content img {
-  max-width: 100%;
+  @apply my-2 max-w-full;
 }
 .content a {
   @apply text-primary;
