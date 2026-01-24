@@ -1,0 +1,30 @@
+{
+    "name": "InfraRead",
+    "short_name": "InfraRead",
+    "description": "Read and manage InfraRead posts.",
+    "start_url": "/",
+    "scope": "/",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#B90C11",
+    "orientation": "portrait",
+    "icons": [
+        {
+            "src": "/img/infraread192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "/img/infraread512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ],
+    "screenshots": [
+        {
+            "src": "/img/screenshot.png",
+            "sizes": "1280x720",
+            "type": "image/png"
+        }
+    ]
+}

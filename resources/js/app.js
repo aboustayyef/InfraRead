@@ -24,3 +24,11 @@ Vue.component('admin-categories', require('./components/AdminCategories.vue').de
 const app = new Vue({
     el: '#app'
 });
+
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/service-worker.js').catch(() => {
+            // Silent fail to avoid disrupting the app if SW registration fails.
+        });
+    });
+}

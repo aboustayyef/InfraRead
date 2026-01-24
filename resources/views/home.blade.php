@@ -17,8 +17,9 @@
         </script>
         <link rel="stylesheet" type="text/css" href="{{mix('/css/app.css')}}">
         <link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
+        <link rel="manifest" href="/manifest.webmanifest">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="theme-color" content="#da2525">
+        <meta name="theme-color" content="#B90C11">
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

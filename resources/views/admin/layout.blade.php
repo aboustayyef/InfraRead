@@ -7,6 +7,7 @@
 
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="theme-color" content="#B90C11">
 
     {{-- Transfer Variables from PHP to Js --}}
     <script>
@@ -21,6 +22,7 @@
     <!-- Styles -->
     <link href="https://fonts.googleapis.com/css?family=Bebas+Neue|Catamaran:400,600&display=swap" rel="stylesheet">
     <link href="{{ mix('css/app.css') }}" rel="stylesheet">
+    <link rel="manifest" href="/manifest.webmanifest">
 </head>
 <body>
     <style>
