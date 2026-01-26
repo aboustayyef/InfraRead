@@ -2,10 +2,11 @@
     "agents": [
         "codex"
     ],
-    "editors": [
-        "codex",
-        "vscode"
-    ],
-    "guidelines": [],
-    "herd_mcp": true
+    "guidelines": true,
+    "herd_mcp": true,
+    "mcp": true,
+    "sail": false,
+    "skills": [
+        "livewire-development"
+    ]
 }
