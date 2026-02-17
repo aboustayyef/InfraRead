@@ -250,6 +250,12 @@ export default {
             }
         });
     },
+    mounted() {
+        window.addEventListener("pageshow", this.handlePageShow);
+    },
+    beforeDestroy() {
+        window.removeEventListener("pageshow", this.handlePageShow);
+    },
     computed: {
         undoable: function () {
             return this.view == "list" && this.posts_marked_as_read.length > 0;
@@ -289,6 +295,23 @@ export default {
         }
     },
     methods: {
+        handlePageShow(event) {
+            const navigationEntry = performance.getEntriesByType("navigation")[0];
+            const isBackForwardNavigation = navigationEntry && navigationEntry.type === "back_forward";
+
+            if (event.persisted || isBackForwardNavigation) {
+                this.reloadFeedFromServer();
+            }
+        },
+        reloadFeedFromServer() {
+            this.posts_loaded = false;
+            this.posts = [];
+            this.displayed_post = {};
+            this.displayed_summary = null;
+            this.isLoadingPost = false;
+            this.fetch_posts_from_server();
+            this.fetch_crawl_status();
+        },
         handleSummary(summary) {
             this.displayed_summary = summary;
         },

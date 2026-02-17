@@ -75,6 +75,11 @@ class InfrareadAPI {
             ...options
         };
 
+        // Force fresh data reads for API GET requests.
+        if (config.method === 'GET') {
+            config.cache = 'no-store';
+        }
+
         // Add authentication
         if (this.token) {
             config.headers['Authorization'] = `Bearer ${this.token}`;
