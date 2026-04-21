@@ -3,7 +3,6 @@
         v-if="shown && readlaterservice != 'none'"
         @click="save"
         class="flex items-center justify-center w-16 h-16 border rounded-full shadow-md group bg-yellow-50"
-        :class="{ 'ring-2 ring-primary ring-opacity-30': isAcknowledged }"
         title="Save for later"
     >
         <div v-if="isAcknowledged">
@@ -55,6 +54,14 @@ export default {
     watch: {
         readLaterService(newValue) {
             this.readlaterservice = newValue || 'none';
+        },
+        shown(newValue) {
+            if (!newValue) {
+                this.status = 'save';
+            }
+        },
+        url() {
+            this.status = 'save';
         }
     },
     computed: {
