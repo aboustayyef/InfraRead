@@ -1,5 +1,12 @@
 <template>
     <div class="relative w-full h-screen text-left">
+        <div
+            v-if="hasPendingReadLaterSaves"
+            class="fixed top-0 left-0 right-0 z-50 h-0.5 overflow-hidden bg-red-100"
+        >
+            <div class="read-later-progress h-full bg-primary"></div>
+        </div>
+
         <!-- Debug Bar -->
         <div
             v-if="this.debug == true"
@@ -113,7 +120,9 @@
             :summary="displayed_summary"
             :is-loading="isLoadingPost"
             :read-later-service="readLaterService"
+            :acknowledged-read-later-url="acknowledgedReadLaterUrl"
             v-on:exit-post="exit_post"
+            v-on:save-later="saveForLater"
             @summary-ready="handleSummary"
         >
         </post>
@@ -182,6 +191,9 @@ export default {
             external_links: [],
             isLoadingPost: false,
             readLaterService: 'none',
+            pendingReadLaterSaves: 0,
+            acknowledgedReadLaterUrl: null,
+            acknowledgedReadLaterTimeout: null,
         };
     },
     created() {
@@ -252,11 +264,17 @@ export default {
     },
     mounted() {
         window.addEventListener("pageshow", this.handlePageShow);
+        window.addEventListener("beforeunload", this.handleBeforeUnload);
     },
     beforeDestroy() {
         window.removeEventListener("pageshow", this.handlePageShow);
+        window.removeEventListener("beforeunload", this.handleBeforeUnload);
+        clearTimeout(this.acknowledgedReadLaterTimeout);
     },
     computed: {
+        hasPendingReadLaterSaves: function () {
+            return this.pendingReadLaterSaves > 0;
+        },
         undoable: function () {
             return this.view == "list" && this.posts_marked_as_read.length > 0;
         },
@@ -295,6 +313,14 @@ export default {
         }
     },
     methods: {
+        handleBeforeUnload(event) {
+            if (!this.hasPendingReadLaterSaves) {
+                return;
+            }
+
+            event.preventDefault();
+            event.returnValue = "";
+        },
         handlePageShow(event) {
             const navigationEntry = performance.getEntriesByType("navigation")[0];
             const isBackForwardNavigation = navigationEntry && navigationEntry.type === "back_forward";
@@ -467,6 +493,40 @@ export default {
                 console.warn('⚠️ Could not warm Narrator markdown cache', error.getUserMessage ? error.getUserMessage() : error);
             }
         },
+        async saveForLater(url) {
+            if (!url) {
+                return;
+            }
+
+            this.acknowledgeReadLaterSave(url);
+            this.pendingReadLaterSaves++;
+
+            try {
+                const response = await axios.get('/app/readlater/', {
+                    params: { url }
+                });
+
+                if (!response.data || response.data.status !== 'ok') {
+                    throw new Error('Save later service returned an unexpected response.');
+                }
+            } catch (error) {
+                console.error('❌ Failed to save for later:', error);
+                this.show_notification(
+                    "warning",
+                    "Could not save this article for later.",
+                    5000
+                );
+            } finally {
+                this.pendingReadLaterSaves = Math.max(this.pendingReadLaterSaves - 1, 0);
+            }
+        },
+        acknowledgeReadLaterSave(url) {
+            this.acknowledgedReadLaterUrl = url;
+            clearTimeout(this.acknowledgedReadLaterTimeout);
+            this.acknowledgedReadLaterTimeout = setTimeout(() => {
+                this.acknowledgedReadLaterUrl = null;
+            }, 1200);
+        },
         mark_post_as_read: async function (p) {
             // Update locally first (optimistic update)
             p.read = 1;
@@ -586,4 +646,21 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.read-later-progress {
+    animation: read-later-progress 1.1s ease-in-out infinite;
+    transform-origin: left;
+}
+
+@keyframes read-later-progress {
+    0% {
+        transform: translateX(-100%) scaleX(0.35);
+    }
+    45% {
+        transform: translateX(20%) scaleX(0.55);
+    }
+    100% {
+        transform: translateX(100%) scaleX(0.35);
+    }
+}
+</style>

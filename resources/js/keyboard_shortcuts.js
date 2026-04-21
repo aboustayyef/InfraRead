@@ -155,6 +155,12 @@ export function handle_keyboard_shortcut(key, app) {
                 window.open('https://twitter.com/search?q=' + encodeURI(app.displayed_post.url), "_blank");
             }
             break;
+        case "s":
+        case "Save":
+            if (app.view == "post") {
+                app.saveForLater(app.displayed_post.url);
+            }
+            break;
         default:
             break;
     }

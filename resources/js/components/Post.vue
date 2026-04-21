@@ -74,7 +74,13 @@
           />
         </svg>
       </button>
-      <SaveLaterButton :shown="shown" :url="post.url"></SaveLaterButton>
+      <SaveLaterButton
+        :shown="shown"
+        :url="post.url"
+        :read-later-service="readLaterService"
+        :acknowledged-url="acknowledgedReadLaterUrl"
+        @save-later="$emit('save-later', $event)"
+      ></SaveLaterButton>
       <SummarizeButton
         v-show="shown"
         :post="post.id"
@@ -90,7 +96,7 @@ import PostContentSkeleton from "./partials/ui/PostContentSkeleton.vue";
 import SummarySkeleton from "./partials/ui/SummarySkeleton.vue";
 
 export default {
-  props: ["post", "summary", "isLoading", "readLaterService"],
+  props: ["post", "summary", "isLoading", "readLaterService", "acknowledgedReadLaterUrl"],
   components: { SaveLaterButton, SummarizeButton, PostContentSkeleton, SummarySkeleton },
   methods: {
     handleSummary: function (summary) {
