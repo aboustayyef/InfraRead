@@ -7,7 +7,7 @@ This document captures the existing structure, patterns, and conventions observe
 - **Laravel application (v12) with classic Laravel 10-style structure** (no new streamlined Laravel 11+ structure).
 - **Backend:** PHP/Laravel, Sanctum for API auth, queued jobs for long-running tasks.
 - **Frontend:** Vue 2 app for the main UI and admin views, Alpine.js (v2), Tailwind CSS (v2).
-- **Build tooling:** Laravel Mix + Webpack (`webpack.mix.js`), not Vite.
+- **Build tooling:** Vite with Laravel's Vite plugin (`vite.config.js`).
 - **API versioning:** `/api/v1` with resources and form requests.
 
 Key top-level folders:
@@ -74,7 +74,7 @@ Key top-level folders:
 
 ### Blade Views
 - Blade layouts in `resources/views/layouts`.
-- Vue app uses `mix()` and includes `resources/css/app.css` and `resources/js/app.js`.
+- Vue app uses `@vite` and includes `resources/css/app.css` and `resources/js/app.js`.
 
 ### Styles
 - Tailwind CSS v2, configured in `tailwind.config.js`.
@@ -82,11 +82,11 @@ Key top-level folders:
 - Custom utility classes in `resources/css/app.css` (e.g., `.ir_input`, `.ir_button`).
 
 ### Build Tooling
-- Laravel Mix (`webpack.mix.js`) builds:
-  - `resources/js/app.js` → `public/js/app.js`
-  - `resources/js/admin.js` → `public/js/admin.js`
-  - `resources/css/app.css` → `public/css/app.css`
-- BrowserSync is configured to proxy `http://infraread.test`.
+- Vite (`vite.config.js`) builds:
+  - `resources/js/app.js`
+  - `resources/css/app.css`
+  - versioned assets in `public/build`
+- Built assets in `public/build` are committed because production does not build frontend assets.
 
 ## Testing Conventions
 
@@ -111,6 +111,5 @@ Key top-level folders:
 - Keep new API endpoints under `/api/v1` and return resources.
 - Reuse existing utilities (OPML, API token handling, read-later integrations) instead of re-implementing.
 - Prefer extending the Vue 2 component patterns and centralized API client.
-- Respect the Laravel Mix pipeline and Tailwind v2 usage.
+- Respect the Vite pipeline and Tailwind v2 usage.
 - When adding new backend logic, follow the style of nearby files (type hints vary by file age).
-

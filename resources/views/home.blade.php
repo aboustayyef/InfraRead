@@ -15,7 +15,7 @@
                 apiToken: '{{ $api_token }}'
             }
         </script>
-        <link rel="stylesheet" type="text/css" href="{{mix('/css/app.css')}}">
+        @vite(['resources/css/app.css', 'resources/js/app.js'])
         <link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#da2525">
@@ -38,7 +38,6 @@
                 refreshInterval="{!! config('infraread.refresh_interval') !!}" >
             </app>
         </div>
-        <script src="{{ mix('/js/app.js') }}"></script>
     </body>
 
 </html>

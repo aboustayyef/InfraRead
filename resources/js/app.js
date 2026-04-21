@@ -1,11 +1,15 @@
-require('./bootstrap');
-
-require('alpinejs');
+import './bootstrap';
+import 'alpinejs';
+import Vue from 'vue';
 
 // Import the API client
 import api from './api/client.js';
+import App from './components/App.vue';
+import ApiClientTest from './components/ApiClientTest.vue';
+import AdminSources from './components/AdminSources.vue';
+import AdminCategories from './components/AdminCategories.vue';
 
-window.Vue = require('vue');
+window.Vue = Vue;
 
 // Make API client available globally
 window.api = api;
@@ -16,10 +20,10 @@ window.api = api;
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
-Vue.component('app', require('./components/App.vue').default);
-Vue.component('api-client-test', require('./components/ApiClientTest.vue').default);
-Vue.component('admin-sources', require('./components/AdminSources.vue').default);
-Vue.component('admin-categories', require('./components/AdminCategories.vue').default);
+Vue.component('app', App);
+Vue.component('api-client-test', ApiClientTest);
+Vue.component('admin-sources', AdminSources);
+Vue.component('admin-categories', AdminCategories);
 
 const app = new Vue({
     el: '#app'

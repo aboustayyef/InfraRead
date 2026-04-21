@@ -13,9 +13,25 @@ trait CreatesApplication
      */
     public function createApplication()
     {
+        if (file_exists(__DIR__.'/../bootstrap/cache/config.php')) {
+            throw new \RuntimeException(
+                'Refusing to run tests while bootstrap/cache/config.php exists. '.
+                'Run php artisan config:clear so phpunit.xml can force the test database.'
+            );
+        }
+
         $app = require __DIR__.'/../bootstrap/app.php';
 
         $app->make(Kernel::class)->bootstrap();
+
+        $connection = config('database.default');
+        $database = config("database.connections.{$connection}.database");
+
+        if ($connection !== 'sqlite' || ! str_ends_with((string) $database, 'database/testing.sqlite')) {
+            throw new \RuntimeException(
+                "Refusing to run tests against database connection [{$connection}] with database [{$database}]."
+            );
+        }
 
         return $app;
     }

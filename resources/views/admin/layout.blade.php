@@ -20,7 +20,7 @@
 
     <!-- Styles -->
     <link href="https://fonts.googleapis.com/css?family=Bebas+Neue|Catamaran:400,600&display=swap" rel="stylesheet">
-    <link href="{{ mix('css/app.css') }}" rel="stylesheet">
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body>
     <style>
@@ -70,7 +70,6 @@
     </div>
 
     <!-- Scripts -->
-    <script src="{{ mix('js/app.js') }}"></script>
     <!-- Extra Scripts -->
     @yield('extra_scripts')
 

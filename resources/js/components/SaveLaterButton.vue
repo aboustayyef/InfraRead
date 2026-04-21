@@ -50,7 +50,6 @@ export default {
         return {
            readlaterservice: this.readLaterService || 'none',
            status: 'save',
-           resetStatusTimeout: null,
         }
     },
     watch: {
@@ -72,9 +71,6 @@ export default {
             });
         }
     },
-    beforeDestroy() {
-        clearTimeout(this.resetStatusTimeout);
-    },
     methods: {
         save: function(){
             if (!this.url) {
@@ -83,10 +79,6 @@ export default {
 
             this.status = 'queued';
             this.$emit('save-later', this.url);
-            clearTimeout(this.resetStatusTimeout);
-            this.resetStatusTimeout = setTimeout(() => {
-                this.status = 'save';
-            }, 1200);
         }
     },
 }

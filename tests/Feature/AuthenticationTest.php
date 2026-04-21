@@ -16,6 +16,14 @@ class AuthenticationTest extends TestCase
         $response = $this->get('/login');
 
         $response->assertStatus(200);
+        $this->assertTrue(
+            str_contains($response->getContent(), '/build/assets/app-')
+            || str_contains($response->getContent(), '/resources/css/app.css')
+        );
+        $response->assertDontSee('href="/css/app.css"', false);
+        $response->assertDontSee('href="http://localhost/css/app.css"', false);
+        $response->assertDontSee('src="/js/app.js"', false);
+        $response->assertDontSee('src="http://localhost/js/app.js"', false);
     }
 
     public function test_users_can_authenticate_using_the_login_screen()

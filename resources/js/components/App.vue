@@ -193,7 +193,6 @@ export default {
             readLaterService: 'none',
             pendingReadLaterSaves: 0,
             acknowledgedReadLaterUrl: null,
-            acknowledgedReadLaterTimeout: null,
         };
     },
     created() {
@@ -269,7 +268,6 @@ export default {
     beforeDestroy() {
         window.removeEventListener("pageshow", this.handlePageShow);
         window.removeEventListener("beforeunload", this.handleBeforeUnload);
-        clearTimeout(this.acknowledgedReadLaterTimeout);
     },
     computed: {
         hasPendingReadLaterSaves: function () {
@@ -334,6 +332,7 @@ export default {
             this.posts = [];
             this.displayed_post = {};
             this.displayed_summary = null;
+            this.acknowledgedReadLaterUrl = null;
             this.isLoadingPost = false;
             this.fetch_posts_from_server();
             this.fetch_crawl_status();
@@ -522,10 +521,6 @@ export default {
         },
         acknowledgeReadLaterSave(url) {
             this.acknowledgedReadLaterUrl = url;
-            clearTimeout(this.acknowledgedReadLaterTimeout);
-            this.acknowledgedReadLaterTimeout = setTimeout(() => {
-                this.acknowledgedReadLaterUrl = null;
-            }, 1200);
         },
         mark_post_as_read: async function (p) {
             // Update locally first (optimistic update)
@@ -570,6 +565,7 @@ export default {
             }
 
             this.displayed_post = {};
+            this.acknowledgedReadLaterUrl = null;
             this.external_links = [];
             this.isLoadingPost = false;
         },

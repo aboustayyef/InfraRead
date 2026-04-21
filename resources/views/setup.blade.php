@@ -6,9 +6,8 @@
     <!-- CSRF Stuff -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <script>window.Laravel = { csrfToken: '{{ csrf_token() }}' }</script>
-    {{-- <link rel="stylesheet" type="text/css" href="{{mix('/css/app_bulma.css')}}"> --}}
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="{{ mix('css/app.css') }}" rel="stylesheet">
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body>
     <section class="container mx-auto mt-4">
