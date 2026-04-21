@@ -33,28 +33,45 @@ class Post extends Model
         $apiKey = config('services.openai.key');
 
         $text = $this->content; // Already contains HTML
+        $contentAnalysis = $this->analyzeSummaryContent($text);
+        $summaryProfile = $this->summaryProfileFor($contentAnalysis);
 
         // OpenAI API endpoint
         $endpoint = 'https://api.openai.com/v1/chat/completions';
 
-        // Clarify in the system prompt how blockquotes should be interpreted
+        $formatInstruction = $summaryProfile['format_instruction'];
+
         $systemPrompt = <<<EOT
-You are a helpful assistant that summarizes HTML content.
-The content may include <blockquote> tags that indicate quoted text from someone else.
-Focus on the main author's commentary and key points; only mention quoted material if it is essential.
-Return HTML with only <p> tags. Do not include any other HTML tags.
+You summarize HTML articles for an RSS reader.
+The content may include <blockquote> tags or quoted excerpts from other people.
+Do not attribute quoted claims to the blogger unless the blogger clearly endorses them.
+Distinguish the blogger's own framing or commentary from the quoted source's point.
+If the post is mostly quotes, summarize the theme of the curated quotes and any framing the blogger adds.
+Return HTML with only <p>, <ul>, and <li> tags. Do not include headings, blockquotes, links, or markdown.
 EOT;
 
         $userPrompt = <<<EOT
-Summarize the following content in {$numSentences} sentences.
-Do not include <blockquote> tags in the output. If you reference a quote, paraphrase it.
-Wrap each output sentence in a <p> tag and return only those <p> tags.
+Summarize the following content.
+
+Article analysis:
+- Total words: {$contentAnalysis['total_words']}
+- Quoted words: {$contentAnalysis['quoted_words']}
+- Quote profile: {$contentAnalysis['quote_profile']}
+- Article size: {$contentAnalysis['size_profile']}
+
+Summary rules:
+- {$formatInstruction}
+- Prefer the blogger's framing, but include quoted ideas when they are central to the post.
+- If a claim comes from quoted material, make that clear in plain language.
+- Paraphrase quotes instead of reproducing them.
+- Keep the summary substantially shorter than the article.
+- Do not include <blockquote> tags.
 
 {$text}
 EOT;
 
         $data = [
-            'model' => 'gpt-3.5-turbo',
+            'model' => 'gpt-4.1-mini',
             'messages' => [
                 [
                     'role' => 'system',
@@ -65,7 +82,7 @@ EOT;
                     'content' => $userPrompt,
                 ],
             ],
-            'max_tokens' => 200,
+            'max_tokens' => $summaryProfile['max_tokens'],
             'temperature' => 0.5,
         ];
 
@@ -80,6 +97,86 @@ EOT;
         }
 
         return optional($response->json())['choices'][0]['message']['content'] ?? 'Error generating summary';
+    }
+
+    /**
+     * @return array{total_words: int, quoted_words: int, quote_ratio: float, quote_profile: string, size_profile: string}
+     */
+    private function analyzeSummaryContent(?string $html): array
+    {
+        $html = (string) $html;
+        $plainText = (string) Str::of($html)->stripTags()->squish();
+        $totalWords = Str::wordCount($plainText);
+        $quotedWords = $this->countBlockquoteWords($html);
+        $quoteRatio = $totalWords > 0 ? $quotedWords / $totalWords : 0.0;
+
+        return [
+            'total_words' => $totalWords,
+            'quoted_words' => $quotedWords,
+            'quote_ratio' => $quoteRatio,
+            'quote_profile' => $this->quoteProfileFor($quoteRatio),
+            'size_profile' => $this->sizeProfileFor($totalWords),
+        ];
+    }
+
+    private function countBlockquoteWords(string $html): int
+    {
+        preg_match_all('/<blockquote\b[^>]*>(.*?)<\/blockquote>/is', $html, $matches);
+
+        return collect($matches[1] ?? [])
+            ->sum(fn (string $blockquote): int => Str::wordCount((string) Str::of($blockquote)->stripTags()->squish()));
+    }
+
+    private function quoteProfileFor(float $quoteRatio): string
+    {
+        if ($quoteRatio >= 0.65) {
+            return 'mostly quoted material';
+        }
+
+        if ($quoteRatio >= 0.25) {
+            return 'mixed commentary and quoted material';
+        }
+
+        return 'mostly original commentary';
+    }
+
+    private function sizeProfileFor(int $totalWords): string
+    {
+        if ($totalWords < 500) {
+            return 'short';
+        }
+
+        if ($totalWords < 1600) {
+            return 'medium';
+        }
+
+        return 'large';
+    }
+
+    /**
+     * @param array{total_words: int, quoted_words: int, quote_ratio: float, quote_profile: string, size_profile: string} $contentAnalysis
+     * @return array{format_instruction: string, max_tokens: int}
+     */
+    private function summaryProfileFor(array $contentAnalysis): array
+    {
+        if ($contentAnalysis['size_profile'] === 'short') {
+            return [
+                'format_instruction' => 'Return exactly one concise <p> paragraph, no more than 70 words.',
+                'max_tokens' => 130,
+            ];
+        }
+
+        if ($contentAnalysis['quote_profile'] === 'mostly quoted material' && $contentAnalysis['size_profile'] === 'large') {
+            return [
+                'format_instruction' => 'Return a short <p> paragraph explaining the blogger\'s framing, followed by a <ul> list of 3 to 5 concise <li> main points from the quoted material.',
+                'max_tokens' => 260,
+            ];
+        }
+
+        return [
+            'format_instruction' => 'Return exactly two concise <p> paragraphs, no more than 160 words total.',
+            'max_tokens' => 230,
+        ];
     }
 
 

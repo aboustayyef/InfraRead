@@ -32,12 +32,16 @@ class PostSummaryApiTest extends TestCase
         $user = $this->actingUser();
         $category = Category::factory()->create();
         $source = Source::factory()->create(['category_id' => $category->id]);
-        $post = Post::factory()->create(['source_id' => $source->id, 'category_id' => $category->id]);
+        $post = Post::factory()->create([
+            'source_id' => $source->id,
+            'category_id' => $category->id,
+            'content' => '<p>The blogger explains why a small product decision matters for regular readers.</p>',
+        ]);
 
         Http::fake([
             'api.openai.com/*' => Http::response([
                 'choices' => [
-                    ['message' => ['content' => '<p>Sentence one.</p><p>Sentence two.</p>']]
+                    ['message' => ['content' => '<p>Sentence one.</p>']]
                 ]
             ], 200)
         ]);
@@ -58,10 +62,53 @@ class PostSummaryApiTest extends TestCase
             $systemPrompt = $messages[0]['content'] ?? '';
             $userPrompt = $messages[1]['content'] ?? '';
 
-            return str_contains($systemPrompt, 'blockquote')
-                && str_contains($systemPrompt, 'only <p> tags')
+            return $payload['model'] === 'gpt-4.1-mini'
+                && str_contains($systemPrompt, 'Do not attribute quoted claims to the blogger')
+                && str_contains($systemPrompt, 'only <p>, <ul>, and <li> tags')
                 && str_contains($userPrompt, 'Do not include <blockquote> tags')
-                && str_contains($userPrompt, 'Wrap each output sentence in a <p>');
+                && str_contains($userPrompt, 'Quote profile: mostly original commentary')
+                && str_contains($userPrompt, 'Article size: short')
+                && str_contains($userPrompt, 'Return exactly one concise <p> paragraph');
+        });
+    }
+
+    public function test_quote_heavy_large_posts_request_quote_aware_bullets()
+    {
+        $user = $this->actingUser();
+        $category = Category::factory()->create();
+        $source = Source::factory()->create(['category_id' => $category->id]);
+        $post = Post::factory()->create([
+            'source_id' => $source->id,
+            'category_id' => $category->id,
+            'content' => '<p>'.str_repeat('blogger framing ', 40).'</p><blockquote>'.str_repeat('quoted source point ', 1700).'</blockquote>',
+        ]);
+
+        Http::fake([
+            'api.openai.com/*' => Http::response([
+                'choices' => [
+                    ['message' => ['content' => '<p>The blogger collects excerpts around one issue.</p><ul><li>First point.</li></ul>']]
+                ]
+            ], 200)
+        ]);
+
+        $csrf = csrf_token();
+        $response = $this->withHeaders(['X-CSRF-TOKEN'=>$csrf])
+            ->actingAs($user)
+            ->postJson('/api/v1/posts/'.$post->id.'/summary', [
+                'sentences' => 2,
+            ]);
+
+        $response->assertOk();
+
+        Http::assertSent(function (Request $request) {
+            $payload = $request->data();
+            $messages = $payload['messages'] ?? [];
+            $userPrompt = $messages[1]['content'] ?? '';
+
+            return str_contains($userPrompt, 'Quote profile: mostly quoted material')
+                && str_contains($userPrompt, 'Article size: large')
+                && str_contains($userPrompt, 'followed by a <ul> list of 3 to 5 concise <li> main points')
+                && $payload['max_tokens'] === 260;
         });
     }
 
