@@ -168,8 +168,8 @@ export default {
             this.explainQuote(quoteText, button, panel);
           });
 
+          blockquote.insertBefore(panel, blockquote.firstChild);
           blockquote.appendChild(button);
-          blockquote.appendChild(panel);
         });
       });
     },
