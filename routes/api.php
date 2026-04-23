@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\V1\PostController as V1PostController;
 use App\Http\Controllers\Api\V1\SourceController as V1SourceController;
 use App\Http\Controllers\Api\V1\CategoryController as V1CategoryController;
 use App\Http\Controllers\Api\V1\PostSummaryController as V1PostSummaryController;
+use App\Http\Controllers\Api\V1\PostQuoteExplanationController as V1PostQuoteExplanationController;
 use App\Http\Controllers\Api\V1\PostReadStatusController as V1PostReadStatusController;
 use App\Http\Controllers\Api\V1\BulkPostReadStatusController as V1BulkPostReadStatusController;
 use App\Http\Controllers\Api\V1\MarkAllReadController as V1MarkAllReadController;
@@ -88,6 +89,7 @@ Route::prefix('v1')->group(function () {
 
     // Special endpoints
     Route::post('/posts/{post}/summary', V1PostSummaryController::class)->middleware('throttle:summaries');
+    Route::post('/posts/{post}/quote-explanation', V1PostQuoteExplanationController::class)->middleware('throttle:summaries');
     Route::post('/posts/{post}/cache-markdown', PostMarkdownCacheController::class);
 
     // Job-based endpoints (Phase 6)

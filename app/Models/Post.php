@@ -6,6 +6,7 @@ use App\Plugins\Kernel;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
@@ -97,6 +98,105 @@ EOT;
         }
 
         return optional($response->json())['choices'][0]['message']['content'] ?? 'Error generating summary';
+    }
+
+    public function explainQuote(string $quote): string
+    {
+        $apiKey = config('services.openai.key');
+        $quote = $this->normalizeQuoteText($quote);
+
+        $endpoint = 'https://api.openai.com/v1/chat/completions';
+
+        $systemPrompt = <<<EOT
+You explain dense quoted passages from articles for a general RSS reader.
+Use simple language without talking down to the reader.
+Do not add claims beyond the quoted passage.
+If the passage includes numbers or comparisons, preserve the direction and approximate magnitude.
+Return HTML with only <p>, <ul>, and <li> tags. Do not include headings, links, blockquotes, or markdown.
+EOT;
+
+        $userPrompt = <<<EOT
+Explain this quoted passage in simple language.
+
+Rules:
+- Prefer one short <p> paragraph.
+- Use a <ul> with up to 3 <li> items only if the quote contains several distinct findings.
+- Keep it under 120 words.
+- Make the practical meaning clear for a non-specialist reader.
+
+Quoted passage:
+{$quote}
+EOT;
+
+        $data = [
+            'model' => 'gpt-4.1-mini',
+            'messages' => [
+                [
+                    'role' => 'system',
+                    'content' => $systemPrompt,
+                ],
+                [
+                    'role' => 'user',
+                    'content' => $userPrompt,
+                ],
+            ],
+            'max_tokens' => 180,
+            'temperature' => 0.4,
+        ];
+
+        $response = Http::withHeaders([
+            'Content-Type' => 'application/json',
+            'Authorization' => 'Bearer ' . $apiKey,
+        ])->post($endpoint, $data);
+
+        if ($response->failed()) {
+            \Log::error('OpenAI Quote Explanation API Error: ' . $response->body());
+            return 'Error explaining the quote.';
+        }
+
+        return optional($response->json())['choices'][0]['message']['content'] ?? 'Error generating explanation';
+    }
+
+    public function cachedQuoteExplanation(string $quote): array
+    {
+        $normalizedQuote = $this->normalizeQuoteText($quote);
+        $cacheKey = $this->quoteExplanationCacheKey($normalizedQuote);
+        $cachedExplanation = Cache::get($cacheKey);
+
+        if ($cachedExplanation) {
+            return [
+                'explanation' => $cachedExplanation,
+                'cached' => true,
+                'hash' => $this->quoteExplanationHash($normalizedQuote),
+            ];
+        }
+
+        $explanation = $this->explainQuote($normalizedQuote);
+
+        if (! str_starts_with($explanation, 'Error')) {
+            Cache::forever($cacheKey, $explanation);
+        }
+
+        return [
+            'explanation' => $explanation,
+            'cached' => false,
+            'hash' => $this->quoteExplanationHash($normalizedQuote),
+        ];
+    }
+
+    public function quoteExplanationHash(string $quote): string
+    {
+        return sha1($this->normalizeQuoteText($quote));
+    }
+
+    public function normalizeQuoteText(string $quote): string
+    {
+        return (string) Str::of($quote)->stripTags()->squish();
+    }
+
+    private function quoteExplanationCacheKey(string $quote): string
+    {
+        return "post_quote_explanation:{$this->id}:".$this->quoteExplanationHash($quote);
     }
 
     /**

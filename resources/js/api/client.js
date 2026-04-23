@@ -244,6 +244,10 @@ class InfrareadAPI {
         return await this.request('POST', `/posts/${postId}/summary`, { sentences });
     }
 
+    async explainQuote(postId, quote) {
+        return await this.request('POST', `/posts/${postId}/quote-explanation`, { quote });
+    }
+
     /**
      * Sources API
      */

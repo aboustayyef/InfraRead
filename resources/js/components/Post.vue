@@ -47,6 +47,7 @@
         <div
           id="post-content"
           v-if="!isLoading"
+          ref="postContent"
           v-html="post.content"
           class="text-xl font-light leading-loose text-gray-600 content break-words"
         ></div>
@@ -98,9 +99,136 @@ import SummarySkeleton from "./partials/ui/SummarySkeleton.vue";
 export default {
   props: ["post", "summary", "isLoading", "readLaterService", "acknowledgedReadLaterUrl"],
   components: { SaveLaterButton, SummarizeButton, PostContentSkeleton, SummarySkeleton },
+  data() {
+    return {
+      quoteExplanations: {},
+    };
+  },
+  watch: {
+    "post.content": function () {
+      this.prepareQuoteExplainers();
+    },
+    "post.id": function () {
+      this.prepareQuoteExplainers();
+    },
+    isLoading: function (newValue) {
+      if (!newValue) {
+        this.prepareQuoteExplainers();
+      }
+    },
+    shown: function (newValue) {
+      if (newValue) {
+        this.prepareQuoteExplainers();
+      }
+    },
+  },
+  updated() {
+    this.prepareQuoteExplainers();
+  },
   methods: {
     handleSummary: function (summary) {
       this.$emit("summary-ready", summary);
+    },
+    prepareQuoteExplainers: function () {
+      this.$nextTick(() => {
+        const container = this.$refs.postContent;
+
+        if (!container || this.isLoading) {
+          return;
+        }
+
+        const blockquotes = Array.from(container.querySelectorAll("*"))
+          .filter((element) => element.tagName && element.tagName.toLowerCase() === "blockquote");
+
+        blockquotes.forEach((blockquote) => {
+          if (blockquote.dataset.explainReady === "true") {
+            return;
+          }
+
+          const quoteText = this.normalizedText(blockquote.textContent || "");
+
+          if (this.wordCount(quoteText) <= 75) {
+            return;
+          }
+
+          blockquote.dataset.explainReady = "true";
+          blockquote.classList.add("relative", "pr-14");
+
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className = "absolute top-2 right-2 z-10 flex h-8 w-8 items-center justify-center rounded-full border border-gray-200 bg-white text-sm font-semibold text-primary shadow-sm hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-30";
+          button.title = "Explain this in simple language";
+          button.setAttribute("aria-label", "Explain this in simple language");
+          button.textContent = "?";
+
+          const panel = document.createElement("div");
+          panel.className = "mt-4 hidden rounded border border-red-100 bg-red-50 p-3 text-base leading-relaxed text-gray-800";
+
+          button.addEventListener("click", () => {
+            this.explainQuote(quoteText, button, panel);
+          });
+
+          blockquote.appendChild(button);
+          blockquote.appendChild(panel);
+        });
+      });
+    },
+    explainQuote: async function (quoteText, button, panel) {
+      if (!this.post || !this.post.id) {
+        return;
+      }
+
+      const quoteHash = this.hashText(quoteText);
+      panel.classList.remove("hidden");
+
+      if (this.quoteExplanations[quoteHash]) {
+        panel.innerHTML = this.quoteExplanations[quoteHash];
+        return;
+      }
+
+      button.disabled = true;
+      button.classList.add("opacity-60");
+      panel.innerHTML = '<div class="animate-pulse text-gray-500">Explaining...</div>';
+
+      try {
+        const response = await window.api.explainQuote(this.post.id, quoteText);
+        const explanation = response.data && response.data.explanation
+          ? response.data.explanation
+          : null;
+
+        if (!explanation) {
+          throw new Error("No explanation returned.");
+        }
+
+        this.$set(this.quoteExplanations, quoteHash, explanation);
+        panel.innerHTML = explanation;
+      } catch (error) {
+        console.error("Failed to explain quote:", error);
+        panel.innerHTML = '<p>Could not explain this quote right now.</p>';
+      } finally {
+        button.disabled = false;
+        button.classList.remove("opacity-60");
+      }
+    },
+    normalizedText: function (text) {
+      return text.replace(/\s+/g, " ").trim();
+    },
+    wordCount: function (text) {
+      if (!text) {
+        return 0;
+      }
+
+      return text.split(/\s+/).filter(Boolean).length;
+    },
+    hashText: function (text) {
+      let hash = 5381;
+
+      for (let i = 0; i < text.length; i++) {
+        hash = ((hash << 5) + hash) + text.charCodeAt(i);
+        hash = hash & hash;
+      }
+
+      return Math.abs(hash).toString(36);
     },
   },
 

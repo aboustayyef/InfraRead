@@ -20,6 +20,13 @@ trait CreatesApplication
             );
         }
 
+        if (glob(__DIR__.'/../bootstrap/cache/routes-*.php')) {
+            throw new \RuntimeException(
+                'Refusing to run tests while cached routes exist. '.
+                'Run php artisan route:clear so tests use current route definitions.'
+            );
+        }
+
         $app = require __DIR__.'/../bootstrap/app.php';
 
         $app->make(Kernel::class)->bootstrap();
