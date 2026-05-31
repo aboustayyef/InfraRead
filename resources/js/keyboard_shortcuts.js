@@ -1,5 +1,3 @@
-import { upperCase } from "lodash";
-
 let settings = {
     down: "j",
     double_down: "d",
@@ -24,7 +22,9 @@ export function handle_keyboard_shortcut(key, app) {
     console.log(key);
     // external links shortcuts
     if (key.match(/\d/)) {
-        if (eval(key) < app.external_links.length) {
+        const linkIndex = Number.parseInt(key, 10);
+
+        if (!Number.isNaN(linkIndex) && linkIndex < app.external_links.length) {
             window.open(app.external_links[key], "_blank");
         }
     }
