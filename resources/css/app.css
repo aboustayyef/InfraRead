@@ -48,6 +48,9 @@ strong {
 .content img {
   @apply my-2 max-w-full;
 }
+.content iframe {
+  @apply my-2 max-w-full;
+}
 .content a {
   @apply text-primary;
 }
