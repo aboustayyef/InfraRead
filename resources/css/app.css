@@ -49,7 +49,8 @@ strong {
   @apply my-2 max-w-full;
 }
 .content iframe {
-  @apply my-2 max-w-full;
+  @apply block my-2 max-w-full;
+  min-width: 50%;
 }
 .content a {
   @apply text-primary;
